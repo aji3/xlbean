@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ja"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ValueLoader.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">xlbean</a> &gt; <a href="index.source.html" class="el_package">org.xlbean.data</a> &gt; <span class="el_source">ValueLoader.java</span></div><h1>ValueLoader.java</h1><pre class="source lang-java linenums">package org.xlbean.data;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.xlbean.XlBean;
+import org.xlbean.XlList;
+import org.xlbean.definition.Definition;
+import org.xlbean.excel.XlSheet.ValueType;
+import org.xlbean.util.XlBeanFactory;
+
+public abstract class ValueLoader&lt;T extends Definition&gt; {
+
+	/**
+	 * Populate {@code bean} with {@code definition}.
+	 * 
+	 * @param bean
+	 */
+	abstract public void load(XlBean bean);
+
+	private T definition;
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L25">	public ValueLoader(Definition definition) {</span>
+<span class="fc" id="L26">		this.definition = (T) definition;</span>
+<span class="fc" id="L27">	}</span>
+
+	public T getDefinition() {
+<span class="fc" id="L30">		return definition;</span>
+	}
+
+	public void setDefinition(T definition) {
+<span class="nc" id="L34">		this.definition = definition;</span>
+<span class="nc" id="L35">	}</span>
+
+	protected String getValue(Definition definition, int row, int column) {
+<span class="fc" id="L38">		String type = definition.getOptions().get(&quot;type&quot;);</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">		if (type == null) {</span>
+<span class="fc" id="L40">			return definition.getSheet().getCellValue(row, column);</span>
+		} else {
+<span class="fc" id="L42">			return definition.getSheet().getCellValue(row, column, ValueType.valueOf(type));</span>
+		}
+	}
+
+    protected void convertDottedStringToBean(String name, Object data, XlBean bean) {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (data == null) {</span>
+<span class="fc" id="L48">            return;</span>
+        }
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (name.contains(&quot;.&quot;)) {</span>
+<span class="fc" id="L51">            XlBean newBean = toBean(name, data);</span>
+<span class="fc" id="L52">            mergeMap(bean, newBean);</span>
+<span class="fc" id="L53">        } else {</span>
+<span class="fc" id="L54">            bean.put(name, data);</span>
+        }
+<span class="fc" id="L56">    }</span>
+
+    private void mergeMap(XlBean base, XlBean additional) {
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        if (additional == null) {</span>
+<span class="nc" id="L60">            return;</span>
+        }
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        for (Entry&lt;String, Object&gt; entry : additional.entrySet()) {</span>
+<span class="fc" id="L63">            Object baseValue = base.get(entry.getKey());</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">            if (baseValue == null) {</span>
+<span class="fc" id="L65">                base.put(entry.getKey(), entry.getValue());</span>
+            } else {
+<span class="pc bpc" id="L67" title="1 of 4 branches missed.">                if (baseValue instanceof Map &amp;&amp; entry.getValue() instanceof Map) {</span>
+<span class="fc" id="L68">                    mergeMap((XlBean) baseValue, (XlBean) entry.getValue());</span>
+<span class="pc bpc" id="L69" title="2 of 4 branches missed.">                } else if (baseValue instanceof List &amp;&amp; entry.getValue() instanceof List) {</span>
+<span class="fc" id="L70">                    mergeList((XlList) baseValue, (XlList) entry.getValue());</span>
+                } else {
+<span class="nc" id="L72">                    base.put(entry.getKey(), entry.getValue());</span>
+                }
+            }
+<span class="fc" id="L75">        }</span>
+<span class="fc" id="L76">    }</span>
+
+    private void mergeList(XlList baseList, XlList additional) {
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        for (int i = 0; i &lt; additional.size(); i++) {</span>
+<span class="fc" id="L80">            XlBean add = additional.get(i);</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            if (add != null) {</span>
+<span class="fc bfc" id="L82" title="All 4 branches covered.">                if (baseList.size() &gt; i &amp;&amp; baseList.get(i) != null) {</span>
+<span class="fc" id="L83">                    mergeMap(baseList.get(i), add);</span>
+                } else {
+<span class="fc" id="L85">                    baseList.setFillNull(i, add);</span>
+                }
+            }
+        }
+<span class="fc" id="L89">    }</span>
+
+    private XlBean toBean(String name, Object data) {
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if (data == null) {</span>
+<span class="nc" id="L93">            return null;</span>
+        }
+<span class="fc" id="L95">		XlBean ret = XlBeanFactory.getInstance().createBean();</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (name.contains(&quot;.&quot;)) {</span>
+<span class="fc" id="L97">            String thisName = name.substring(0, name.indexOf('.'));</span>
+<span class="fc" id="L98">            String childName = name.substring(name.indexOf('.') + 1);</span>
+<span class="fc" id="L99">            XlBean childBean = toBean(childName, data);</span>
+<span class="pc bpc" id="L100" title="2 of 4 branches missed.">            if (childBean == null || childBean.isValuesEmpty()) {</span>
+<span class="nc" id="L101">                return null;</span>
+            }
+<span class="fc bfc" id="L103" title="All 2 branches covered.">            if (thisName.contains(&quot;[&quot;)) {</span>
+<span class="fc" id="L104">                String thisListName = name.substring(0, name.indexOf('['));</span>
+<span class="fc" id="L105">                int index = Integer.parseInt(thisName.substring(thisName.indexOf('[') + 1, thisName.length() - 1));</span>
+<span class="fc" id="L106">                XlList childList = ret.list(thisListName);</span>
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">                if (childList == null) {</span>
+<span class="fc" id="L108">                    childList = XlBeanFactory.getInstance().createList();</span>
+                }
+<span class="fc" id="L110">                childList.setFillNull(index, childBean);</span>
+<span class="fc" id="L111">                ret.put(thisListName, childList);</span>
+<span class="fc" id="L112">            } else {</span>
+<span class="fc" id="L113">                ret.put(thisName, childBean);</span>
+            }
+<span class="fc" id="L115">        } else {</span>
+<span class="fc" id="L116">            ret.put(name, data);    </span>
+        }
+<span class="fc" id="L118">        return ret;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

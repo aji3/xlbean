@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ja"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>XlList.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">xlbean</a> &gt; <a href="index.source.html" class="el_package">org.xlbean</a> &gt; <span class="el_source">XlList.java</span></div><h1>XlList.java</h1><pre class="source lang-java linenums">package org.xlbean;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import org.xlbean.util.XlBeanFactory;
+
+/**
+ * Sub class of {@link ArrayList} with additional utility methods suitable for
+ * usual excel data structure.
+ * 
+ * &lt;p&gt;
+ * All the tables defined in excel is represented as {@link XlList} of
+ * {@link XlBean} instances.
+ * &lt;/p&gt;
+ * 
+ * @author Kazuya Tanikawa
+ *
+ */
+@SuppressWarnings(&quot;serial&quot;)
+<span class="fc" id="L26">public class XlList extends ArrayList&lt;XlBean&gt; {</span>
+
+<span class="fc" id="L28">	private Map&lt;String, Index&gt; indexMap = new HashMap&lt;&gt;();</span>
+
+	/**
+	 * Adds index of {@code indexName} with {@code indexKeys} to this object.
+	 * 
+	 * @param indexName
+	 * @param indexKeys
+	 */
+	public void addIndex(String indexName, List&lt;String&gt; indexKeys) {
+<span class="fc" id="L37">		indexMap.put(indexName, new Index(indexKeys));</span>
+<span class="fc" id="L38">	}</span>
+
+	/**
+	 * Adds {@code element} to the list after organizing index.
+	 * 
+	 * @return
+	 */
+	@Override
+	public boolean add(XlBean element) {
+<span class="fc bfc" id="L47" title="All 2 branches covered.">		if (!indexMap.isEmpty()) {</span>
+<span class="fc" id="L48">			indexMap.values().forEach(idx -&gt; idx.addData(element));</span>
+		}
+<span class="fc" id="L50">		return super.add(element);</span>
+	}
+
+	/**
+	 * @param aggregatedListName
+	 * @param keys
+	 * @return
+	 */
+	public XlList aggregate(String aggregatedListName, String... keys) {
+<span class="nc" id="L59">		XlList retList = XlBeanFactory.getInstance().createList();</span>
+<span class="nc" id="L60">		aggregateIndex(retList, keys);</span>
+<span class="nc" id="L61">		Map&lt;String, XlBean&gt; cache = new HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">		for (XlBean elem : this) {</span>
+<span class="nc" id="L63">			String key = generateAggregateKey(elem, keys);</span>
+<span class="nc" id="L64">			XlBean aggregatedMap = cache.get(key);</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">			if (aggregatedMap == null) {</span>
+<span class="nc" id="L66">				aggregatedMap = XlBeanFactory.getInstance().createBean();</span>
+<span class="nc" id="L67">				cache.put(key, aggregatedMap);</span>
+<span class="nc" id="L68">				retList.add(aggregatedMap);</span>
+			}
+<span class="nc" id="L70">			XlList aggregatedList = null;</span>
+<span class="nc" id="L71">			Object aggregatedListObject = aggregatedMap.get(aggregatedListName);</span>
+<span class="nc bnc" id="L72" title="All 4 branches missed.">			if (aggregatedListObject == null || !(aggregatedListObject instanceof XlList)) {</span>
+<span class="nc" id="L73">				aggregatedList = XlBeanFactory.getInstance().createList();</span>
+<span class="nc" id="L74">				aggregatedMap.put(aggregatedListName, aggregatedList);</span>
+<span class="nc" id="L75">				final XlBean x = aggregatedMap;</span>
+<span class="nc" id="L76">				Arrays.stream(keys)</span>
+<span class="nc" id="L77">				        .forEach(k -&gt; x.put(k, elem.get(k)));</span>
+<span class="nc" id="L78">			} else {</span>
+<span class="nc" id="L79">				aggregatedList = (XlList) aggregatedListObject;</span>
+			}
+<span class="nc" id="L81">			aggregatedList.add(elem);</span>
+<span class="nc" id="L82">		}</span>
+
+<span class="nc" id="L84">		return retList;</span>
+	}
+
+	/**
+	 * Convert this list to {@link XlBean}.
+	 * 
+	 * &lt;p&gt;
+	 * Key of {@link XlBean} is a string created by concatenating string
+	 * retrieved from beans inside this list by {@code keys}. Delimiter for the
+	 * key is &quot;#_#&quot;.
+	 * &lt;/p&gt;
+	 * 
+	 * @param keys
+	 * @return
+	 */
+	public XlBean toMap(String... keys) {
+<span class="nc" id="L100">		XlBean retBean = XlBeanFactory.getInstance().createBean();</span>
+<span class="nc" id="L101">		stream().forEach(bean -&gt; retBean.put(generateAggregateKey(bean, keys), bean));</span>
+<span class="nc" id="L102">		return retBean;</span>
+	}
+
+	/**
+	 * Remove {@code keys} from {@link Index} and add to the {@code newList}.
+	 * 
+	 * @param newList
+	 * @param keys
+	 */
+	private void aggregateIndex(XlList newList, String... keys) {
+<span class="nc" id="L112">		indexMap.forEach((indexName, index) -&gt; newList.addIndex(indexName, index.getKeys()</span>
+<span class="nc" id="L113">		        .stream()</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">		        .filter(key -&gt; Arrays.binarySearch(keys, key) &gt;= 0)</span>
+<span class="nc" id="L115">		        .collect(Collectors.toList())</span>
+		        ));
+<span class="nc" id="L117">	}</span>
+
+	/**
+	 * Generates a key used for aggregate.
+	 * 
+	 * @param elem
+	 * @param keys
+	 * @return
+	 */
+	private String generateAggregateKey(XlBean elem, String... keys) {
+<span class="nc" id="L127">		StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">		for (String key : Arrays.asList(keys).stream().sorted().collect(Collectors.toList())) {</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">			if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L130">				sb.append(&quot;#_#&quot;);</span>
+			}
+<span class="nc" id="L132">			sb.append(elem.get(key));</span>
+<span class="nc" id="L133">		}</span>
+<span class="nc" id="L134">		return sb.toString();</span>
+	}
+
+	/**
+	 * Filters this list with {@code conditionMap} and returns a new list.
+	 * 
+	 * &lt;p&gt;
+	 * All the keys and values in the {@code conditionMap} is used to check if
+	 * elements in this list matches with it.
+	 * &lt;/p&gt;
+	 * 
+	 * @param conditionMap
+	 * @return
+	 */
+	public List&lt;XlBean&gt; filter(Map&lt;String, String&gt; conditionMap) {
+<span class="nc" id="L149">		XlList list = XlBeanFactory.getInstance().createList();</span>
+		;
+<span class="nc bnc" id="L151" title="All 2 branches missed.">		if (conditionMap == null) {</span>
+<span class="nc" id="L152">			return list;</span>
+		} else {
+<span class="nc" id="L154">			stream().filter(elem -&gt; matches(elem, conditionMap)).forEach(list::add);</span>
+		}
+<span class="nc" id="L156">		return list;</span>
+	}
+
+	/**
+	 * Returns element registered at {@code index}.
+	 * 
+	 * &lt;p&gt;
+	 * If the index is out of bounds, then it returns null.
+	 * &lt;/p&gt;
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public XlBean find(int index) {
+<span class="nc bnc" id="L170" title="All 2 branches missed.">		if (size() &gt; index) {</span>
+<span class="nc" id="L171">			return get(index);</span>
+		}
+<span class="nc" id="L173">		return null;</span>
+	}
+
+	/**
+     * Returns the first element matches {@code conditionMap}.
+     * 
+     * &lt;p&gt;
+     * All the keys and values in the {@code conditionMap} is used to check if
+     * elements in this list matches with it.
+     * &lt;/p&gt;
+     * 
+     * &lt;p&gt;
+     * The matching starts from index 0 to the end of this list one by one until
+     * matched element. If there is no element to be matched, then it returns
+     * null.
+     * &lt;/p&gt;
+     * 
+     * @param conditionMap
+     * @return
+     */
+    public XlBean find(Map&lt;String, String&gt; conditionMap) {
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">        for (XlBean data : this) {</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">            if (matches(data, conditionMap)) {</span>
+<span class="fc" id="L196">                return data;</span>
+            }
+<span class="fc" id="L198">        }</span>
+<span class="nc" id="L199">        return null;</span>
+    }
+
+    /**
+     * 
+     * 
+     * @param conditionMap
+     * @return
+     */
+    public XlBean findByIndex(Map&lt;String, String&gt; conditionMap) {
+<span class="fc" id="L209">        return findByIndex(conditionMap, null);</span>
+    }
+
+    public XlBean findByIndex(Map&lt;String, String&gt; conditionMap, String indexName) {
+<span class="fc" id="L213">        Index index = null;</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">        if (indexName == null) {</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">            if (indexMap.size() == 1) {</span>
+<span class="fc" id="L216">                index = indexMap.values()</span>
+<span class="fc" id="L217">                        .iterator()</span>
+<span class="fc" id="L218">                        .next();</span>
+            } else {
+<span class="nc" id="L220">                return null;</span>
+            }
+        } else {
+<span class="nc" id="L223">            index = indexMap.get(indexName);</span>
+        }
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">        if (index == null) {</span>
+<span class="nc" id="L226">            return null;</span>
+        } else {
+<span class="fc" id="L228">            return index.getData(conditionMap);</span>
+        }
+    }
+
+    private boolean matches(XlBean row, Map&lt;String, String&gt; conditionMap) {
+<span class="fc" id="L233">        boolean matched = true;</span>
+<span class="fc bfc" id="L234" title="All 2 branches covered.">        for (Entry&lt;String, String&gt; entry : conditionMap.entrySet()) {</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">            if (!entry.getValue().equals(row.get(entry.getKey()))) {</span>
+<span class="fc" id="L236">                matched = false;</span>
+<span class="fc" id="L237">                break;</span>
+            }
+<span class="fc" id="L239">        }</span>
+<span class="fc" id="L240">        return matched;</span>
+    }
+
+    /**
+     * Private class for index of list.
+     * 
+     * @author Kazuya Tanikawa
+     *
+     */
+    private static class Index {
+        private static final String KEY_DELIMITER = &quot;#_#&quot;;
+        private List&lt;String&gt; keys;
+<span class="fc" id="L252">        private Map&lt;String, XlBean&gt; indexData = new HashMap&lt;&gt;();</span>
+
+<span class="fc" id="L254">        public Index(List&lt;String&gt; keys) {</span>
+<span class="fc" id="L255">            this.keys = keys.stream()</span>
+<span class="fc" id="L256">                    .sorted()</span>
+<span class="fc" id="L257">                    .collect(Collectors.toList());</span>
+<span class="fc" id="L258">        }</span>
+
+        public void addData(XlBean data) {
+<span class="fc" id="L261">            indexData.put(createKey(data), data);</span>
+<span class="fc" id="L262">        }</span>
+
+        public XlBean getData(Map&lt;String, ?&gt; conditionMap) {
+<span class="fc" id="L265">            return indexData.get(createKey(conditionMap));</span>
+        }
+
+        private String createKey(Map&lt;String, ?&gt; conditionMap) {
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">            if (keys.isEmpty()) {</span>
+<span class="nc" id="L270">                return String.valueOf(conditionMap.hashCode());</span>
+            }
+<span class="fc" id="L272">            final StringBuilder sb = new StringBuilder();</span>
+<span class="fc" id="L273">            keys.forEach(key -&gt; sb.append(conditionMap.get(key))</span>
+<span class="fc" id="L274">                    .append(KEY_DELIMITER));</span>
+<span class="fc" id="L275">            return sb.toString();</span>
+        }
+
+        public List&lt;String&gt; getKeys() {
+<span class="nc" id="L279">            return keys;</span>
+        }
+    }
+
+    /**
+     * Set {@code data} at the specified {@code index}. If the length of this
+     * list is less than pecified, then it will extend the list by filling with
+     * null.
+     * 
+     * 
+     * @param index
+     * @param data
+     */
+    public void setFillNull(int index, XlBean data) {
+<span class="fc bfc" id="L293" title="All 2 branches covered.">        while (size() &lt; index) {</span>
+<span class="fc" id="L294">            add(null);</span>
+        }
+<span class="fc bfc" id="L296" title="All 2 branches covered.">        if (size() == index) {</span>
+<span class="fc" id="L297">            add(data);</span>
+        } else {
+<span class="fc" id="L299">            set(index, data);</span>
+        }
+<span class="fc" id="L301">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

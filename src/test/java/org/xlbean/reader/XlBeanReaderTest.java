@@ -27,7 +27,6 @@ import org.xlbean.definition.DefinitionRepository;
 import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.excel.XlWorkbook;
-import org.xlbean.reader.XlBeanReader;
 import org.xlbean.testbean.Country;
 import org.xlbean.util.Util;
 
@@ -145,9 +144,9 @@ public class XlBeanReaderTest {
 
 		assertThat(tableStr.get(0).get("date"), is("3/18/17"));// Not the same
 		assertThat(tableStr.get(1).get("date"), is("土曜日, 3月 18, 2017"));// Not the same
-		assertThat(tableStr.get(2).get("date"), is("42812.0"));// Not the same
-		assertThat(tableStr.get(3).get("date"), is("42812.0"));// Not the same
-		assertThat(tableStr.get(4).get("date"), is("42812.0"));// Not the same
+		assertThat(tableStr.get(2).get("date"), is("2017\"年\"3\"月\"18\"日\""));// Not the same
+		assertThat(tableStr.get(3).get("date"), is("2017\"年\"3\"月\""));// Not the same
+		assertThat(tableStr.get(4).get("date"), is("3\"月\"18\"日\""));// Not the same
 		assertThat(tableStr.get(5).get("date"), is("2017/3/18"));
 		assertThat(tableStr.get(6).get("date"), is("2017/3/18 12:00 午前"));// Not the same
 		assertThat(tableStr.get(7).get("date"), is("2017/3/18 0:00"));
@@ -214,7 +213,7 @@ public class XlBeanReaderTest {
 		
 	}
 	
-//	@Test
+	@Test
 	public void testBigData() {
 		InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_bigdata.xlsx");
 		
@@ -224,7 +223,7 @@ public class XlBeanReaderTest {
 		System.out.println(bean);
 	}
 	
-//	@Test
+	@Test
 	public void testIndex() {
 		InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_bigdata_index.xlsx");
 		

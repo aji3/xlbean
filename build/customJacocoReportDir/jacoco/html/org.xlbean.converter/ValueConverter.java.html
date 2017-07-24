@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ja"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ValueConverter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">xlbean</a> &gt; <a href="index.source.html" class="el_package">org.xlbean.converter</a> &gt; <span class="el_source">ValueConverter.java</span></div><h1>ValueConverter.java</h1><pre class="source lang-java linenums">package org.xlbean.converter;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.TemporalAccessor;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import org.xlbean.XlBean;
+
+/**
+ * Converter used for converting String values in {@link XlBean} to object or
+ * vice-versa.
+ * 
+ * &lt;p&gt;
+ * This class defines all types which can be used as a leaf value and it can be
+ * checked by a method {@link #canConvert(Class)}. Any class which is not
+ * convertable is treated as custom object and dug down into the object to
+ * convert all the elements inside the object.
+ * &lt;/p&gt;
+ * 
+ * &lt;p&gt;
+ * List of convertable objects:
+ * &lt;ul&gt;
+ * &lt;li&gt;BigDecimal.class&lt;/li&gt;
+ * &lt;li&gt;BigInteger.class&lt;/li&gt;
+ * &lt;li&gt;Boolean.class&lt;/li&gt;
+ * &lt;li&gt;Character.class&lt;/li&gt;
+ * &lt;li&gt;Date.class&lt;/li&gt;
+ * &lt;li&gt;Double.class&lt;/li&gt;
+ * &lt;li&gt;Integer.class&lt;/li&gt;
+ * &lt;li&gt;LocalDate.class&lt;/li&gt;
+ * &lt;li&gt;Long.class&lt;/li&gt;
+ * &lt;li&gt;Short.class&lt;/li&gt;
+ * &lt;li&gt;String.class&lt;/li&gt;
+ * &lt;li&gt;boolean.class&lt;/li&gt;
+ * &lt;li&gt;char.class&lt;/li&gt;
+ * &lt;li&gt;double.class&lt;/li&gt;
+ * &lt;li&gt;int.class&lt;/li&gt;
+ * &lt;li&gt;long.class&lt;/li&gt;
+ * &lt;li&gt;short.class&lt;/li&gt;
+ * &lt;li&gt;LocalDateTime.class&lt;/li&gt;
+ * &lt;/ul&gt;
+ * &lt;/p&gt;
+ * 
+ * @author Kazuya Tanikawa
+ *
+ */
+<span class="fc" id="L57">public class ValueConverter {</span>
+
+<span class="fc" id="L59">    private static final List&lt;Class&lt;?&gt;&gt; SUPPORT_CLASSES = Arrays.asList(int.class, long.class, char.class,</span>
+            boolean.class, short.class, double.class, Integer.class, Long.class, Character.class, Boolean.class,
+            Short.class, Double.class, String.class, BigDecimal.class, BigInteger.class, Date.class, LocalDate.class,
+            LocalDateTime.class);
+
+<span class="fc" id="L64">    private static final DateFormat DATE_FORMAT = new SimpleDateFormat(&quot;yyyy/MM/dd HH:mm:ss.SSS&quot;);</span>
+<span class="fc" id="L65">    private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern(&quot;yyyy/MM/dd HH:mm:ss.SSS&quot;);</span>
+<span class="fc" id="L66">    private static final DateTimeFormatter LOCALDATE_FORMAT = DateTimeFormatter.ofPattern(&quot;yyyy/MM/dd&quot;);</span>
+
+    public boolean canConvert(Class&lt;?&gt; clazz) {
+<span class="fc" id="L69">        return SUPPORT_CLASSES.contains(clazz);</span>
+    }
+
+    /**
+     * Convert given {@code obj} to the {@link String} value to be hold in
+     * {@link XlBean}.
+     * 
+     * @param obj
+     * @return
+     */
+    public String toString(Object obj) {
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if (obj == null) {</span>
+<span class="nc" id="L81">            return null;</span>
+        }
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">        if (obj instanceof Date) {</span>
+<span class="nc" id="L84">            return DATE_FORMAT.format((Date) obj);</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">        } else if (obj instanceof LocalDate) {</span>
+<span class="nc" id="L86">            return LOCALDATE_FORMAT.format((LocalDate) obj) + &quot; 00:00:00.000&quot;;</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        } else if (obj instanceof LocalDateTime) {</span>
+<span class="nc" id="L88">            return DATETIME_FORMAT.format((TemporalAccessor) obj);</span>
+        }
+<span class="fc" id="L90">        return obj.toString();</span>
+    }
+
+    /**
+     * Convert given {@code value} to an instance of {@code valueClass}.
+     * 
+     * &lt;p&gt;
+     * This method will not throw any exception even if the {@code value} is not
+     * able to be converted to the specified class. If the {@code value} is
+     * null, then always returns null.
+     * &lt;/p&gt;
+     * 
+     * @param value
+     * @param valueClass
+     * @return
+     */
+    public Object toObject(String value, Class&lt;?&gt; valueClass) {
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">        if (value == null) {</span>
+<span class="nc" id="L108">            return null;</span>
+        }
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        if (valueClass.isAssignableFrom(String.class)) {</span>
+<span class="fc" id="L111">            return value;</span>
+<span class="pc bpc" id="L112" title="1 of 4 branches missed.">        } else if (valueClass.isAssignableFrom(Integer.class) || valueClass.isAssignableFrom(int.class)) {</span>
+            try {
+<span class="fc" id="L114">                return Integer.parseInt(value.replaceAll(&quot;\\..*$&quot;, &quot;&quot;));</span>
+<span class="nc" id="L115">            } catch (NumberFormatException e) {</span>
+                // ignore
+<span class="nc" id="L117">            }</span>
+<span class="pc bpc" id="L118" title="1 of 4 branches missed.">        } else if (valueClass.isAssignableFrom(Long.class) || valueClass.isAssignableFrom(long.class)) {</span>
+            try {
+<span class="fc" id="L120">                return Long.parseLong(value.replaceAll(&quot;\\..*$&quot;, &quot;&quot;));</span>
+<span class="nc" id="L121">            } catch (NumberFormatException e) {</span>
+                // ignore
+<span class="nc" id="L123">            }</span>
+<span class="pc bpc" id="L124" title="2 of 4 branches missed.">        } else if (valueClass.isAssignableFrom(Character.class) || valueClass.isAssignableFrom(char.class)) {</span>
+            try {
+<span class="nc" id="L126">                return value.charAt(0);</span>
+<span class="nc" id="L127">            } catch (ArrayIndexOutOfBoundsException e) {</span>
+                // ignore
+<span class="nc" id="L129">            }</span>
+<span class="pc bpc" id="L130" title="2 of 4 branches missed.">        } else if (valueClass.isAssignableFrom(Boolean.class) || valueClass.isAssignableFrom(boolean.class)) {</span>
+            try {
+<span class="nc" id="L132">                return Boolean.parseBoolean(value);</span>
+<span class="nc" id="L133">            } catch (NumberFormatException e) {</span>
+                // ignore
+<span class="nc" id="L135">            }</span>
+<span class="pc bpc" id="L136" title="2 of 4 branches missed.">        } else if (valueClass.isAssignableFrom(Short.class) || valueClass.isAssignableFrom(short.class)) {</span>
+            try {
+<span class="nc" id="L138">                return Short.parseShort(value);</span>
+<span class="nc" id="L139">            } catch (NumberFormatException e) {</span>
+                // ignore
+<span class="nc" id="L141">            }</span>
+<span class="pc bpc" id="L142" title="2 of 4 branches missed.">        } else if (valueClass.isAssignableFrom(Float.class) || valueClass.isAssignableFrom(float.class)) {</span>
+            try {
+<span class="nc" id="L144">                return Float.parseFloat(value);</span>
+<span class="nc" id="L145">            } catch (NumberFormatException e) {</span>
+                // ignore
+<span class="nc" id="L147">            }</span>
+<span class="pc bpc" id="L148" title="2 of 4 branches missed.">        } else if (valueClass.isAssignableFrom(Double.class) || valueClass.isAssignableFrom(double.class)) {</span>
+            try {
+<span class="nc" id="L150">                return Double.parseDouble(value);</span>
+<span class="nc" id="L151">            } catch (NumberFormatException e) {</span>
+                // ignore
+<span class="nc" id="L153">            }</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        } else if (valueClass.isAssignableFrom(BigDecimal.class)) {</span>
+            try {
+<span class="fc" id="L156">                return new BigDecimal(value);</span>
+<span class="nc" id="L157">            } catch (NumberFormatException e) {</span>
+                // ignore
+<span class="nc" id="L159">            }</span>
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        } else if (valueClass.isAssignableFrom(BigInteger.class)) {</span>
+            try {
+<span class="nc" id="L162">                return new BigInteger(value.replaceAll(&quot;\\..*$&quot;, &quot;&quot;));</span>
+<span class="nc" id="L163">            } catch (NumberFormatException e) {</span>
+                // ignore
+<span class="nc" id="L165">            }</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        } else if (valueClass.isAssignableFrom(Date.class)) {</span>
+            try {
+<span class="fc" id="L168">                return DATE_FORMAT.parse(value);</span>
+<span class="nc" id="L169">            } catch (ParseException e) {</span>
+                // ignore
+<span class="nc" id="L171">            }</span>
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        } else if (valueClass.isAssignableFrom(LocalDate.class)) {</span>
+            try {
+<span class="fc" id="L174">                return LocalDate.parse(value, DATETIME_FORMAT);</span>
+<span class="nc" id="L175">            } catch (DateTimeParseException e) {</span>
+                // ignore
+<span class="nc" id="L177">            }</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        } else if (valueClass.isAssignableFrom(LocalDateTime.class)) {</span>
+            try {
+<span class="fc" id="L180">                return LocalDateTime.parse(value, DATETIME_FORMAT);</span>
+<span class="nc" id="L181">            } catch (DateTimeParseException e) {</span>
+                // ignore
+            }
+        }
+<span class="nc" id="L185">        return null;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

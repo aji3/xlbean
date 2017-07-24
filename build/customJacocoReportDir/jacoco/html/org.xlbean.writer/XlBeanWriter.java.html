@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ja"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>XlBeanWriter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">xlbean</a> &gt; <a href="index.source.html" class="el_package">org.xlbean.writer</a> &gt; <span class="el_source">XlBeanWriter.java</span></div><h1>XlBeanWriter.java</h1><pre class="source lang-java linenums">package org.xlbean.writer;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.xlbean.XlBean;
+import org.xlbean.data.ExcelDataSaver;
+import org.xlbean.definition.Definition;
+import org.xlbean.definition.DefinitionLoader;
+import org.xlbean.definition.DefinitionRepository;
+import org.xlbean.definition.ExcelR1C1DefinitionLoader;
+import org.xlbean.definition.SingleDefinition;
+import org.xlbean.definition.TableDefinition;
+import org.xlbean.excel.XlCellAddress;
+import org.xlbean.excel.XlWorkbook;
+import org.xlbean.util.Util;
+
+/**
+ * 
+ * 
+ * @author Kazuya Tanikawa
+ *
+ */
+public class XlBeanWriter {
+
+    private DefinitionLoader&lt;?&gt; definitionLoader;
+    private ExcelDataSaver dataSaver;
+    
+    public XlBeanWriter() {
+<span class="fc" id="L38">        this(null, null);</span>
+<span class="fc" id="L39">    }</span>
+
+    public XlBeanWriter(DefinitionLoader&lt;?&gt; definitionLoader) {
+<span class="fc" id="L42">        this(definitionLoader, null);</span>
+<span class="fc" id="L43">    }</span>
+
+    public XlBeanWriter(ExcelDataSaver dataSaver) {
+<span class="nc" id="L46">        this(null, dataSaver);</span>
+<span class="nc" id="L47">    }</span>
+
+<span class="fc" id="L49">    public XlBeanWriter(DefinitionLoader&lt;?&gt; definitionLoader, ExcelDataSaver dataSaver) {</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (definitionLoader == null) {</span>
+<span class="fc" id="L51">            this.definitionLoader = new ExcelR1C1DefinitionLoader(); </span>
+        } else {
+<span class="fc" id="L53">            this.definitionLoader = definitionLoader;</span>
+        }
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        if (dataSaver == null) {</span>
+<span class="fc" id="L56">            this.dataSaver = new ExcelDataSaver();</span>
+        } else {
+<span class="nc" id="L58">            this.dataSaver = dataSaver;    </span>
+        }
+<span class="fc" id="L60">    }</span>
+
+    public void write(File excelTemplate, XlBean data, File outputExcel) {
+<span class="nc" id="L63">        try (OutputStream out = new FileOutputStream(outputExcel);) {</span>
+<span class="nc" id="L64">            write(Util.copyToInputStream(excelTemplate), data, out);</span>
+<span class="nc bnc" id="L65" title="All 8 branches missed.">        } catch (IOException e) {</span>
+<span class="nc" id="L66">            throw new RuntimeException(e);</span>
+<span class="nc" id="L67">        }</span>
+<span class="nc" id="L68">    }</span>
+
+    public void write(InputStream excelTemplate, XlBean data, OutputStream outputExcel) {
+<span class="pc" id="L71">        try (Workbook wb = WorkbookFactory.create(Util.copyToInputStream(excelTemplate));) {</span>
+
+<span class="fc" id="L73">            write(wb, wb, data, outputExcel);</span>
+
+<span class="pc bpc" id="L75" title="6 of 8 branches missed.">        } catch (EncryptedDocumentException | InvalidFormatException | IOException e) {</span>
+<span class="nc" id="L76">            throw new RuntimeException(e);</span>
+<span class="fc" id="L77">        }</span>
+<span class="fc" id="L78">    }</span>
+   
+    public void write(Object definitionSource, Workbook templateWorkbook, XlBean bean, OutputStream outputExcel)
+            throws IOException {
+
+<span class="fc" id="L83">        definitionLoader.initialize(definitionSource);</span>
+<span class="fc" id="L84">        DefinitionRepository definitions = definitionLoader.load();</span>
+
+<span class="fc bfc" id="L86" title="All 2 branches covered.">        if (templateWorkbook == null) {</span>
+<span class="fc" id="L87">            templateWorkbook = new XSSFWorkbook();</span>
+<span class="fc" id="L88">            templateWorkbook.createSheet(&quot;data&quot;);</span>
+            
+<span class="fc" id="L90">            DefinitionRepository definitionDefinitions = createDefinitionDefinitions(bean, definitions);</span>
+<span class="fc" id="L91">            definitions.merge(definitionDefinitions);</span>
+        }
+<span class="fc" id="L93">        XlWorkbook workbook = XlWorkbook.wrap(templateWorkbook);</span>
+<span class="fc" id="L94">        dataSaver.save(bean, definitions, workbook, outputExcel);</span>
+<span class="fc" id="L95">    }</span>
+
+    private DefinitionRepository createDefinitionDefinitions(XlBean bean, DefinitionRepository definitions) {
+<span class="fc" id="L98">        DefinitionRepository definitionDefinitions = new DefinitionRepository();</span>
+<span class="fc" id="L99">        definitions.forEach(it -&gt; {</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            if (it instanceof TableDefinition) {</span>
+<span class="fc" id="L101">                TableDefinition table = (TableDefinition)it;</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">                for (SingleDefinition attr : table.getAttributes().values()) {</span>
+                    int row, column;
+<span class="fc bfc" id="L104" title="All 2 branches covered.">                    if (attr.getName().startsWith(&quot;~&quot;)) {</span>
+<span class="fc" id="L105">                        row = attr.getCell().getRow();</span>
+<span class="fc" id="L106">                        column = 0;</span>
+                    } else {
+<span class="fc" id="L108">                        row = 0;</span>
+<span class="fc" id="L109">                        column = attr.getCell().getColumn();</span>
+                    }
+<span class="fc" id="L111">                    definitionDefinitions.addDefinition(createDefinitionDefinition(row, column, table.getName() + &quot;#&quot; + attr.getName(), bean));</span>
+<span class="fc" id="L112">                }</span>
+<span class="fc" id="L113">            } else {</span>
+                // it instanceof SingleDefinition
+<span class="fc" id="L115">                SingleDefinition single = (SingleDefinition)it;</span>
+                
+<span class="fc" id="L117">                definitionDefinitions.addDefinition(createDefinitionDefinition(single.getCell().getRow(), 0, single.getName(), bean));</span>
+<span class="fc" id="L118">                definitionDefinitions.addDefinition(createDefinitionDefinition(0, single.getCell().getColumn(), single.getName(), bean));</span>
+            }
+<span class="fc" id="L120">            it.setSheetName(&quot;data&quot;);</span>
+<span class="fc" id="L121">        });</span>
+<span class="fc" id="L122">        return definitionDefinitions;</span>
+    }
+    
+    private Definition createDefinitionDefinition(int row, int column, String name, XlBean bean) {
+<span class="fc" id="L126">        String key = String.format(&quot;$definition_%d_%d&quot;, row, column);</span>
+<span class="fc" id="L127">        SingleDefinition definitionDefinition = new SingleDefinition();</span>
+<span class="fc" id="L128">        definitionDefinition.setName(key);</span>
+<span class="fc" id="L129">        definitionDefinition.setOriginalKeyString(key);</span>
+<span class="fc" id="L130">        definitionDefinition.setCell(new XlCellAddress.Builder().row(row).column(column).build());</span>
+<span class="fc" id="L131">        definitionDefinition.setSheetName(&quot;data&quot;);</span>
+
+<span class="fc" id="L133">        mergeDefinitionDefinition(key, name, bean);</span>
+<span class="fc" id="L134">        return definitionDefinition;</span>
+    }
+    
+    private void mergeDefinitionDefinition(String key, String value, XlBean bean) {
+<span class="fc" id="L138">        Object obj = bean.get(key);</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        if (obj == null) {</span>
+<span class="fc" id="L140">            bean.put(key, value);</span>
+        } else {
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">            if (obj instanceof String) {</span>
+<span class="fc" id="L143">                bean.put(key, ((String)obj) + &quot;, &quot; + value);</span>
+            } else {
+                // skip
+            }
+        }
+<span class="fc" id="L148">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ja"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>XlCellAddress.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">xlbean</a> &gt; <a href="index.source.html" class="el_package">org.xlbean.excel</a> &gt; <span class="el_source">XlCellAddress.java</span></div><h1>XlCellAddress.java</h1><pre class="source lang-java linenums">package org.xlbean.excel;
+
+/**
+ * Class to represent a cell of excel sheet.
+ * 
+ * @author Kazuya Tanikawa
+ *
+ */
+public class XlCellAddress {
+
+	private Integer row;
+	private Integer column;
+	
+<span class="fc" id="L14">	private XlCellAddress() {</span>
+<span class="fc" id="L15">	}</span>
+	
+	public Integer getRow() {
+<span class="fc" id="L18">		return row;</span>
+	}
+	public void setRow(Integer row) {
+<span class="fc" id="L21">		this.row = row;</span>
+<span class="fc" id="L22">	}</span>
+	public Integer getColumn() {
+<span class="fc" id="L24">		return column;</span>
+	}
+	public void setColumn(Integer column) {
+<span class="fc" id="L27">		this.column = column;</span>
+<span class="fc" id="L28">	}</span>
+	public void merge(XlCellAddress cell) {
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">		if (cell.getRow() != null) {</span>
+<span class="fc" id="L31">			this.setRow(cell.getRow());</span>
+		}
+<span class="fc bfc" id="L33" title="All 2 branches covered.">		if (cell.getColumn() != null) {</span>
+<span class="fc" id="L34">			this.setColumn(cell.getColumn());</span>
+		}
+<span class="fc" id="L36">	}</span>
+	public XlCellAddress clone() {
+<span class="fc" id="L38">	    XlCellAddress ret = new XlCellAddress();</span>
+<span class="fc" id="L39">	    ret.setRow(this.row);</span>
+<span class="fc" id="L40">	    ret.setColumn(this.column);</span>
+<span class="fc" id="L41">	    return ret;</span>
+	}
+<span class="fc" id="L43">	public static class Builder {</span>
+		private Integer row;
+		private Integer column;
+		public Builder row(Integer row) {
+<span class="fc" id="L47">			this.row = row;</span>
+<span class="fc" id="L48">			return this;</span>
+		}
+		public Builder column(Integer column) {
+<span class="fc" id="L51">			this.column = column;</span>
+<span class="fc" id="L52">			return this;</span>
+		}
+		public XlCellAddress build() {
+<span class="fc" id="L55">			XlCellAddress cell = new XlCellAddress();</span>
+<span class="fc" id="L56">			cell.setRow(row);</span>
+<span class="fc" id="L57">			cell.setColumn(column);</span>
+<span class="fc" id="L58">			return cell;</span>
+		}
+	}
+    @Override
+    public String toString() {
+<span class="nc" id="L63">        return &quot;XlCellAddress [row=&quot; + row + &quot;, column=&quot; + column + &quot;]&quot;;</span>
+    }
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

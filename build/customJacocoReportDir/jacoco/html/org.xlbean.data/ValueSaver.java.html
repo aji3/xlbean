@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ja"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ValueSaver.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">xlbean</a> &gt; <a href="index.source.html" class="el_package">org.xlbean.data</a> &gt; <span class="el_source">ValueSaver.java</span></div><h1>ValueSaver.java</h1><pre class="source lang-java linenums">package org.xlbean.data;
+
+import org.xlbean.XlBean;
+import org.xlbean.definition.Definition;
+import org.xlbean.excel.XlSheet.ValueType;
+
+public abstract class ValueSaver&lt;T extends Definition&gt; {
+
+	abstract public void save(XlBean bean);
+
+	private T definition;
+
+<span class="fc" id="L13">	public ValueSaver(T definition) {</span>
+<span class="fc" id="L14">		this.definition = (T) definition;</span>
+<span class="fc" id="L15">	}</span>
+
+	public T getDefinition() {
+<span class="fc" id="L18">		return definition;</span>
+	}
+
+	public void setDefinition(T definition) {
+<span class="nc" id="L22">		this.definition = definition;</span>
+<span class="nc" id="L23">	}</span>
+
+	protected void setValue(Definition definition, int row, int column, String value) {
+<span class="fc" id="L26">		String type = definition.getOptions().get(&quot;type&quot;);</span>
+<span class="fc bfc" id="L27" title="All 2 branches covered.">		if (type == null) {</span>
+<span class="fc" id="L28">			definition.getSheet().setCellValue(row, column, value);</span>
+		} else {
+<span class="fc" id="L30">			definition.getSheet().setCellValue(row, column, value, ValueType.valueOf(type));</span>
+		}
+<span class="fc" id="L32">	}</span>
+
+	@SuppressWarnings(&quot;unchecked&quot;)
+	protected &lt;S&gt; S getValueFromXlBean(String name, XlBean bean) {
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">		if (bean == null) {</span>
+<span class="nc" id="L37">			return null;</span>
+		}
+<span class="fc bfc" id="L39" title="All 2 branches covered.">		if (name.contains(&quot;.&quot;)) {</span>
+<span class="fc" id="L40">			Object value = bean.get(name.substring(0, name.indexOf('.')));</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">			if (value instanceof XlBean) {</span>
+<span class="fc" id="L42">				return (S) getValueFromXlBean(name.substring(name.indexOf('.') + 1, name.length()), (XlBean) value);</span>
+			} else {
+<span class="fc" id="L44">				return null;</span>
+			}
+		} else {
+<span class="fc" id="L47">			return (S) bean.get(name);</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>
