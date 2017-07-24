@@ -21,6 +21,7 @@ target
 out
 build
 bin
+RemoteSystemsTempFiles
 
 # Other
 *.log
