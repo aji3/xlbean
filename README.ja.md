@@ -3,20 +3,48 @@ xlbean
 
 Excelシート上のデータのJavaプログラムからの読み書きを、**Excelシート上にマッピング定義を記載**することで実現するユーティリティ。
 
-**Excelシート、早くJavaプログラムから使いたい**という目的におすすめです。
+**Excelシートを多少よごしてもよいから、とにかく早くJavaプログラムから使いたい**という用途におすすめです。
 
 ## Getting Started
 
-# Installing
+### Installing
 
+1. 依存関係の設定
 
+Mavenの場合
+```
+<repositories>
+    <repository>
+        <id>xlbean</id>
+        <url>https://raw.github.com/aji3/xlbean/mvn-repo/</url>
+    </repository>
+</repositories>
+<dependencies>
+    <dependency>
+        <groupId>org.xlbean</groupId>
+        <artifactId>xlbean</artifactId>
+        <version>0.1.0</version>
+    </dependency>
+</dependencies>
+```
 
-## Description
+Gradleの場合
+```
 
-以下の3ステップで利用できます。
-1. Excelシート上の表形式データの各カラムに名前を付け、データが始まる行をマークする
-2. Excelファイル内の読み込み対象シートにマークする
-3. *org.xlbean.reader.XlBeanReader*で読み込む
+```
+
+2. Excelシートへの読み込み定義の追記
+2-1. Excelシート上の表形式データの各カラムに名前を付け、データが始まる行をマークする
+2-2. Excelファイル内の読み込み対象シートにマークする
+
+3. Javaプログラムの記述
+```
+InputStream in = new FileInputStream("example/presidents.xlsx");
+XlBeanReader reader = new XlBeanReader();
+XlBean bean = reader.read(in);
+
+XlList list = bean.list("presidents");
+```
 
 
 

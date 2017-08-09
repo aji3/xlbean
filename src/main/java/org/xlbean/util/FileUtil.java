@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
-public class Util {
+public class FileUtil {
 
 	/**
 	 * Copy given {@code file} to on-memory {@link InputStream}.

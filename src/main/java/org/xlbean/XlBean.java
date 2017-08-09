@@ -13,9 +13,7 @@ import org.xlbean.util.XlBeanFactory;
  * <p>
  * Basic concept of this library is to read or write any value on excel sheet as
  * {@link String}. This class is to hold this string value with it's name as
- * map. Although type of value is always {@link String}, to express general data
- * structure of Java object, Map or List is used to realize it so that Map and
- * List are also candidate of value of this map.
+ * map.
  * </p>
  * 
  * <p>
@@ -28,21 +26,14 @@ import org.xlbean.util.XlBeanFactory;
  * <li>{@link SingleValue}</li>
  * <li>{@link String}</li>
  * </ul>
- * However, you usually do not have to care what object can be put or not
- * because there is {@link #set(Object)} method which converts any type of
- * object, including Map, List and any other custom classes, to XlBean suitable
- * type.
+ * If you want to put any value other than the types above, use
+ * {@link #set(Object)} method which converts any type of object, including Map,
+ * List or any other custom classes, to XlBean suitable type.
  * </p>
  * 
  * <p>
  * Other methods defined in this class are utility to convert {@link Map} to
  * other format easily.
- * </p>
- * 
- * <p>
- * Although the type of value is {@link Object}, only three types of objects are
- * potentially put to the bean. The three types are {@link XlBean},
- * {@link XlList} and {@link String}
  * </p>
  * 
  * @author Kazuya Tanikawa
@@ -80,8 +71,7 @@ public class XlBean extends HashMap<String, Object> {
     }
 
     /**
-     * Overridden method of {@link HashMap#put(Object, Object)} with type check
-     * added.
+     * Overridden method of {@link HashMap#put(Object, Object)} with type check.
      * 
      * <p>
      * This method allows only the following types:

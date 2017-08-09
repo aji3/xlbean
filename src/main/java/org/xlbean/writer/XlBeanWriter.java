@@ -21,7 +21,7 @@ import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
 import org.xlbean.excel.XlCellAddress;
 import org.xlbean.excel.XlWorkbook;
-import org.xlbean.util.Util;
+import org.xlbean.util.FileUtil;
 
 /**
  * 
@@ -61,14 +61,14 @@ public class XlBeanWriter {
 
     public void write(File excelTemplate, XlBean data, File outputExcel) {
         try (OutputStream out = new FileOutputStream(outputExcel);) {
-            write(Util.copyToInputStream(excelTemplate), data, out);
+            write(FileUtil.copyToInputStream(excelTemplate), data, out);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void write(InputStream excelTemplate, XlBean data, OutputStream outputExcel) {
-        try (Workbook wb = WorkbookFactory.create(Util.copyToInputStream(excelTemplate));) {
+        try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(excelTemplate));) {
 
             write(wb, wb, data, outputExcel);
 

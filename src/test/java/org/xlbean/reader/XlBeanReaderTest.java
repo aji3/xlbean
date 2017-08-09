@@ -28,7 +28,7 @@ import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.excel.XlWorkbook;
 import org.xlbean.testbean.Country;
-import org.xlbean.util.Util;
+import org.xlbean.util.FileUtil;
 
 public class XlBeanReaderTest {
 
@@ -250,7 +250,7 @@ public class XlBeanReaderTest {
 	public void testConvertFromObjectToXlBean() {
 		InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_bigdata_index.xlsx");
 		
-		try (Workbook wb = WorkbookFactory.create(Util.copyToInputStream(in))) {
+		try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
 
 			DefinitionLoader<XlWorkbook> definitionLoader = new ExcelR1C1DefinitionLoader();
 			definitionLoader.initialize(wb);

@@ -12,7 +12,7 @@ import org.xlbean.util.XlBeanFactory;
 
 /**
  * Sub class of {@link ArrayList} with additional utility methods suitable for
- * usual excel data structure.
+ * common data structure of excel.
  * 
  * <p>
  * All the tables defined in excel is represented as {@link XlList} of
@@ -25,155 +25,172 @@ import org.xlbean.util.XlBeanFactory;
 @SuppressWarnings("serial")
 public class XlList extends ArrayList<XlBean> {
 
-	private Map<String, Index> indexMap = new HashMap<>();
+    private Map<String, Index> indexMap = new HashMap<>();
 
-	/**
-	 * Adds index of {@code indexName} with {@code indexKeys} to this object.
-	 * 
-	 * @param indexName
-	 * @param indexKeys
-	 */
-	public void addIndex(String indexName, List<String> indexKeys) {
-		indexMap.put(indexName, new Index(indexKeys));
+    /**
+     * Adds index of {@code indexName} with {@code indexKeys} to this object.
+     * 
+     * @param indexName
+     * @param indexKeys
+     */
+    public void addIndex(String indexName, List<String> indexKeys) {
+        indexMap.put(indexName, new Index(indexKeys));
+    }
+
+    /**
+     * Adds {@code element} to the list after organizing index.
+     * 
+     * @return
+     */
+    @Override
+    public boolean add(XlBean element) {
+        if (!indexMap.isEmpty()) {
+            indexMap.values().forEach(idx -> idx.addData(element));
+        }
+        return super.add(element);
 	}
 
-	/**
-	 * Adds {@code element} to the list after organizing index.
-	 * 
-	 * @return
-	 */
-	@Override
-	public boolean add(XlBean element) {
-		if (!indexMap.isEmpty()) {
-			indexMap.values().forEach(idx -> idx.addData(element));
-		}
-		return super.add(element);
-	}
+    /**
+     * Convert a denormalized list of one to many relation objects into parent
+     * object with list of children objects.
+     * 
+     * <p>
+     * Suppose you have a table of companies and employees in a excel sheet. In
+     * each row of the table, there are a name of an employee and a name of a
+     * company which the employee belongs to. When this table is loaded by
+     * XlBean, you will get an instance of {@link XlList} filled with multiple
+     * instances of {@link XlBean} as elements, and each of the XlBean instance
+     * has name of an employeeName and a companyName.
+     * </p>
+     * 
+     * <p>
+     * Now you want to have a list of companies which has list of employees
+     * inside each instance of company. This can be done by calling this method
+     * with "employees" as childListName and ["companyName"] as parentKeys.
+     * </p>
+     * 
+     * @param childListName
+     * @param parentKeys
+     * @return
+     */
+    public XlList aggregate(String childListName, String... parentKeys) {
+        XlList retList = XlBeanFactory.getInstance().createList();
+        aggregateIndex(retList, parentKeys);
+        Map<String, XlBean> cache = new HashMap<>();
+        for (XlBean elem : this) {
+            String key = generateAggregateKey(elem, parentKeys);
+            XlBean aggregatedMap = cache.get(key);
+            if (aggregatedMap == null) {
+                aggregatedMap = XlBeanFactory.getInstance().createBean();
+                cache.put(key, aggregatedMap);
+                retList.add(aggregatedMap);
+            }
+            XlList aggregatedList = null;
+            Object aggregatedListObject = aggregatedMap.get(childListName);
+            if (aggregatedListObject == null || !(aggregatedListObject instanceof XlList)) {
+                aggregatedList = XlBeanFactory.getInstance().createList();
+                aggregatedMap.put(childListName, aggregatedList);
+                final XlBean x = aggregatedMap;
+                Arrays.stream(parentKeys)
+                        .forEach(k -> x.put(k, elem.get(k)));
+            } else {
+                aggregatedList = (XlList) aggregatedListObject;
+            }
+            aggregatedList.add(elem);
+        }
 
-	/**
-	 * @param aggregatedListName
-	 * @param keys
-	 * @return
-	 */
-	public XlList aggregate(String aggregatedListName, String... keys) {
-		XlList retList = XlBeanFactory.getInstance().createList();
-		aggregateIndex(retList, keys);
-		Map<String, XlBean> cache = new HashMap<>();
-		for (XlBean elem : this) {
-			String key = generateAggregateKey(elem, keys);
-			XlBean aggregatedMap = cache.get(key);
-			if (aggregatedMap == null) {
-				aggregatedMap = XlBeanFactory.getInstance().createBean();
-				cache.put(key, aggregatedMap);
-				retList.add(aggregatedMap);
-			}
-			XlList aggregatedList = null;
-			Object aggregatedListObject = aggregatedMap.get(aggregatedListName);
-			if (aggregatedListObject == null || !(aggregatedListObject instanceof XlList)) {
-				aggregatedList = XlBeanFactory.getInstance().createList();
-				aggregatedMap.put(aggregatedListName, aggregatedList);
-				final XlBean x = aggregatedMap;
-				Arrays.stream(keys)
-				        .forEach(k -> x.put(k, elem.get(k)));
-			} else {
-				aggregatedList = (XlList) aggregatedListObject;
-			}
-			aggregatedList.add(elem);
-		}
+        return retList;
+    }
 
-		return retList;
-	}
+    /**
+     * Convert this list to {@link XlBean}.
+     * 
+     * <p>
+     * Key of {@link XlBean} is a string created by concatenating string
+     * retrieved from beans inside this list by {@code keys}. Delimiter for the
+     * key is "#_#".
+     * </p>
+     * 
+     * @param keys
+     * @return
+     */
+    public XlBean toMap(String... keys) {
+        XlBean retBean = XlBeanFactory.getInstance().createBean();
+        stream().forEach(bean -> retBean.put(generateAggregateKey(bean, keys), bean));
+        return retBean;
+    }
 
-	/**
-	 * Convert this list to {@link XlBean}.
-	 * 
-	 * <p>
-	 * Key of {@link XlBean} is a string created by concatenating string
-	 * retrieved from beans inside this list by {@code keys}. Delimiter for the
-	 * key is "#_#".
-	 * </p>
-	 * 
-	 * @param keys
-	 * @return
-	 */
-	public XlBean toMap(String... keys) {
-		XlBean retBean = XlBeanFactory.getInstance().createBean();
-		stream().forEach(bean -> retBean.put(generateAggregateKey(bean, keys), bean));
-		return retBean;
-	}
+    /**
+     * Remove {@code keys} from {@link Index} and add to the {@code newList}.
+     * 
+     * @param newList
+     * @param keys
+     */
+    private void aggregateIndex(XlList newList, String... keys) {
+        indexMap.forEach((indexName, index) -> newList.addIndex(indexName, index.getKeys()
+                .stream()
+                .filter(key -> Arrays.binarySearch(keys, key) >= 0)
+                .collect(Collectors.toList())
+                ));
+    }
 
-	/**
-	 * Remove {@code keys} from {@link Index} and add to the {@code newList}.
-	 * 
-	 * @param newList
-	 * @param keys
-	 */
-	private void aggregateIndex(XlList newList, String... keys) {
-		indexMap.forEach((indexName, index) -> newList.addIndex(indexName, index.getKeys()
-		        .stream()
-		        .filter(key -> Arrays.binarySearch(keys, key) >= 0)
-		        .collect(Collectors.toList())
-		        ));
-	}
+    /**
+     * Generates a key used for aggregate.
+     * 
+     * @param elem
+     * @param keys
+     * @return
+     */
+    protected String generateAggregateKey(XlBean elem, String... keys) {
+        StringBuilder sb = new StringBuilder();
+        for (String key : Arrays.asList(keys).stream().sorted().collect(Collectors.toList())) {
+            if (sb.length() > 0) {
+                sb.append("#_#");
+            }
+            sb.append(elem.get(key));
+        }
+        return sb.toString();
+    }
 
-	/**
-	 * Generates a key used for aggregate.
-	 * 
-	 * @param elem
-	 * @param keys
-	 * @return
-	 */
-	private String generateAggregateKey(XlBean elem, String... keys) {
-		StringBuilder sb = new StringBuilder();
-		for (String key : Arrays.asList(keys).stream().sorted().collect(Collectors.toList())) {
-			if (sb.length() > 0) {
-				sb.append("#_#");
-			}
-			sb.append(elem.get(key));
-		}
-		return sb.toString();
-	}
+    /**
+     * Filters this list with {@code conditionMap} and returns a new list.
+     * 
+     * <p>
+     * All the keys and values in the {@code conditionMap} is used to check if
+     * elements in this list matches with it.
+     * </p>
+     * 
+     * @param conditionMap
+     * @return
+     */
+    public List<XlBean> filter(Map<String, String> conditionMap) {
+        XlList list = XlBeanFactory.getInstance().createList();
+        if (conditionMap == null) {
+            return list;
+        } else {
+            stream().filter(elem -> matches(elem, conditionMap)).forEach(list::add);
+        }
+        return list;
+    }
 
-	/**
-	 * Filters this list with {@code conditionMap} and returns a new list.
-	 * 
-	 * <p>
-	 * All the keys and values in the {@code conditionMap} is used to check if
-	 * elements in this list matches with it.
-	 * </p>
-	 * 
-	 * @param conditionMap
-	 * @return
-	 */
-	public List<XlBean> filter(Map<String, String> conditionMap) {
-		XlList list = XlBeanFactory.getInstance().createList();
-		;
-		if (conditionMap == null) {
-			return list;
-		} else {
-			stream().filter(elem -> matches(elem, conditionMap)).forEach(list::add);
-		}
-		return list;
-	}
+    /**
+     * Returns element registered at {@code index}.
+     * 
+     * <p>
+     * If the index is out of bounds, then it returns null.
+     * </p>
+     * 
+     * @param index
+     * @return
+     */
+    public XlBean find(int index) {
+        if (size() > index) {
+            return get(index);
+        }
+        return null;
+    }
 
-	/**
-	 * Returns element registered at {@code index}.
-	 * 
-	 * <p>
-	 * If the index is out of bounds, then it returns null.
-	 * </p>
-	 * 
-	 * @param index
-	 * @return
-	 */
-	public XlBean find(int index) {
-		if (size() > index) {
-			return get(index);
-		}
-		return null;
-	}
-
-	/**
+    /**
      * Returns the first element matches {@code conditionMap}.
      * 
      * <p>
@@ -200,7 +217,13 @@ public class XlList extends ArrayList<XlBean> {
     }
 
     /**
+     * Returns an instance of {@link XlBean} which is registered to this list by an index
+     * which value is specified by the {@code conditionMap}.
      * 
+     * <p>
+     * This method is available only when one index is set to table. Otherwise
+     * it always returns null.
+     * </p>
      * 
      * @param conditionMap
      * @return
@@ -281,8 +304,8 @@ public class XlList extends ArrayList<XlBean> {
     }
 
     /**
-     * Set {@code data} at the specified {@code index}. If the length of this
-     * list is less than pecified, then it will extend the list by filling with
+     * Set {@code data} at the specified {@code index}. If length of this list
+     * is less than specified, then it will extend the list by filling with
      * null.
      * 
      * 

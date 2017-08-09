@@ -12,6 +12,17 @@ import org.xlbean.XlList;
 import org.xlbean.converter.BeanConverter;
 import org.xlbean.excel.XlCellAddress;
 
+/**
+ * Generates {@link DefinitionRepository} from a bean given as definitionSource.
+ * 
+ * <p>
+ * Basically this class is needed only when you want to write out a bean into
+ * blank excel sheet.
+ * </p>
+ * 
+ * @author Kazuya Tanikawa
+ *
+ */
 public class BeanDefinitionLoader extends DefinitionLoader<Object>{
 
     private BeanConverter converter = new BeanConverter();

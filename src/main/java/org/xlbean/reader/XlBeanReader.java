@@ -14,7 +14,7 @@ import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.DefinitionRepository;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.excel.XlWorkbook;
-import org.xlbean.util.Util;
+import org.xlbean.util.FileUtil;
 
 /**
  * Reader to read data from excel file and return XlBean.
@@ -65,7 +65,7 @@ public class XlBeanReader {
      */
     public XlBean read(InputStream in) {
 
-        try (Workbook wb = WorkbookFactory.create(Util.copyToInputStream(in))) {
+        try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
 
             return read(wb, wb);
 
@@ -89,7 +89,7 @@ public class XlBeanReader {
     public XlBean read(File excelFile) {
         // Copy excel file to on-memory stream to make it readable even if the
         // file is opened.
-        return read(Util.copyToInputStream(excelFile));
+        return read(FileUtil.copyToInputStream(excelFile));
     }
 
     public XlBean read(Object definitionSource, Workbook dataSource) {
