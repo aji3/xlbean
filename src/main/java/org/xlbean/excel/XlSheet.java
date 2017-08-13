@@ -186,12 +186,12 @@ public class XlSheet {
         return "@".equals(dataFormatString);
     }
 
-    private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS");
+    private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     /**
      * Format excel date value which is a differential number from 1900/1/0, to
-     * either date-time string(yyyy/MM/dd HH:mm:ss.SSS) or time
+     * either date-time string(yyyy-MM-dd'T'HH:mm:ss.SSS) or time
      * string(HH:mm:ss.SSS) depends on the {@code value}.
      * 
      * @param value
@@ -208,7 +208,7 @@ public class XlSheet {
                 // returns HH:mm:ss.SSS
                 return TIME_FORMAT.format(dateTime);
             } else {
-                // returns yyyy/MM/dd HH:mm:ss.SSS
+                // returns yyyy-MM-dd'T'HH:mm:ss.SSS
                 return DATETIME_FORMAT.format(dateTime);
             }
         }

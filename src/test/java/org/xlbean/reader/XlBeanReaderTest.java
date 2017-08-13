@@ -200,14 +200,14 @@ public class XlBeanReaderTest {
 		assertThat(america.getPresidents().get(0).getName(), is("John F. Kennedy"));
 		assertThat(america.getPresidents().get(0).getDateOfBirth(), is(LocalDate.of(1917, 5, 29)));
 		assertThat(america.getPresidents().get(0).getStateOfBirth(), is("Massachusetts"));
-		assertThat(america.getPresidents().get(0).getInOfficeFrom(), is(new SimpleDateFormat("yyyy/MM/dd").parse("1961/1/20")));
+		assertThat(america.getPresidents().get(0).getInOfficeFrom(), is(new SimpleDateFormat("yyyy-MM-dd").parse("1961-01-20")));
 		assertThat(america.getPresidents().get(0).getInOfficeTo(), is(LocalDateTime.of(1963, 11, 22, 0, 0)));
 		assertThat(america.getPresidents().get(0).getNumberOfDaysInOffice(), comparesEqualTo(1036));
 
 		assertThat(america.getPresidents().get(10).getName(), is("Donald Trump"));
 		assertThat(america.getPresidents().get(10).getDateOfBirth(), is(LocalDate.of(1946, 6, 14)));
 		assertThat(america.getPresidents().get(10).getStateOfBirth(), is("New York"));
-		assertThat(america.getPresidents().get(10).getInOfficeFrom(), is(new SimpleDateFormat("yyyy/MM/dd").parse("2017/1/20")));
+		assertThat(america.getPresidents().get(10).getInOfficeFrom(), is(new SimpleDateFormat("yyyy-MM-dd").parse("2017-01-20")));
 		assertThat(america.getPresidents().get(10).getInOfficeTo(), nullValue());
 		assertThat(america.getPresidents().get(10).getNumberOfDaysInOffice(), is(0));
 		
@@ -285,14 +285,14 @@ public class XlBeanReaderTest {
         assertThat(america.getPresidents().get(0).getName(), is("John F. Kennedy"));
         assertThat(america.getPresidents().get(0).getDateOfBirth(), is(LocalDate.of(1917, 5, 29)));
         assertThat(america.getPresidents().get(0).getStateOfBirth(), is("Massachusetts"));
-        assertThat(america.getPresidents().get(0).getInOfficeFrom(), is(new SimpleDateFormat("yyyy/MM/dd").parse("1961/1/20")));
+        assertThat(america.getPresidents().get(0).getInOfficeFrom(), is(new SimpleDateFormat("yyyy-MM-dd").parse("1961-1-20")));
         assertThat(america.getPresidents().get(0).getInOfficeTo(), is(LocalDateTime.of(1963, 11, 22, 0, 0)));
         assertThat(america.getPresidents().get(0).getNumberOfDaysInOffice(), comparesEqualTo(1036));
 
         assertThat(america.getPresidents().get(10).getName(), is("Donald Trump"));
         assertThat(america.getPresidents().get(10).getDateOfBirth(), is(LocalDate.of(1946, 6, 14)));
         assertThat(america.getPresidents().get(10).getStateOfBirth(), is("New York"));
-        assertThat(america.getPresidents().get(10).getInOfficeFrom(), is(new SimpleDateFormat("yyyy/MM/dd").parse("2017/1/20")));
+        assertThat(america.getPresidents().get(10).getInOfficeFrom(), is(new SimpleDateFormat("yyyy-MM-dd").parse("2017-1-20")));
         assertThat(america.getPresidents().get(10).getInOfficeTo(), nullValue());
         assertThat(america.getPresidents().get(10).getNumberOfDaysInOffice(), is(0));
         
