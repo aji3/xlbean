@@ -234,21 +234,7 @@ public class XlSheet {
     }
 
     protected String getCellValueAsData(Cell cell, boolean forceDate) {
-        if (CellType.BLANK.equals(cell.getCellTypeEnum())) {
-            return null;
-        }
-        try {
-            if (forceDate || isDateTimeValue(cell.getCellStyle().getDataFormatString())) {
-                return formatDateTimeValue(cell.getNumericCellValue());
-            }
-            if (CellType.BOOLEAN.equals(cell.getCellTypeEnum())) {
-                return String.valueOf(cell.getBooleanCellValue());
-            } else {
-                return BigDecimal.valueOf(cell.getNumericCellValue()).toPlainString();
-            }
-        } catch (IllegalStateException e) {
-            return cell.getRichStringCellValue().getString();
-        }
+    	return getCellValueAsData(cell, cell.getCellTypeEnum(), forceDate);
     }
     /**
      * 
@@ -268,6 +254,8 @@ public class XlSheet {
             }
             if (CellType.BOOLEAN.equals(type)) {
                 return String.valueOf(cell.getBooleanCellValue());
+            } else if (CellType.STRING.equals(type)) {
+            	return cell.getRichStringCellValue().getString();
             } else {
                 return BigDecimal.valueOf(cell.getNumericCellValue()).toPlainString();
             }
@@ -277,7 +265,7 @@ public class XlSheet {
     }
     protected String getCellValueAsPresented(Cell cell) {
         DataFormatter formatter = new DataFormatter();
-        return formatter.formatCellValue(cell);
+        return formatter.formatCellValue(cell, evaluator);
     }
 
     private Cell getCell(int row, int col) {

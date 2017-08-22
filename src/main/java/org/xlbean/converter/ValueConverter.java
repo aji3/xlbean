@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
@@ -48,6 +49,7 @@ import org.xlbean.XlBean;
  * <li>long.class</li>
  * <li>short.class</li>
  * <li>LocalDateTime.class</li>
+ * <li>LocalTime.class</li>
  * </ul>
  * </p>
  * 
@@ -59,11 +61,12 @@ public class ValueConverter {
     private static final List<Class<?>> SUPPORT_CLASSES = Arrays.asList(int.class, long.class, char.class,
             boolean.class, short.class, double.class, Integer.class, Long.class, Character.class, Boolean.class,
             Short.class, Double.class, String.class, BigDecimal.class, BigInteger.class, Date.class, LocalDate.class,
-            LocalDateTime.class);
+            LocalDateTime.class, LocalTime.class);
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
     private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
     private static final DateTimeFormatter LOCALDATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter LOCALTIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     public boolean canConvert(Class<?> clazz) {
         return SUPPORT_CLASSES.contains(clazz);
@@ -86,6 +89,8 @@ public class ValueConverter {
             return LOCALDATE_FORMAT.format((LocalDate) obj) + " 00:00:00.000";
         } else if (obj instanceof LocalDateTime) {
             return DATETIME_FORMAT.format((TemporalAccessor) obj);
+        } else if (obj instanceof LocalTime) {
+        	return LOCALTIME_FORMAT.format((LocalTime) obj);
         }
         return obj.toString();
     }
@@ -135,7 +140,7 @@ public class ValueConverter {
             }
         } else if (valueClass.isAssignableFrom(Short.class) || valueClass.isAssignableFrom(short.class)) {
             try {
-                return Short.parseShort(value);
+                return Short.parseShort(value.replaceAll("\\..*$", ""));
             } catch (NumberFormatException e) {
                 // ignore
             }
@@ -178,6 +183,12 @@ public class ValueConverter {
         } else if (valueClass.isAssignableFrom(LocalDateTime.class)) {
             try {
                 return LocalDateTime.parse(value, DATETIME_FORMAT);
+            } catch (DateTimeParseException e) {
+                // ignore
+            }
+        } else if (valueClass.isAssignableFrom(LocalTime.class)) {
+            try {
+                return LocalTime.parse(value, LOCALTIME_FORMAT);
             } catch (DateTimeParseException e) {
                 // ignore
             }

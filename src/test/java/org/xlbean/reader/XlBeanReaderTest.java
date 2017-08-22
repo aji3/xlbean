@@ -71,21 +71,21 @@ public class XlBeanReaderTest {
 		assertThat(table.get(1).get("accounting"), is("100.12"));
 		assertThat(table.get(2).get("accounting"), is("100.12"));
 
-		assertThat(table.get(0).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(1).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(2).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(3).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(4).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(5).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(6).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(7).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(8).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(9).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(10).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(11).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(12).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(13).get("date"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(14).get("date"), is("2017/03/18 00:00:00.000"));
+		assertThat(table.get(0).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(1).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(2).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(3).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(4).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(5).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(6).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(7).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(8).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(9).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(10).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(11).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(12).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(13).get("date"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(14).get("date"), is("2017-03-18T00:00:00.000"));
 
 		assertThat(table.get(0).get("time"), is("06:55:00.000"));
 		assertThat(table.get(1).get("time"), is("06:55:00.000"));
@@ -104,11 +104,17 @@ public class XlBeanReaderTest {
 		assertThat(table.get(0).get("string"), is("abcde"));
 		assertThat(table.get(1).get("string"), is("12345"));
 
-		assertThat(table.get(0).get("user"), is("2017/03/18 00:00:00.000"));
-		assertThat(table.get(1).get("user"), is("2017/03/18 00:00:00.000"));
+		assertThat(table.get(0).get("user"), is("2017-03-18T00:00:00.000"));
+		assertThat(table.get(1).get("user"), is("2017-03-18T00:00:00.000"));
 		assertThat(table.get(2).get("user"), is("06:59:00.000"));
 		assertThat(table.get(3).get("user"), is("06:59:00.000"));
 		assertThat(table.get(4).get("user"), is("1234.0"));
+
+		assertThat(table.get(0).get("standardAndFormulaInside"), is("AAABBB"));
+		assertThat(table.get(1).get("standardAndFormulaInside"), is("1.0"));
+		assertThat(table.get(2).get("standardAndFormulaInside"), is("1"));
+		assertThat(table.get(3).get("standardAndFormulaInside"), is("1.0"));
+		assertThat(table.get(4).get("standardAndFormulaInside"), is("1"));
 		
 		XlList tableStr = bean.list("formatStr");
 		
@@ -155,8 +161,8 @@ public class XlBeanReaderTest {
 		assertThat(tableStr.get(10).get("date"), is("18-3"));// Not the same
 		assertThat(tableStr.get(11).get("date"), is("3-17"));// Not the same
 		assertThat(tableStr.get(12).get("date"), is("3月-17"));// Not the same
-//		assertThat(tableStr.get(13).get("date"), is("2017/03/18 00:00:00.000"));// can't even assert
-//		assertThat(tableStr.get(14).get("date"), is("2017/03/18 00:00:00.000"));// can't even assert
+//		assertThat(tableStr.get(13).get("date"), is("2017-03-18T00:00:00.000"));// can't even assert
+//		assertThat(tableStr.get(14).get("date"), is("2017-03-18T00:00:00.000"));// can't even assert
 
 		assertThat(tableStr.get(0).get("time"), is("6:55:00 午前"));// Not the same
 		assertThat(tableStr.get(1).get("time"), is("6:55"));
@@ -180,6 +186,13 @@ public class XlBeanReaderTest {
 		assertThat(tableStr.get(2).get("user"), is("6"));
 		assertThat(tableStr.get(3).get("user"), is("659"));
 		assertThat(tableStr.get(4).get("user"), is("1234.000"));
+
+		assertThat(tableStr.get(0).get("standardAndFormulaInside"), is("AAABBB"));
+		assertThat(tableStr.get(1).get("standardAndFormulaInside"), is("1"));
+		assertThat(tableStr.get(2).get("standardAndFormulaInside"), is("1"));
+		assertThat(tableStr.get(3).get("standardAndFormulaInside"), is("1"));
+		assertThat(tableStr.get(4).get("standardAndFormulaInside"), is("1"));
+		
 	}
 	
 	@Test
