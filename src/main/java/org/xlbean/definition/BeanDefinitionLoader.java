@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.xlbean.XlBean;
 import org.xlbean.XlList;
 import org.xlbean.converter.BeanConverter;
+import org.xlbean.converter.BeanConverterFactory;
 import org.xlbean.excel.XlCellAddress;
 
 /**
@@ -25,7 +26,7 @@ import org.xlbean.excel.XlCellAddress;
  */
 public class BeanDefinitionLoader extends DefinitionLoader<Object>{
 
-    private BeanConverter converter = new BeanConverter();
+    private BeanConverter converter = BeanConverterFactory.getInstance().createBeanConverter();
 
     @Override
     public void initialize(Object definitionSource) {

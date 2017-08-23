@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.xlbean.converter.BeanConverter;
+import org.xlbean.converter.BeanConverterFactory;
 import org.xlbean.util.XlBeanFactory;
 
 /**
@@ -140,7 +141,7 @@ public class XlBean extends HashMap<String, Object> {
         }
     }
 
-    private static BeanConverter converter = new BeanConverter();
+    private static BeanConverter converter = BeanConverterFactory.getInstance().createBeanConverter();
 
     public static void updateConverter(BeanConverter converter) {
         XlBean.converter = converter;
