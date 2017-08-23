@@ -163,7 +163,7 @@ public class XlList extends ArrayList<XlBean> {
      * @param conditionMap
      * @return
      */
-    public List<XlBean> filter(Map<String, String> conditionMap) {
+    public XlList findAll(Map<String, String> conditionMap) {
         XlList list = XlBeanFactory.getInstance().createList();
         if (conditionMap == null) {
             return list;
