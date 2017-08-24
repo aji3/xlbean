@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.xlbean</groupId>
-	<artifactId>xlbean</artifactId>
-	<version>0.1.1</version>
+	<artifactId>xltemplating</artifactId>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
-	<name>xlbean</name>
-	<url>https://github.com/aji3/xlbean</url>
-
+	<name>xltemplating</name>
+	<url>https://github.com/aji3/xltemplating</url>
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<github.global.server>github</github.global.server>
@@ -24,6 +24,13 @@
 			<url>file://${project.build.directory}/mvn-repo</url>
 		</repository>
 	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>xlbean</id>
+			<url>https://raw.github.com/aji3/xlbean/mvn-repo/</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
@@ -40,19 +47,19 @@
 				<artifactId>site-maven-plugin</artifactId>
 				<version>0.12</version>
 				<configuration>
-					<!-- Git ã‚³ãƒŸãƒƒãƒˆãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ -->
+					<!-- Git ƒRƒ~ƒbƒgƒƒbƒZ[ƒW -->
 					<message>Maven artifacts for ${project.version}</message>
 					<noJekyll>true</noJekyll>
-					<!-- distributionManagement ã® url ã¨ä¸€è‡´ã•ã›ã‚‹ -->
+					<!-- distributionManagement ‚Ì url ‚Æˆê’v‚³‚¹‚é -->
 					<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
-					<!-- ãƒªãƒ¢ãƒ¼ãƒˆãƒ–ãƒ©ãƒ³ãƒå -->
+					<!-- ƒŠƒ‚[ƒgƒuƒ‰ƒ“ƒ`–¼ -->
 					<branch>refs/heads/mvn-repo</branch>
 					<includes>
 						<include>**/*</include>
 					</includes>
-					<!-- Github ãƒªãƒã‚¸ãƒˆãƒªå -->
+					<!-- Github ƒŠƒ|ƒWƒgƒŠ–¼ -->
 					<repositoryName>xlbean</repositoryName>
-					<!-- Github ãƒªãƒã‚¸ãƒˆãƒªãƒ¦ãƒ¼ã‚¶ãƒ¼å -->
+					<!-- Github ƒŠƒ|ƒWƒgƒŠƒ†[ƒU[–¼ -->
 					<repositoryOwner>aji3</repositoryOwner>
 				</configuration>
 				<executions>
@@ -68,45 +75,37 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>3.16</version>
+			<groupId>com.mitchellbosecke</groupId>
+			<artifactId>pebble</artifactId>
+			<version>2.3.0</version>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>3.16</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.25</version>
-		</dependency>
-
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-all</artifactId>
-			<version>1.3</version>
-			<scope>test</scope>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-jsr223</artifactId>
+			<version>2.4.10</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.2.2</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
 			<version>1.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.xlbean</groupId>
+			<artifactId>xlbean</artifactId>
+			<version>0.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 </project>
