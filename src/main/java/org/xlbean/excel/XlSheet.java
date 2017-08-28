@@ -171,13 +171,22 @@ public class XlSheet {
         }
     }
 
-    private static final String DATEFORMAT_CHARS = "ymdhs";
-
+    private static final String DATETIMEFORMAT_CHARS = "ymdhs";
     private boolean isDateTimeValue(String dataFormatString) {
         if (dataFormatString == null) {
             return false;
         }
-        return dataFormatString.replaceAll("\\[.*\\]", "").chars().anyMatch(c -> DATEFORMAT_CHARS.indexOf(c) >= 0);
+        return dataFormatString.replaceAll("\\[.*\\]", "").chars().anyMatch(c -> DATETIMEFORMAT_CHARS.indexOf(c) >= 0);
+    }
+
+    private boolean isTimeValue(String dataFormatString) {
+        if (dataFormatString == null) {
+            return false;
+        }
+        if (dataFormatString.contains("y") || dataFormatString.contains("d")) {
+            return false;
+        }
+        return dataFormatString.matches(".*h.*m*.*");
     }
     private boolean isStringValue(String dataFormatString) {
         if (dataFormatString == null) {
@@ -191,27 +200,33 @@ public class XlSheet {
 
     /**
      * Format excel date value which is a differential number from 1900/1/0, to
-     * either date-time string(yyyy-MM-dd'T'HH:mm:ss.SSS) or time
-     * string(HH:mm:ss.SSS) depends on the {@code value}.
+     * date-time string(yyyy-MM-dd'T'HH:mm:ss.SSS).
      * 
      * @param value
      * @return
      */
     protected String formatDateTimeValue(double value) {
-        if (value == 0) {
-            return "";
-        } else {
-            int days = (int) value;
-            long time = (long) (Math.round((value - days) * 86400 * 1000) * 1000000);
-            LocalDateTime dateTime = LocalDateTime.of(1899, 12, 30, 0, 0, 0, 0).plusDays((int) value).plusNanos(time);
-            if (value < 1d) {
-                // returns HH:mm:ss.SSS
-                return TIME_FORMAT.format(dateTime);
-            } else {
-                // returns yyyy-MM-dd'T'HH:mm:ss.SSS
-                return DATETIME_FORMAT.format(dateTime);
-            }
-        }
+        int days = (int) value;
+        long time = (long) (Math.round((value - days) * 86400 * 1000) * 1000000);
+        LocalDateTime dateTime = LocalDateTime.of(1899, 12, 30, 0, 0, 0, 0).plusDays((int) value).plusNanos(time);
+
+        // returns yyyy-MM-dd'T'HH:mm:ss.SSS
+        return DATETIME_FORMAT.format(dateTime);
+    }
+
+    /**
+     * Format excel date value which is a differential number from 1900/1/0, to
+     * time string(HH:mm:ss.SSS) depends on the {@code value}.
+     * 
+     * @param value
+     * @return
+     */
+    protected String formatTimeValue(double value) {
+        int days = (int) value;
+        long time = (long) (Math.round((value - days) * 86400 * 1000) * 1000000);
+        LocalDateTime dateTime = LocalDateTime.of(1899, 12, 30, 0, 0, 0, 0).plusDays((int) value).plusNanos(time);
+        // returns HH:mm:ss.SSS
+        return TIME_FORMAT.format(dateTime);
     }
 
     protected double parseDateTimeValue(String dateTime) {
@@ -249,8 +264,13 @@ public class XlSheet {
             return null;
         }
         try {
-            if (forceDate || isDateTimeValue(cell.getCellStyle().getDataFormatString())) {
-                return formatDateTimeValue(cell.getNumericCellValue());
+            String dataFormatString = cell.getCellStyle().getDataFormatString();
+            if (forceDate || isDateTimeValue(dataFormatString)) {
+                if (isTimeValue(dataFormatString)) {
+                    return formatTimeValue(cell.getNumericCellValue());
+                } else {
+                    return formatDateTimeValue(cell.getNumericCellValue());
+                }
             }
             if (CellType.BOOLEAN.equals(type)) {
                 return String.valueOf(cell.getBooleanCellValue());

@@ -55,7 +55,8 @@ public class XlBeanReaderTest {
 		assertThat(table.get(9).get("number"), is("12345.6789"));
 		assertThat(table.get(10).get("number"), is("12345.6789"));
 		assertThat(table.get(11).get("number"), is("1.0"));
-		assertThat(table.get(12).get("number"), nullValue());
+        assertThat(table.get(12).get("number"), is("0.0"));
+        assertThat(table.get(13).get("number"), nullValue());
 
 		assertThat(table.get(0).get("currency"), is("100.12"));
 		assertThat(table.get(1).get("currency"), is("100.12"));
@@ -65,11 +66,15 @@ public class XlBeanReaderTest {
 		assertThat(table.get(5).get("currency"), is("100.12"));
 		assertThat(table.get(6).get("currency"), is("100.12"));
 		assertThat(table.get(7).get("currency"), is("100.12"));
-		assertThat(table.get(8).get("currency"), is("100.12"));
+        assertThat(table.get(8).get("currency"), is("100.12"));
+        assertThat(table.get(9).get("currency"), is("0.0"));
+        assertThat(table.get(10).get("currency"), is(nullValue()));
 
 		assertThat(table.get(0).get("accounting"), is("100.12"));
 		assertThat(table.get(1).get("accounting"), is("100.12"));
-		assertThat(table.get(2).get("accounting"), is("100.12"));
+        assertThat(table.get(2).get("accounting"), is("100.12"));
+        assertThat(table.get(3).get("accounting"), is("0.0"));
+        assertThat(table.get(4).get("accounting"), is(nullValue()));
 
 		assertThat(table.get(0).get("date"), is("2017-03-18T00:00:00.000"));
 		assertThat(table.get(1).get("date"), is("2017-03-18T00:00:00.000"));
@@ -85,36 +90,45 @@ public class XlBeanReaderTest {
 		assertThat(table.get(11).get("date"), is("2017-03-18T00:00:00.000"));
 		assertThat(table.get(12).get("date"), is("2017-03-18T00:00:00.000"));
 		assertThat(table.get(13).get("date"), is("2017-03-18T00:00:00.000"));
-		assertThat(table.get(14).get("date"), is("2017-03-18T00:00:00.000"));
+        assertThat(table.get(14).get("date"), is("2017-03-18T00:00:00.000"));
+        assertThat(table.get(15).get("date"), is("1899-12-30T00:00:00.000"));
+        assertThat(table.get(16).get("date"), is(nullValue()));
 
 		assertThat(table.get(0).get("time"), is("06:55:00.000"));
 		assertThat(table.get(1).get("time"), is("06:55:00.000"));
 		assertThat(table.get(2).get("time"), is("06:55:00.000"));
 		assertThat(table.get(3).get("time"), is("06:55:00.000"));
 		assertThat(table.get(4).get("time"), is("06:55:00.000"));
-		assertThat(table.get(5).get("time"), is("06:55:00.000"));
-		assertThat(table.get(6).get("time"), is("06:55:00.000"));
+		assertThat(table.get(5).get("time"), is("1899-12-30T06:55:00.000"));// This is actually not a time format, but it is correct because this is the format which is specified on the excel sheet.
+		assertThat(table.get(6).get("time"), is("1899-12-30T06:55:00.000"));// This is actually not a time format, but it is correct because this is the format which is specified on the excel sheet.
 		assertThat(table.get(7).get("time"), is("06:55:00.000"));
 		assertThat(table.get(8).get("time"), is("06:55:00.000"));
-		assertThat(table.get(9).get("time"), is("06:55:00.000"));
+        assertThat(table.get(9).get("time"), is("06:55:00.000"));
+        assertThat(table.get(10).get("time"), is("00:00:00.000"));
+        assertThat(table.get(11).get("time"), is(nullValue()));
 		
 		assertThat(table.get(0).get("percentage"), is("0.1"));
-		assertThat(table.get(1).get("percentage"), is("1.1"));
+        assertThat(table.get(1).get("percentage"), is("1.1"));
+        assertThat(table.get(2).get("percentage"), is("0.0"));
+        assertThat(table.get(3).get("percentage"), is(nullValue()));
 		
 		assertThat(table.get(0).get("string"), is("abcde"));
-		assertThat(table.get(1).get("string"), is("12345"));
+        assertThat(table.get(1).get("string"), is("12345"));
+        assertThat(table.get(2).get("string"), is(nullValue()));
 
 		assertThat(table.get(0).get("user"), is("2017-03-18T00:00:00.000"));
 		assertThat(table.get(1).get("user"), is("2017-03-18T00:00:00.000"));
 		assertThat(table.get(2).get("user"), is("06:59:00.000"));
 		assertThat(table.get(3).get("user"), is("06:59:00.000"));
-		assertThat(table.get(4).get("user"), is("1234.0"));
+        assertThat(table.get(4).get("user"), is("1234.0"));
+        assertThat(table.get(5).get("user"), is(nullValue()));
 
 		assertThat(table.get(0).get("standardAndFormulaInside"), is("AAABBB"));
 		assertThat(table.get(1).get("standardAndFormulaInside"), is("1.0"));
 		assertThat(table.get(2).get("standardAndFormulaInside"), is("1"));
 		assertThat(table.get(3).get("standardAndFormulaInside"), is("1.0"));
-		assertThat(table.get(4).get("standardAndFormulaInside"), is("1"));
+        assertThat(table.get(4).get("standardAndFormulaInside"), is("1"));
+        assertThat(table.get(5).get("standardAndFormulaInside"), is(nullValue()));
 		
 		XlList tableStr = bean.list("formatStr");
 		
@@ -130,7 +144,8 @@ public class XlBeanReaderTest {
 		assertThat(tableStr.get(9).get("number"), is("12345.68"));
 		assertThat(tableStr.get(10).get("number"), is("12,346"));
 		assertThat(tableStr.get(11).get("number"), is("1"));
-		assertThat(tableStr.get(12).get("number"), nullValue());
+        assertThat(tableStr.get(12).get("number"), is("0"));
+        assertThat(tableStr.get(13).get("number"), nullValue());
 
 		// CAUTION: ¥ on excel is not backslash!!
 		assertThat(tableStr.get(0).get("currency"), is("¥100"));
@@ -142,11 +157,15 @@ public class XlBeanReaderTest {
 		assertThat(tableStr.get(6).get("currency"), is("¥100.12"));
 		// but $ is $
 		assertThat(tableStr.get(7).get("currency"), is("$100.12"));
-		assertThat(tableStr.get(8).get("currency"), is("100.12"));
+        assertThat(tableStr.get(8).get("currency"), is("100.12"));
+        assertThat(tableStr.get(9).get("currency"), is("¥0.00"));
+        assertThat(tableStr.get(10).get("currency"), is(nullValue()));
 
 		assertThat(tableStr.get(0).get("accounting"), is("¥   100"));
 		assertThat(tableStr.get(1).get("accounting"), is("¥   100.120"));
-		assertThat(tableStr.get(2).get("accounting"), is("100"));
+        assertThat(tableStr.get(2).get("accounting"), is("100"));
+        assertThat(tableStr.get(3).get("accounting"), is("¥   -  0"));// 
+        assertThat(tableStr.get(4).get("accounting"), is(nullValue()));
 
 		assertThat(tableStr.get(0).get("date"), is("3/18/17"));// Not the same
 		assertThat(tableStr.get(1).get("date"), is("土曜日, 3月 18, 2017"));// Not the same
@@ -163,6 +182,8 @@ public class XlBeanReaderTest {
 		assertThat(tableStr.get(12).get("date"), is("3月-17"));// Not the same
 //		assertThat(tableStr.get(13).get("date"), is("2017-03-18T00:00:00.000"));// can't even assert
 //		assertThat(tableStr.get(14).get("date"), is("2017-03-18T00:00:00.000"));// can't even assert
+        assertThat(tableStr.get(15).get("date"), is("1899/12/31"));// Not the same as excel presentation, however meaning wise it is the same.
+        assertThat(tableStr.get(16).get("date"), is(nullValue()));
 
 		assertThat(tableStr.get(0).get("time"), is("6:55:00 午前"));// Not the same
 		assertThat(tableStr.get(1).get("time"), is("6:55"));
@@ -173,25 +194,32 @@ public class XlBeanReaderTest {
 		assertThat(tableStr.get(6).get("time"), is("1899/12/31 6:55"));// Not the same
 		assertThat(tableStr.get(7).get("time"), is("0.2881944444444445"));// Not the same
 		assertThat(tableStr.get(8).get("time"), is("0.2881944444444445"));// Not the same
-		assertThat(tableStr.get(9).get("time"), is("6:55"));
+        assertThat(tableStr.get(9).get("time"), is("6:55"));
+        assertThat(tableStr.get(10).get("time"), is("0:00"));
+        assertThat(tableStr.get(11).get("time"), is(nullValue()));
 		
 		assertThat(tableStr.get(0).get("percentage"), is("10%"));
-		assertThat(tableStr.get(1).get("percentage"), is("110.0%"));
+        assertThat(tableStr.get(1).get("percentage"), is("110.0%"));
+        assertThat(tableStr.get(2).get("percentage"), is("0.0%"));
+        assertThat(tableStr.get(3).get("percentage"), is(nullValue()));
 		
 		assertThat(tableStr.get(0).get("string"), is("abcde"));
-		assertThat(tableStr.get(1).get("string"), is("12345"));
+        assertThat(tableStr.get(1).get("string"), is("12345"));
+        assertThat(tableStr.get(2).get("string"), is(nullValue()));
 
 		assertThat(tableStr.get(0).get("user"), is("2017"));
 		assertThat(tableStr.get(1).get("user"), is("3"));
 		assertThat(tableStr.get(2).get("user"), is("6"));
 		assertThat(tableStr.get(3).get("user"), is("659"));
-		assertThat(tableStr.get(4).get("user"), is("1234.000"));
+        assertThat(tableStr.get(4).get("user"), is("1234.000"));
+        assertThat(tableStr.get(5).get("user"), is(nullValue()));
 
 		assertThat(tableStr.get(0).get("standardAndFormulaInside"), is("AAABBB"));
 		assertThat(tableStr.get(1).get("standardAndFormulaInside"), is("1"));
 		assertThat(tableStr.get(2).get("standardAndFormulaInside"), is("1"));
 		assertThat(tableStr.get(3).get("standardAndFormulaInside"), is("1"));
-		assertThat(tableStr.get(4).get("standardAndFormulaInside"), is("1"));
+        assertThat(tableStr.get(4).get("standardAndFormulaInside"), is("1"));
+        assertThat(tableStr.get(5).get("standardAndFormulaInside"), is(nullValue()));
 		
 	}
 	
