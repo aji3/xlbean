@@ -45,6 +45,7 @@ public class TableDefinitionResolver extends DefinitionResolver {
 		columnDefinition.addOptions(columnOptions);
 		columnDefinition.setCell(cell);
 		definition.addAttribute(columnDefinition);
+		definition.addOptions(columnOptions);// Column options are also regarded as table options
 		
 		return definition;
 	}

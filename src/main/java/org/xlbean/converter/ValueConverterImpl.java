@@ -15,8 +15,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.xlbean.XlBean;
-
 /**
  * Default implementation of {@link ValueConverter}.
  * 

@@ -22,5 +22,15 @@ public class XlBeanExampleForGithub {
         // Map value to Class
         List<President> presidents = bean.listOf("presidents", President.class);
         System.out.println(presidents);
+        
+        // Get value of a single cell
+        String name = bean.value("name");// United States of America
+        System.out.println(name);
+        
+        // Get value of a map
+        XlBean stats = bean.bean("stats");
+        System.out.println(stats.value("totalArea"));// 9833520.0
+        System.out.println(stats.value("gdp"));// 18558000000000000
+
     }
 }
