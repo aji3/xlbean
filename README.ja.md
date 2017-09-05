@@ -57,7 +57,7 @@ dependencies {
     ![Excelシートの例](https://user-images.githubusercontent.com/23234132/29244923-4f5cba56-8002-11e7-929d-617a9ea38d83.png "Excelシートの例")
 
 ##### 3. Javaプログラムの記述
-```
+```java
 InputStream in = new FileInputStream("example/presidents.xlsx");
 XlBeanReader reader = new XlBeanReader();
 XlBean bean = reader.read(in);
@@ -85,7 +85,7 @@ List<President> presidents = bean.listOf("presidents", President.class);
 
 単一セルの読み込みのサンプル画像のとおり、1行目もしくは1列目の定義セルに複数の定義が入る場合、**カンマ区切り** で記入してください。
 
-```
+```java
 InputStream in = new FileInputStream("example/presidents.xlsx");
 XlBeanReader reader = new XlBeanReader();
 XlBean bean = reader.read(in);
@@ -99,7 +99,7 @@ System.out.println(name);// United States of America
 
 単一セルの読み込みのサンプル画像の通り、セル名をピリオド区切りで定義することでマップによって階層化されます。
 
-```
+```java
 InputStream in = new FileInputStream("example/presidents.xlsx");
 XlBeanReader reader = new XlBeanReader();
 XlBean bean = reader.read(in);
@@ -136,14 +136,14 @@ System.out.println(noOptionTable.get(1).get("stringCellType")); // 1
 
 この例に対応したオプションとしては、以下のように **type** プロパティを利用することで同じ形式で読み込めるようになります。
 
-### オプション：type - セルの型を明示的に指定
+#### オプション：type - セルの型を明示的に指定
 
 利用可能なtypeは下記のとおりです：
 * **string** - 強制的に表示されている通りの文字列として読み込みます。読み込み結果については、Apache POIのorg.apache.poi.ss.usermodel.DataFormatterの挙動に準拠します。ただし、日付型の場合には既知の障害があり、Excelの表示と読み込み結果が同一にならないケースがあります。
 
 <img width="575" alt="example_excel_option_1" src="https://user-images.githubusercontent.com/23234132/29819102-22e46f78-8cfa-11e7-83f6-b8b2d9a50495.PNG">
 
-```
+```java
 XlList optionTable = bean.list("optionTable");
 System.out.println(optionTable.get(0).get("defaultCellType"));// 0 <= 文字列扱いとなる
 System.out.println(optionTable.get(0).get("stringCellType")); // 0
@@ -152,36 +152,76 @@ System.out.println(optionTable.get(1).get("defaultCellType"));// 1 <= 文字列�
 System.out.println(optionTable.get(1).get("stringCellType")); // 1
 ```
 
-### オプション：limit - 読み込みの上限件数を指定
+#### オプション：limit - 読み込みの上限件数を指定
 
 <img width="260" alt="example_excel_option_2" src="https://user-images.githubusercontent.com/23234132/29819268-e40a802a-8cfa-11e7-8f56-ce8cf5df61e8.PNG">
 
-```
+```java
 XlList limitedTable = bean.list("limitedTable");
 System.out.println(limitedTable.size());// 5 <= Number of rows loaded is limited to 5
 System.out.println(limitedTable.get(0).value("value"));// 0.0 <= The list is started from row 1
 System.out.println(limitedTable.get(1).value("value"));// 1.0
 ```
 
-### オプション：index - 読み込み結果のリストをindexとして指定した値をキーに検索できるマップを持つ
+#### オプション：index - indexとして指定したカラムの値をハッシュ検索用のキーとする
 
+<img width="450" alt="example_excel_option_3" src="https://user-images.githubusercontent.com/23234132/30059107-b105da8e-9278-11e7-9810-03b2d45a2395.PNG">
 
-### "コメント" を利用した定義
+```java
+XlList presidents = bean.list("presidents");
+Map<String, String> condition = new HashMap<>();
+condition.put("id", "45");
 
+XlBean p = presidents.find(condition);
+System.out.println(p);// {name=Donald Trump, dateOfBirth=1946-06-14T00:00:00.000, id=45, ...}
+p = presidents.findByIndex(condition);
+System.out.println(p);// {name=Donald Trump, dateOfBirth=1946-06-14T00:00:00.000, id=45, ...}
+```
 
+`XlBean#find`と`XlBean#findByIndex`で結果的に取得できる行は同じですが、内部の挙動は異なります。
 
-注記）上記サンプルのとおり、シートを読み込むかどうかの判定はR1C1のコメントを利用しています。
+`XlBean#find`では、内部的にすべてのデータに対してループを回しており、最初に条件に合致する行がでるまですべての行に対して比較を行っています。
+
+`XlBean#findByIndex`では、Excelから読み込むタイミングでindexで指定された値をキーとするHashMapを内部で構築しており、`findByIndex`メソッドが呼び出されたタイミングではハッシュ値で検索しています。
+Excelからの読み込み後に繰り返し検索するようなユースケースで利用することを想定しています。
+
+なお、複数カラムに同一index名を付けることで複合キーとすることもできます。
+
 
 ### 横向きのテーブル
 
 横に向かってデータを並べるテーブルは以下のように定義してください。
 
-Javaプログラム側は同じになります。
+<img width="563" alt="example_excel_tabletoright" src="https://user-images.githubusercontent.com/23234132/30060386-1b64ab26-927e-11e7-9743-eb2ff1b66410.png">
+
+Javaプログラムは縦方向と同じです。
 
 
-### オプション：direction - 読み込み方向を指定する（コメント定義モード時に利用）
+### "コメント" を利用した定義（コメント定義モード）
 
-コメント定義モードで横向きのテーブルを読み込む場合、以下のように定義してください。
+Excelシートの1行目および1列目を定義に利用するのではなく、セルにコメントをつけることで読み込み対象セルを指定することも可能です。
+
+<img width="544" alt="example_excel_comment" src="https://user-images.githubusercontent.com/23234132/30059718-41e2e266-927b-11e7-8cda-52b9da2c9c36.PNG">
+
+```java
+XlBeanReader reader = new XlBeanReader(new ExcelCommentDefinitionLoader());
+InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_presidents_comment.xlsx");
+XlBean bean = reader.read(in);
+```
+
+上述のサンプルプログラムのとおり、`ExcelCommentDefinitionLoader`を`XlBeanReader`の定義時に指定してください。
+
+注記）上記サンプルのとおり、シートを読み込むかどうかの判定はR1C1のコメントを利用しています。
+
+### コメント定義モードにおけるオプション
+
+1行目および1列目を利用する定義モードと同様のオプションが利用可能です。
+
+下記に示すdirectionオプションがコメント定義モードで必要となります。
+
+#### オプション：direction - 読み込み方向を指定する（コメント定義モード時に利用）
+
+コメント定義モードで横向きに伸びるテーブルを定義する場合、オプションに`?direction=right`を指定してください。
 
 
 
