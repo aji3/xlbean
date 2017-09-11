@@ -49,7 +49,7 @@ javadoc {
 jacocoTestReport {
     reports {
         xml.enabled = true
-        xml.destination "${buildDir}/aji3/xlbean/reports/jacoco/test/jacocoTestReport.xml"
+        xml.destination "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
         html.enabled = true
     }
 }
