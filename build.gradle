@@ -10,7 +10,6 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
-apply plugin: 'com.github.kt3k.coveralls'
 
 group = 'org.xlbean'
 version = '0.1.1'
@@ -62,4 +61,8 @@ jacocoTestReport {
         xml.enabled = true // coveralls plugin depends on xml format report
         html.enabled = true
     }
+}
+
+tasks.coveralls {
+  dependsOn 'check'
 }
