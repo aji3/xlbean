@@ -53,4 +53,6 @@ jacocoTestReport {
     }
 }
 
-coveralls.jacocoReportPath = 'build/reports/jacoco/test/jacocoTestReport.xml'
+coveralls {
+    jacocoReportPath = "${buildDir}/reports/jacoco/test/report.xml"
+}
