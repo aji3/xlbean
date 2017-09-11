@@ -1,3 +1,13 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+plugins {
+    id 'jacoco'
+    id 'com.github.kt3k.coveralls' version '2.6.3'
+}
+
 apply plugin: 'java'
 apply plugin: 'jacoco'
 
@@ -13,12 +23,6 @@ tasks.withType(GroovyCompile)*.groovyOptions*.encoding = defaultEncoding
 repositories {
    mavenCentral()
 }
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-}
-
 dependencies {
     compile 'org.apache.poi:poi:3.16'
     compile 'org.apache.poi:poi-ooxml:3.16'
@@ -51,10 +55,6 @@ javadoc {
     options.locale = 'en_US'
 }
 
-plugins {
-    id 'jacoco'
-    id 'com.github.kt3k.coveralls' version '2.6.3'
-}
 
 jacocoTestReport {
     reports {

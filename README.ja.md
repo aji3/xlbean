@@ -1,7 +1,7 @@
 xlbean
 ====
 [![Build Status](https://travis-ci.org/aji3/xlbean.svg?branch=master)](https://travis-ci.org/aji3/xlbean)
-
+[![Coverage Status](https://coveralls.io/repos/github/aji3/xlbean/badge.svg?branch=master)](https://coveralls.io/github/aji3/xlbean?branch=master)
 
 Excelシート上のデータのJavaプログラムからの読み書きを、**Excelシート上にマッピング定義を記載**することで実現するユーティリティ。
 
