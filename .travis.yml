@@ -2,7 +2,7 @@ before_install:
   - sudo apt-get update && sudo apt-get --reinstall install -qq language-pack-ja
 env:
   global:
-    - _JAVA_OPTIONS="user.language=ja"
+    - _JAVA_OPTIONS="-Duser.language=ja"
 language: java
 jdk:
   - openjdk8
