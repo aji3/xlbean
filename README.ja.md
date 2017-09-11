@@ -80,11 +80,6 @@ List<President> presidents = bean.listOf("presidents", President.class);
 
 <img width="583" alt="example_excel_single_item_1" src="https://user-images.githubusercontent.com/23234132/29818012-5a50272c-8cf5-11e7-8e79-98f05eee87c6.PNG">
 
-
-### 複数のテーブル、セルの読み込み
-
-単一セルの読み込みのサンプル画像のとおり、1行目もしくは1列目の定義セルに複数の定義が入る場合、**カンマ区切り** で記入してください。
-
 ```java
 InputStream in = new FileInputStream("example/presidents.xlsx");
 XlBeanReader reader = new XlBeanReader();
@@ -94,6 +89,12 @@ XlBean bean = reader.read(in);
 String name = bean.value("name");
 System.out.println(name);// United States of America
 ```
+
+### 複数のテーブル、セルの読み込み
+
+単一セルの読み込みのサンプル画像のとおり、1行目もしくは1列目の定義セルに複数の定義が入る場合、**カンマ区切り** で記入してください。
+
+
 
 ### マップの定義
 
@@ -227,7 +228,9 @@ XlBean bean = reader.read(in);
 
 ### 複数のシートの扱い
 
-ワークブックがR1C1セルに**"####"** が定義がされた複数のシートを持つ場合、すべての対象シートを読み込みます。
+ワークブックが複数のシートを持つ場合、R1C1セルに**"####"** が定義がされたシートを読み込みます。
+
+複数のシートに同一の名前が定義されている場合、以下のルールで読み込みます。
 
 * 単一セル - 後に読み込まれた値で上書きされます。
 * テーブル - すべての結果が一つのリストに読み込まれます。
@@ -240,19 +243,6 @@ XlBean bean = reader.read(in);
 Excelのワークブックに複数のシートが含まれている場合、まずR1C1を参照し、**"####"** の記載がある場合のみ読み込みます。
 
 したがって読み込み対象のシートと対象外のシートがワークブックに同居することが可能です。
-
-
-### Excelへの書き出し
-
-
-### テンプレートのExcelを用意しない書き出し
-
-
-### ライブラリの拡張
-
-### XlBeanReaderの拡張
-
-### XlBeanWriterの拡張
 
 
 
