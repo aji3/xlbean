@@ -10,6 +10,7 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
+apply plugin: 'coveralls'
 
 group = 'org.xlbean'
 version = '0.1.1'
