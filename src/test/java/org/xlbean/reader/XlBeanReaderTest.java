@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -256,10 +257,10 @@ public class XlBeanReaderTest {
 	
 	@Test
 	public void testBigData() {
-		InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_bigdata.xlsx");
-		
+//		InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_bigdata.xlsx");
+		File file = new File(XlBeanReaderTest.class.getResource("TestBook_bigdata.xlsx").getFile());
 		XlBeanReader reader = new XlBeanReader();
-		XlBean bean = reader.read(in);
+		XlBean bean = reader.read(file);
 		
 		System.out.println(bean);
 	}
