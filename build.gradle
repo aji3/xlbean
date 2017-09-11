@@ -55,5 +55,5 @@ jacocoTestReport {
 }
 
 coveralls {
-    jacocoReportPath = "${buildDir}/reports/jacoco/test/report.xml"
+    jacocoReportPath = "${buildDir}/aji3/xlbean/reports/jacoco/test/report.xml"
 }
