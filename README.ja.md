@@ -249,7 +249,9 @@ Excelのワークブックに複数のシートが含まれている場合、ま
 
 ## Javadoc
 
-
+https://aji3.github.io/xlbean/
 
 
 ## Licence
+
+http://www.apache.org/licenses/LICENSE-2.0
