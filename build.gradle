@@ -45,15 +45,14 @@ javadoc {
     options.locale = 'en_US'
 }
 
-
 jacocoTestReport {
     reports {
         xml.enabled = true
-        xml.destination "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+        //xml.destination "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
         html.enabled = true
     }
 }
 
-coveralls {
-    jacocoReportPath = "${buildDir}/reports/jacoco/test/report.xml"
-}
+//coveralls {
+//    jacocoReportPath = "${buildDir}/reports/jacoco/test/report.xml"
+//}
