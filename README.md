@@ -98,7 +98,6 @@ If multiple definition to be defined in a cell, **connect the definition by comm
 
 ### Define Map
 
-単一セルの読み込みのサンプル画像の通り、セル名をピリオド区切りで定義することでマップによって階層化されます。
 As shown in the image for "Reading Individual Cell", value can be layered by period separated name.
 
 ```java
@@ -141,16 +140,16 @@ For this specific case, this can be controlled by using ** type ** option shown 
 #### Option：type - Explicitly declare the type of the cell
 
 Available types：
-* **string** - 強制的に表示されている通りの文字列として読み込みます。読み込み結果については、Apache POIのorg.apache.poi.ss.usermodel.DataFormatterの挙動に準拠します。ただし、日付型の場合には既知の障害があり、Excelの表示と読み込み結果が同一にならないケースがあります。
+* **string** - Force to load value as String. Format of the String follow the specification of `org.apache.poi.ss.usermodel.DataFormatter` of Apache POI. There are known issue on formatting Date type.
 
 <img width="575" alt="example_excel_option_1" src="https://user-images.githubusercontent.com/23234132/29819102-22e46f78-8cfa-11e7-83f6-b8b2d9a50495.PNG">
 
 ```java
 XlList optionTable = bean.list("optionTable");
-System.out.println(optionTable.get(0).get("defaultCellType"));// 0 <= 文字列扱いとなる
+System.out.println(optionTable.get(0).get("defaultCellType"));// 0 <= Loaded as String
 System.out.println(optionTable.get(0).get("stringCellType")); // 0
 
-System.out.println(optionTable.get(1).get("defaultCellType"));// 1 <= 文字列扱いとなる
+System.out.println(optionTable.get(1).get("defaultCellType"));// 1 <= Loaded as String
 System.out.println(optionTable.get(1).get("stringCellType")); // 1
 ```
 
@@ -201,7 +200,6 @@ No difference on Java program.
 
 ### "Comment" Definition Mode
 
-Excelシートの1行目および1列目を定義に利用するのではなく、セルにコメントをつけることで読み込み対象セルを指定することも可能です。
 Instead of using row 1 and column 1 for the definition, comment feature of Excel can be used.
 
 <img width="544" alt="example_excel_comment" src="https://user-images.githubusercontent.com/23234132/30059718-41e2e266-927b-11e7-8cda-52b9da2c9c36.PNG">
