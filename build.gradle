@@ -48,11 +48,6 @@ javadoc {
 jacocoTestReport {
     reports {
         xml.enabled = true
-        //xml.destination "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
         html.enabled = true
     }
 }
-
-//coveralls {
-//    jacocoReportPath = "${buildDir}/reports/jacoco/test/report.xml"
-//}
