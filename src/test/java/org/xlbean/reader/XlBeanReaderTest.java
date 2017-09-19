@@ -299,7 +299,7 @@ public class XlBeanReaderTest {
 			DefinitionRepository definitions = definitionLoader.load();
 
 			XlBean bean = new XlBean();
-			bean.set(definitions, "definitions");
+			bean.set("definitions", definitions);
 			
 		} catch (InvalidFormatException | EncryptedDocumentException | IOException e) {
 			throw new RuntimeException(e);

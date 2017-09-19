@@ -6,8 +6,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.List;
 
-import org.xlbean.XlBean;
-import org.xlbean.XlList;
 import org.xlbean.reader.XlBeanReader;
 import org.xlbean.testbean.President;
 import org.xlbean.testbean.Stats;
@@ -38,7 +36,7 @@ public class XlBeanExample {
 
 		XlBeanWriter writer = new XlBeanWriter();
 		XlBean outBean = new XlBean();
-		outBean.set(presidents, "presidents");
+		outBean.set("presidents", presidents);
 		writer.write(new FileInputStream("example/presidents_blank.xlsx"), outBean, new FileOutputStream("newPresidents.xlsx"));
 
 	}

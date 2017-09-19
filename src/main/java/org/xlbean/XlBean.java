@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.xlbean.converter.BeanConverter;
 import org.xlbean.converter.BeanConverterFactory;
-import org.xlbean.util.XlBeanFactory;
 
 /**
  * Data store class.
@@ -43,35 +42,6 @@ import org.xlbean.util.XlBeanFactory;
 public class XlBean extends HashMap<String, Object> {
 
     /**
-     * Convert this {@link XlBean} object to {@link XlList} object with elements
-     * belongs to a List retrieved by {@code extractFieldName} and put all the
-     * key-values in this object to each element inside the List.
-     * 
-     * <p>
-     * This is an inverse method for {@link XlList#aggregate(String, String...)}
-     * .
-     * </p>
-     * 
-     * @param extractFieldName
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    public XlList extract(String extractFieldName) {
-        XlList extractedTable = XlBeanFactory.getInstance()
-                .createList();
-        Object extractField = this.get(extractFieldName);
-        if (Iterable.class.isAssignableFrom(extractField.getClass())) {
-            for (XlBean extractRow : (Iterable<XlBean>) extractField) {
-                putAllExcept(this, extractRow, extractFieldName);
-                extractedTable.add(extractRow);
-            }
-        } else {
-            extractedTable.add(this);
-        }
-        return extractedTable;
-    }
-
-    /**
      * Overridden method of {@link HashMap#put(Object, Object)} with type check.
      * 
      * <p>
@@ -93,7 +63,7 @@ public class XlBean extends HashMap<String, Object> {
     public Object put(String key, Object value) {
         if (!canPut(value)) {
             throw new IllegalArgumentException(String.format(
-                    "Value set to XlBean must be XlBean, XlList or String. To set value of any other class to this bean, please use #set(Object). set(Object) will scan all the properties in the object and set to this object.",
+                    "Value set to XlBean must be XlBean, XlList or String. To set value of any other class to this bean, please use #set(String, Object). #set(String, Object) will scan all the properties in the object and set to this object. (Actual: %s)",
                     value.getClass()));
         }
         return super.put(key, value);
@@ -101,15 +71,6 @@ public class XlBean extends HashMap<String, Object> {
     
     protected boolean canPut(Object value) {
         return !(value != null && !(value instanceof XlBean || value instanceof XlList || value instanceof String));
-    }
-
-    private void putAllExcept(XlBean src, XlBean dst, String excludeFieldName) {
-        src.forEach((key, value) -> {
-            if (key.equals(excludeFieldName)) {
-                return;
-            }
-            dst.put(key, value);
-        });
     }
 
     public XlBean bean(String key) {
@@ -142,10 +103,6 @@ public class XlBean extends HashMap<String, Object> {
     }
 
     private static BeanConverter converter = BeanConverterFactory.getInstance().createBeanConverter();
-
-    public static void updateConverter(BeanConverter converter) {
-        XlBean.converter = converter;
-    }
 
     /**
      * Returns the object of {@code destinationClass} filled with the contents
@@ -196,6 +153,13 @@ public class XlBean extends HashMap<String, Object> {
         return converter.toBeanList(srcList, beanClass);
     }
 
+    /**
+     * Convert each property of given {@code obj} to key-value of this XlBean object.
+     * 
+     * Conversion is done by {@link BeanConverter#toMap(Object)}.
+     * 
+     * @param obj
+     */
     public void set(Object obj) {
         Object convertedObj = converter.toMap(obj);
         if (convertedObj instanceof XlBean) {
@@ -203,11 +167,24 @@ public class XlBean extends HashMap<String, Object> {
         }
     }
 
-    public void set(Object obj, String key) {
+    /**
+     * Convert given {@code obj} to XlBean and put to this XlBean object with given {@code key}.
+     * 
+     * Conversion is done by {@link BeanConverter#toMap(Object)}.
+     * 
+     * @param key
+     * @param obj
+     */
+    public void set(String key, Object obj) {
         Object convertedObj = converter.toMap(obj);
         put(key, convertedObj);
     }
 
+    /**
+     * Returns true if this XlBean contains no value or all values for this Map is empty value.
+     * 
+     * @return
+     */
     public boolean isValuesEmpty() {
         for (Object item : this.values()) {
             if (item == null) {
