@@ -32,6 +32,21 @@ public class XlBeanTest {
     private static final DateFormat DT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     @Test
+    public void beanOf() throws Exception {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_presidents.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        Country c = bean.of(Country.class);
+        System.out.println(c);
+
+        assertThat(c.getName(), is("United States of America"));
+        assertThat(c.getStats().getGdp(), is(BigDecimal.valueOf(18558000000000000l)));
+        assertThat(c.getStats().getTotalArea(), is(9833520l));
+    }
+    
+    @Test
     public void listOf() throws Exception {
         InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_ValueConverter.xlsx");
 
