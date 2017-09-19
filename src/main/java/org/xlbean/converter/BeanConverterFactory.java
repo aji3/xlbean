@@ -1,5 +1,9 @@
 package org.xlbean.converter;
 
+/**
+ * @author Kazuya Tanikawa
+ *
+ */
 public class BeanConverterFactory {
 
     private static BeanConverterFactory INSTANCE = new BeanConverterFactory();
