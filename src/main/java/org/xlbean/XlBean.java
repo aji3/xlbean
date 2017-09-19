@@ -70,6 +70,8 @@ public class XlBean extends HashMap<String, Object> {
     }
     
     protected boolean canPut(Object value) {
+        // TODO to be deleted
+        System.out.println("test");
         return !(value != null && !(value instanceof XlBean || value instanceof XlList || value instanceof String));
     }
 
