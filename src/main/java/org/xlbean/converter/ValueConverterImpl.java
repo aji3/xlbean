@@ -77,7 +77,7 @@ public class ValueConverterImpl implements ValueConverter {
         if (obj instanceof Date) {
             return DATE_FORMAT.format((Date) obj);
         } else if (obj instanceof LocalDate) {
-            return LOCALDATE_FORMAT.format((LocalDate) obj) + " 00:00:00.000";
+            return LOCALDATE_FORMAT.format((LocalDate) obj) + "T00:00:00.000";
         } else if (obj instanceof LocalDateTime) {
             return DATETIME_FORMAT.format((TemporalAccessor) obj);
         } else if (obj instanceof LocalTime) {
@@ -91,7 +91,7 @@ public class ValueConverterImpl implements ValueConverter {
      */
     @Override
     public Object toObject(String value, Class<?> valueClass) {
-        if (value == null) {
+        if (value == null || valueClass == null) {
             return null;
         }
         if (valueClass.isAssignableFrom(String.class)) {
@@ -111,12 +111,14 @@ public class ValueConverterImpl implements ValueConverter {
         } else if (valueClass.isAssignableFrom(Character.class) || valueClass.isAssignableFrom(char.class)) {
             try {
                 return value.charAt(0);
-            } catch (ArrayIndexOutOfBoundsException e) {
+            } catch (StringIndexOutOfBoundsException e) {
                 // ignore
             }
         } else if (valueClass.isAssignableFrom(Boolean.class) || valueClass.isAssignableFrom(boolean.class)) {
+            return Boolean.parseBoolean(value);
+        } else if (valueClass.isAssignableFrom(Byte.class) || valueClass.isAssignableFrom(byte.class)) {
             try {
-                return Boolean.parseBoolean(value);
+                return Byte.parseByte(value.replaceAll("\\..*$", ""));
             } catch (NumberFormatException e) {
                 // ignore
             }
