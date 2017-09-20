@@ -196,9 +196,6 @@ public class BeanConverterImpl implements BeanConverter {
     }
 
     private XlBean toMapInternal(Object obj) {
-        if (obj == null) {
-            return null;
-        }
         XlBean retBean = XlBeanFactory.getInstance().createBean();
         try {
             for (PropertyDescriptor pd : Introspector.getBeanInfo(obj.getClass()).getPropertyDescriptors()) {

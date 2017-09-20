@@ -44,6 +44,10 @@ public class XlBeanTest {
         assertThat(c.getName(), is("United States of America"));
         assertThat(c.getStats().getGdp(), is(BigDecimal.valueOf(18558000000000000l)));
         assertThat(c.getStats().getTotalArea(), is(9833520l));
+        
+        Stats stats = bean.beanOf("stats", Stats.class);
+        assertThat(stats.getGdp(), is(BigDecimal.valueOf(18558000000000000l)));
+        assertThat(stats.getTotalArea(), is(9833520l));
     }
     
     @Test

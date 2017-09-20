@@ -39,8 +39,7 @@ public class DefinitionRepository {
     public void addDefinition(Definition definition) {
         Definition dupulicatedDefinition = null;
         for (Definition d : definitions) {
-            if (d.getDefinitionId()
-                    .equals(definition.getDefinitionId())) {
+            if (d.getDefinitionId().equals(definition.getDefinitionId())) {
                 dupulicatedDefinition = d;
                 break;
             }
@@ -64,21 +63,33 @@ public class DefinitionRepository {
         for (Definition definition : definitions) {
             // Check if the definition is valid
             if (!definition.validate()) {
-                log.warn("Invalid definition [{}] ({})", definition.getName(), definition.getClass()
-                        .getName());
+                log.warn("Invalid definition [{}] ({})", definition.getName(), definition.getClass().getName());
                 continue;
             }
 
             // Link the definition with excel sheet
             XlSheet sheet = workbook.getSheet(definition.getSheetName());
             if (sheet == null) {
-                log.warn("No sheet named \"{0}\" was found for definition \"{1}\". ({2})", definition.getSheetName(),
-                        definition.getName(), definition.getClass()
-                                .getName());
+                log.warn("No sheet named \"{}\" was found for definition \"{}\". ({})", definition.getSheetName(),
+                        definition.getName(), definition.getClass().getName());
                 continue;
             }
             definition.setSheet(sheet);
         }
+    }
+    
+    /**
+     * Returns true when any of the definitions in this repository is true.
+     * 
+     * @return
+     */
+    public boolean isAllValid() {
+        for (Definition definition : definitions) {
+            if (!definition.validate()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public Map<String, Definition> toMap() {

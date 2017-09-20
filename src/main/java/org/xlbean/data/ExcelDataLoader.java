@@ -25,7 +25,11 @@ public class ExcelDataLoader {
 	private static Logger log = LoggerFactory.getLogger(ExcelDataLoader.class);
 
 	public XlBean load(DefinitionRepository definitions, XlWorkbook workbook) {
-	    definitions.validate(workbook);
+        definitions.validate(workbook);
+        
+	    if (!definitions.isAllValid()) {
+	        return null;
+	    }
 		
 		XlBean retBean = XlBeanFactory.getInstance().createBean();
 		definitions.forEach(definition -> {
