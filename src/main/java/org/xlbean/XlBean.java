@@ -102,7 +102,7 @@ public class XlBean extends HashMap<String, Object> {
         }
     }
 
-    private static BeanConverter converter = BeanConverterFactory.getInstance().createBeanConverter();
+    private BeanConverter converter = BeanConverterFactory.getInstance().createBeanConverter();
 
     /**
      * Returns the object of {@code destinationClass} filled with the contents
