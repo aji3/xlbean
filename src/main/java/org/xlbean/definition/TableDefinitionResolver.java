@@ -14,8 +14,6 @@ public class TableDefinitionResolver extends DefinitionResolver {
 	private static final String TABLE_OR_COLUMN_PATTERN = String.format("%s(\\?%s=\\w*(&%s=\\w*)*)?", COMMA_CONNECTED_JAVA_VARIABLE_PATTERN, JAVA_VARIABLE_PATTERN, JAVA_VARIABLE_PATTERN);
 	private static final Pattern RESOLVABLE_PATTERN = Pattern.compile(String.format("%s#%s", TABLE_OR_COLUMN_PATTERN, TABLE_OR_COLUMN_PATTERN.replaceFirst("\\[a-z", "\\[~a-z")));
 	
-//	private static final Pattern RESOLVABLE_PATTERN = Pattern.compile("[a-zA-Z_]\\w*(\\.[a-zA-Z_]\\w*)*(\\?[a-zA-Z_]\\w*=\\w*(&[a-zA-Z_]\\w*=\\w*)*)?#[~a-zA-Z_]\\w*(\\.[a-zA-Z_]\\w*)*(\\?[a-zA-Z_]\\w*=\\w*(&[a-zA-Z_]\\w*=\\w*)*)?");
-	
 	@Override
 	public boolean isResolvable(String definitionStr) {
 		if (definitionStr == null) {

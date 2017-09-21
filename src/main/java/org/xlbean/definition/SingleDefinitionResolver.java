@@ -17,7 +17,11 @@ public class SingleDefinitionResolver extends DefinitionResolver {
 	@Override
 	public Definition resolve(String key, XlCellAddress cell) {
 		SingleDefinition definition = new SingleDefinition();
-		definition.setName(key);
+		String name = key;
+		if (key.contains("?")) {
+		    name = key.substring(0, key.indexOf('?'));
+		}
+		definition.setName(name);
 		definition.setOriginalKeyString(key);
 		definition.setCell(cell);
 		definition.addOptions(parseOptions(key));

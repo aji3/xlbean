@@ -26,7 +26,7 @@ import org.apache.poi.ss.util.CellAddress;
 public class XlSheet {
 
     public enum ValueType {
-        def, string, data, date,
+        def, string, date,
     };
 
     private Sheet sheet;
@@ -88,20 +88,18 @@ public class XlSheet {
      */
     public String getCellValue(Cell cell, ValueType type) {
         CellType cellType = null;
-        if (CellType.FORMULA.equals(cell.getCellTypeEnum())) {
+        if (CellType.FORMULA == cell.getCellTypeEnum()) {
             // Do not use evaluateInCell, as this method updates a cell 
             // when it evaluates the cell so that it is very slow.
             cellType = evaluator.evaluateFormulaCellEnum(cell);
         } else {
             cellType = cell.getCellTypeEnum();
         }
-        if (type == null || ValueType.def.equals(type)) {
+        if (type == null || ValueType.def == type) {
             return getCellValueAsData(cell, cellType, false);
-        } else if (ValueType.string.equals(type)) {
+        } else if (ValueType.string == type) {
             return getCellValueAsPresented(cell);
-        } else if (ValueType.data.equals(type)) {
-            return getCellValueAsData(cell, cellType, false);
-        } else if (ValueType.date.equals(type)) {
+        } else if (ValueType.date == type) {
             return getCellValueAsData(cell, cellType, true);
         } else {
             return null;

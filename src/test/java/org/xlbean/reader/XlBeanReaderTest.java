@@ -222,6 +222,7 @@ public class XlBeanReaderTest {
         assertThat(tableStr.get(4).get("standardAndFormulaInside"), is("1"));
         assertThat(tableStr.get(5).get("standardAndFormulaInside"), is(nullValue()));
 		
+        assertThat(bean.get("testDate"), is("2017-09-21T00:00:00.000"));
 	}
 	
 	@Test
