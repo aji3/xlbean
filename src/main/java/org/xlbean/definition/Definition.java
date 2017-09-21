@@ -40,7 +40,7 @@ public abstract class Definition {
 	}
 	
 	public String getDefinitionId() {
-		return sheetName + "_" + originalKeyString;
+		return sheetName + "_" + name;
 	}
 
 	public String getOriginalKeyString() {
