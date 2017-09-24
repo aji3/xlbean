@@ -6,21 +6,70 @@ buildscript {
 plugins {
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.8.1'
+    id "com.jfrog.bintray" version "1.7.3"
 }
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 group = 'org.xlbean'
-version = '0.1.1'
-project.ext {
-  artifactId = 'xlbean'
+archivesBaseName = 'xlbean'
+version = '0.1.4'
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
 }
 
-def defaultEncoding = 'UTF-8'
-tasks.withType(AbstractCompile)*.options*.encoding = defaultEncoding
-tasks.withType(GroovyCompile)*.groovyOptions*.encoding = defaultEncoding
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+bintray {
+    user = getProperty("BINTRAY_USER")
+    key = getProperty("BINTRAY_API_KEY")
+    pkg {
+        repo = 'xlbean'
+        name = 'xlbean'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/aji3/xlbean.git'
+        publicDownloadNumbers = true
+        version {
+            name = project.version
+            desc = 'xlbean ' + project.version
+            released  = new Date()
+            vcsTag = project.version
+            attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
+	        gpg {
+	            sign = true
+	            passphrase = getProperty('BINTRAY_GPG_KEY')
+	        }
+        }
+    }
+    publications = ['mavenPublication']
+    configurations = ['archives']
+}
+
+publishing {
+    publications {
+        mavenPublication(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
 repositories {
    mavenCentral()
 }
