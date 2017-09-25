@@ -38,8 +38,8 @@ artifacts {
 }
 
 bintray {
-    user = getProperty("BINTRAY_USER")
-    key = getProperty("BINTRAY_API_KEY")
+    user = hasProperty('BINTRAY_USER') ? getProperty('BINTRAY_USER') : System.getenv('BINTRAY_USER')
+    key = hasProperty('BINTRAY_API_KEY') ? getProperty('BINTRAY_API_KEY') : System.getenv('BINTRAY_API_KEY')
     pkg {
         repo = 'xlbean'
         name = 'xlbean'
@@ -54,7 +54,7 @@ bintray {
             attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin']
 	        gpg {
 	            sign = true
-	            passphrase = getProperty('BINTRAY_GPG_KEY')
+	            passphrase = hasProperty('BINTRAY_GPG_KEY') ? getProperty('BINTRAY_GPG_KEY') : System.getenv('BINTRAY_GPG_KEY')
 	        }
         }
     }
