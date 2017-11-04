@@ -407,4 +407,36 @@ public class XlBeanReaderTest {
         assertThat(bean.list("tests").get(6).list("bbbb").get(0).value("key"), is("key1"));
         assertThat(bean.list("tests").get(6).list("bbbb").get(0).value("value"), is(nullValue()));
 	}
+	
+	@Test
+	public void testReadingSheetWithErrorCell() {
+		InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_errorcell.xlsx");
+		
+		XlBeanReader reader = new XlBeanReader();
+		XlBean bean = reader.read(in);
+		
+		System.out.println(bean);
+
+        assertThat(bean.list("error").get(0).get("formulaError"), is("Before Formula error"));
+        assertThat(bean.list("error").get(0).get("refError"), is("Before Ref error"));
+        assertThat(bean.list("error").get(0).get("numberError"), is("Before Num error"));
+
+        assertThat(bean.list("error").get(1).get("formulaError"), is(nullValue()));
+        assertThat(bean.list("error").get(1).get("refError"), is("Before Ref error"));
+        assertThat(bean.list("error").get(1).get("numberError"), is("Before Num error"));
+
+        assertThat(bean.list("error").get(2).get("formulaError"), is("After Formula error"));
+        assertThat(bean.list("error").get(2).get("refError"), is(nullValue()));
+        assertThat(bean.list("error").get(2).get("numberError"), is("Before Num error"));
+
+        assertThat(bean.list("error").get(3).get("formulaError"), is("After Formula error"));
+        assertThat(bean.list("error").get(3).get("refError"), is("After Ref error"));
+        assertThat(bean.list("error").get(3).get("numberError"), is(nullValue()));
+
+        assertThat(bean.list("error").get(4).get("formulaError"), is("After Formula error"));
+        assertThat(bean.list("error").get(4).get("refError"), is("After Ref error"));
+        assertThat(bean.list("error").get(4).get("numberError"), is("After Num error"));
+        
+        assertThat(bean.list("error").size(), is(5));
+	}
 }

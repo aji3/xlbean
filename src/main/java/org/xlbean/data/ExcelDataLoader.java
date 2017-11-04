@@ -1,10 +1,13 @@
 package org.xlbean.data;
 
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlbean.XlBean;
 import org.xlbean.definition.Definition;
 import org.xlbean.definition.DefinitionRepository;
+import org.xlbean.definition.DefinitionRepository.DefinitionValidationContext;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
 import org.xlbean.excel.XlWorkbook;
@@ -27,7 +30,9 @@ public class ExcelDataLoader {
 	public XlBean load(DefinitionRepository definitions, XlWorkbook workbook) {
         definitions.validate(workbook);
         
-	    if (!definitions.isAllValid()) {
+        DefinitionValidationContext validationContext = definitions.validateAll();
+	    if (validationContext.isError()) {
+	    	log.warn("Skip loading due to definition error: {}", String.join(",", validationContext.getErrorDefinitions().stream().map(def -> def.getName()).collect(Collectors.toList())));
 	        return null;
 	    }
 		

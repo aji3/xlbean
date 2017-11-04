@@ -87,7 +87,7 @@ public class XlBean extends HashMap<String, Object> {
      * 
      * <p>
      * This method will not check type before casting so make sure that the
-     * object is able to be casted to specified type.
+     * object can be casted to specified type.
      * </p>
      * 
      * @param key

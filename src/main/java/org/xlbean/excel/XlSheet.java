@@ -5,7 +5,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
 
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Comment;
@@ -16,6 +18,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellAddress;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xlbean.data.ExcelDataLoader;
 
 /**
  * Wrapper class of {@link Sheet}.
@@ -24,6 +29,10 @@ import org.apache.poi.ss.util.CellAddress;
  *
  */
 public class XlSheet {
+
+	private static final Pattern ERROR_MESSAGE_PATTERN = Pattern.compile("Cannot get.*from a ERROR.*");
+
+	private static Logger log = LoggerFactory.getLogger(ExcelDataLoader.class);
 
     public enum ValueType {
         def, string, date,
@@ -89,9 +98,13 @@ public class XlSheet {
     public String getCellValue(Cell cell, ValueType type) {
         CellType cellType = null;
         if (CellType.FORMULA == cell.getCellTypeEnum()) {
-            // Do not use evaluateInCell, as this method updates a cell 
+            // Do not use evaluateInCell, as this method updates a cell
             // when it evaluates the cell so that it is very slow.
-            cellType = evaluator.evaluateFormulaCellEnum(cell);
+            try {
+                cellType = evaluator.evaluateFormulaCellEnum(cell);
+            } catch (FormulaParseException e) {
+                handleException(e, cell);
+            }
         } else {
             cellType = cell.getCellTypeEnum();
         }
@@ -278,9 +291,28 @@ public class XlSheet {
                 return BigDecimal.valueOf(cell.getNumericCellValue()).toPlainString();
             }
         } catch (IllegalStateException e) {
-            return cell.getRichStringCellValue().getString();
+            try {
+                return cell.getRichStringCellValue().getString();
+            } catch (IllegalStateException e2) {
+                handleException(e2, cell);
+            }
+            return null;
         }
     }
+    
+    private void handleException(Exception e, Cell cell) {
+        if (e instanceof FormulaParseException 
+                || ERROR_MESSAGE_PATTERN.matcher(e.getMessage()).matches()) {
+            // Handle exception with specific message
+            log.warn("Excel error exists at (sheet:{}, row:{}, column:{})", 
+                    cell.getSheet().getSheetName(),
+                    cell.getRowIndex(), 
+                    cell.getColumnIndex());
+        } else {
+            throw new RuntimeException(e);
+        }
+    }
+
     protected String getCellValueAsPresented(Cell cell) {
         DataFormatter formatter = new DataFormatter();
         return formatter.formatCellValue(cell, evaluator);

@@ -83,15 +83,29 @@ public class DefinitionRepository {
      * 
      * @return
      */
-    public boolean isAllValid() {
+    public DefinitionValidationContext validateAll() {
+    	DefinitionValidationContext validationContext = new DefinitionValidationContext();
         for (Definition definition : definitions) {
             if (!definition.validate()) {
-                return false;
+            	validationContext.addErrorDefinition(definition);
             }
         }
-        return true;
+        return validationContext;
     }
-
+    
+    public static class DefinitionValidationContext {
+    	private List<Definition> errorDefinitions = new ArrayList<>();
+		public void addErrorDefinition(Definition definition) {
+    		errorDefinitions.add(definition);
+    	}
+    	public boolean isError() {
+    		return !errorDefinitions.isEmpty();
+    	}
+    	public List<Definition> getErrorDefinitions() {
+			return errorDefinitions;
+		}
+    }
+    
     public Map<String, Definition> toMap() {
         Map<String, Definition> retMap = new HashMap<>();
         definitions.forEach(it -> {
