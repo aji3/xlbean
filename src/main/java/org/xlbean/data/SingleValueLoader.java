@@ -8,29 +8,25 @@ import org.xlbean.definition.SingleDefinition;
 
 /**
  * Value loader to load a value of a cell.
- * 
- * @author Kazuya Tanikawa
  *
+ * @author Kazuya Tanikawa
  */
 public class SingleValueLoader extends ValueLoader<SingleDefinition> {
 
-	private static Logger log = LoggerFactory.getLogger(SingleValueLoader.class);
+  private static Logger log = LoggerFactory.getLogger(SingleValueLoader.class);
 
-	public SingleValueLoader(Definition definition) {
-		super(definition);
-	}
+  public SingleValueLoader(Definition definition) {
+    super(definition);
+  }
 
-	/**
-	 * 
-	 */
-	@Override
-	public void load(XlBean bean) {
-		SingleDefinition definition = getDefinition();
-		String value = getValue(definition, definition.getCell().getRow(), definition.getCell().getColumn());
-		if (log.isTraceEnabled()) {
-		    log.trace(value.toString());
-		}
-		convertDottedStringToBean(getDefinition().getName(), value, bean);
-	}
-
+  @Override
+  public void load(XlBean bean) {
+    SingleDefinition definition = getDefinition();
+    String value =
+        getValue(definition, definition.getCell().getRow(), definition.getCell().getColumn());
+    if (log.isTraceEnabled()) {
+      log.trace(value.toString());
+    }
+    convertDottedStringToBean(getDefinition().getName(), value, bean);
+  }
 }

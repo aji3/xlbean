@@ -19,55 +19,62 @@ import org.xlbean.util.FileUtil;
 
 public class DefinitionRepositoryTest {
 
-    @Test
-    public void validate_errorCellDef() throws Exception {
-        
-        PrintStream originalPs = System.out;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream testPs = new PrintStream(baos);
-        System.setOut(testPs);
-        
-        InputStream in = DefinitionRepositoryTest.class.getResourceAsStream("TestBook_withError.xlsx");
+  @Test
+  public void validate_errorCellDef() throws Exception {
 
-        XlBeanReader reader = new XlBeanReader();
-        reader.read(in);
-        
-        System.setOut(originalPs);
+    PrintStream originalPs = System.out;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    PrintStream testPs = new PrintStream(baos);
+    System.setOut(testPs);
 
-        String message = new String(baos.toByteArray());        
-        System.out.println(message);
-        assertThat(message, is(containsString("WARN  o.x.definition.DefinitionRepository - Invalid definition [columnOnly] (org.xlbean.definition.SingleDefinition)")));
-    }
+    InputStream in = DefinitionRepositoryTest.class.getResourceAsStream("TestBook_withError.xlsx");
 
-    @Test
-    public void validate_errorSheetName() throws Exception {
+    XlBeanReader reader = new XlBeanReader();
+    reader.read(in);
 
-        PrintStream originalPs = System.out;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PrintStream testPs = new PrintStream(baos);
-        System.setOut(testPs);
-        
-        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
-        Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in));
-        
-        XlWorkbook xlwb = XlWorkbook.wrap(wb);
-        
-        SingleDefinition def = new SingleDefinition();
-        def.setName("errorDef");
-        XlCellAddress cell = new XlCellAddress.Builder().row(3).column(3).build();
-        def.setCell(cell);
-        def.setSheetName("errorSheet");
-        
-        DefinitionRepository repo = new DefinitionRepository();
-        repo.addDefinition(def);
-        
-        repo.validate(xlwb);
-        
-        System.setOut(originalPs);
-        
-        String message = new String(baos.toByteArray());
-        System.out.println(message);
-        assertThat(message, is(containsString("WARN  o.x.definition.DefinitionRepository - No sheet named \"errorSheet\" was found for definition \"errorDef\". (org.xlbean.definition.SingleDefinition)")));
+    System.setOut(originalPs);
 
-    }
+    String message = new String(baos.toByteArray());
+    System.out.println(message);
+    assertThat(
+        message,
+        is(
+            containsString(
+                "WARN  o.x.definition.DefinitionRepository - Invalid definition [columnOnly] (org.xlbean.definition.SingleDefinition)")));
+  }
+
+  @Test
+  public void validate_errorSheetName() throws Exception {
+
+    PrintStream originalPs = System.out;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    PrintStream testPs = new PrintStream(baos);
+    System.setOut(testPs);
+
+    InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+    Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in));
+
+    XlWorkbook xlwb = XlWorkbook.wrap(wb);
+
+    SingleDefinition def = new SingleDefinition();
+    def.setName("errorDef");
+    XlCellAddress cell = new XlCellAddress.Builder().row(3).column(3).build();
+    def.setCell(cell);
+    def.setSheetName("errorSheet");
+
+    DefinitionRepository repo = new DefinitionRepository();
+    repo.addDefinition(def);
+
+    repo.validate(xlwb);
+
+    System.setOut(originalPs);
+
+    String message = new String(baos.toByteArray());
+    System.out.println(message);
+    assertThat(
+        message,
+        is(
+            containsString(
+                "WARN  o.x.definition.DefinitionRepository - No sheet named \"errorSheet\" was found for definition \"errorDef\". (org.xlbean.definition.SingleDefinition)")));
+  }
 }

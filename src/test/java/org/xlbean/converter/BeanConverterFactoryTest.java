@@ -11,22 +11,23 @@ import org.xlbean.XlBean;
 
 public class BeanConverterFactoryTest {
 
-    private static class TestBeanConverter extends BeanConverterImpl{
-    }
-    @Test
-    public void setInstance() throws Exception {
-        BeanConverterFactory.setInstance(new BeanConverterFactory(){
-            @Override
-            public BeanConverter createBeanConverter() {
-                return new TestBeanConverter();
-            }
+  private static class TestBeanConverter extends BeanConverterImpl {}
+
+  @Test
+  public void setInstance() throws Exception {
+    BeanConverterFactory.setInstance(
+        new BeanConverterFactory() {
+          @Override
+          public BeanConverter createBeanConverter() {
+            return new TestBeanConverter();
+          }
         });
-        
-        XlBean bean = new XlBean();
-        
-        Field f = XlBean.class.getDeclaredField("converter");
-        f.setAccessible(true);
-        
-        assertThat(f.get(bean), is(instanceOf(TestBeanConverter.class)));
-    }
+
+    XlBean bean = new XlBean();
+
+    Field f = XlBean.class.getDeclaredField("converter");
+    f.setAccessible(true);
+
+    assertThat(f.get(bean), is(instanceOf(TestBeanConverter.class)));
+  }
 }

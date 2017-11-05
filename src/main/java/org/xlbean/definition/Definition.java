@@ -7,75 +7,72 @@ import org.xlbean.excel.XlSheet;
 
 /**
  * Super class for all definitions.
- * 
- * @author Kazuya Tanikawa
  *
+ * @author Kazuya Tanikawa
  */
 public abstract class Definition {
-	private String originalKeyString;
-	private String name;
-	private Map<String, String> options = new HashMap<>();
-	private String sheetName;
-	private XlSheet sheet;
+  private String originalKeyString;
+  private String name;
+  private Map<String, String> options = new HashMap<>();
+  private String sheetName;
+  private XlSheet sheet;
 
-	public abstract boolean validate();
+  public abstract boolean validate();
 
-	/**
-	 * Merge given {@link Definition} object with this object.
-	 * 
-	 * <p>
-	 * If given object cannot be merged, it returns without doing anything nor any error. 
-	 * </p>
-	 * 
-	 * @param newDefinition
-	 */
-	public abstract void merge(Definition newDefinition);
+  /**
+   * Merge given {@link Definition} object with this object.
+   *
+   * <p>If given object cannot be merged, it returns without doing anything nor any error.
+   *
+   * @param newDefinition
+   */
+  public abstract void merge(Definition newDefinition);
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getDefinitionId() {
-		return sheetName + "_" + name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public String getOriginalKeyString() {
-		return originalKeyString;
-	}
+  public String getDefinitionId() {
+    return sheetName + "_" + name;
+  }
 
-	public void setOriginalKeyString(String originalKeyString) {
-		this.originalKeyString = originalKeyString;
-	}
+  public String getOriginalKeyString() {
+    return originalKeyString;
+  }
 
-	public Map<String, String> getOptions() {
-		return options;
-	}
+  public void setOriginalKeyString(String originalKeyString) {
+    this.originalKeyString = originalKeyString;
+  }
 
-	public void setOptions(Map<String, String> options) {
-		this.options = options;
-	}
+  public Map<String, String> getOptions() {
+    return options;
+  }
 
-	public String getSheetName() {
-		return sheetName;
-	}
+  public void setOptions(Map<String, String> options) {
+    this.options = options;
+  }
 
-	public void setSheetName(String sheetName) {
-		this.sheetName = sheetName;
-	}
+  public String getSheetName() {
+    return sheetName;
+  }
 
-	public XlSheet getSheet() {
-		return sheet;
-	}
+  public void setSheetName(String sheetName) {
+    this.sheetName = sheetName;
+  }
 
-	public void setSheet(XlSheet sheet) {
-		this.sheet = sheet;
-	}
-	public void addOptions(Map<String, String> options) {
-		getOptions().putAll(options);
-	}
+  public XlSheet getSheet() {
+    return sheet;
+  }
 
+  public void setSheet(XlSheet sheet) {
+    this.sheet = sheet;
+  }
+
+  public void addOptions(Map<String, String> options) {
+    getOptions().putAll(options);
+  }
 }

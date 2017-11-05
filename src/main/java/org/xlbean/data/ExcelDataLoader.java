@@ -15,42 +15,51 @@ import org.xlbean.util.XlBeanFactory;
 
 /**
  * Load data from {@code workbook} by {@code definitions}.
- * 
- * <p>
- * First validate all the {@link Definition} 
- * </p>
- * 
- * @author Kazuya Tanikawa
  *
+ * <p>First validate all the {@link Definition}
+ *
+ * @author Kazuya Tanikawa
  */
 public class ExcelDataLoader {
 
-	private static Logger log = LoggerFactory.getLogger(ExcelDataLoader.class);
+  private static Logger log = LoggerFactory.getLogger(ExcelDataLoader.class);
 
-	public XlBean load(DefinitionRepository definitions, XlWorkbook workbook) {
-        definitions.validate(workbook);
-        
-        DefinitionValidationContext validationContext = definitions.validateAll();
-	    if (validationContext.isError()) {
-	    	log.warn("Skip loading due to definition error: {}", String.join(",", validationContext.getErrorDefinitions().stream().map(def -> def.getName()).collect(Collectors.toList())));
-	        return null;
-	    }
-		
-		XlBean retBean = XlBeanFactory.getInstance().createBean();
-		definitions.forEach(definition -> {
-			long now = System.currentTimeMillis();
-			log.debug("Start loading data: {}", definition.getName());
-			getValueLoader(definition).load(retBean);
-			log.info("Loaded data: {} [{} msec]", definition.getName(), (System.currentTimeMillis() - now));
-		});
-		return retBean;
-	}
-	
-	protected ValueLoader<?> getValueLoader(Definition definition) {
-		if (definition instanceof SingleDefinition) {
-			return new SingleValueLoader((SingleDefinition)definition);
-		} else {
-			return new TableValueLoader((TableDefinition)definition);
-		}
-	}
+  public XlBean load(DefinitionRepository definitions, XlWorkbook workbook) {
+    definitions.validate(workbook);
+
+    DefinitionValidationContext validationContext = definitions.validateAll();
+    if (validationContext.isError()) {
+      log.warn(
+          "Skip loading due to definition error: {}",
+          String.join(
+              ", ",
+              validationContext
+                  .getErrorDefinitions()
+                  .stream()
+                  .map(def -> def.getName())
+                  .collect(Collectors.toList())));
+      return null;
+    }
+
+    XlBean retBean = XlBeanFactory.getInstance().createBean();
+    definitions.forEach(
+        definition -> {
+          long now = System.currentTimeMillis();
+          log.debug("Start loading data: {}", definition.getName());
+          getValueLoader(definition).load(retBean);
+          log.info(
+              "Loaded data: {} [{} msec]",
+              definition.getName(),
+              (System.currentTimeMillis() - now));
+        });
+    return retBean;
+  }
+
+  protected ValueLoader<?> getValueLoader(Definition definition) {
+    if (definition instanceof SingleDefinition) {
+      return new SingleValueLoader((SingleDefinition) definition);
+    } else {
+      return new TableValueLoader((TableDefinition) definition);
+    }
+  }
 }
