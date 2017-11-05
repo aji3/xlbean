@@ -11,6 +11,7 @@ import org.xlbean.definition.DefinitionRepository;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
 import org.xlbean.excel.XlWorkbook;
+import org.xlbean.exception.XlBeanException;
 
 public class ExcelDataSaver {
 
@@ -29,7 +30,7 @@ public class ExcelDataSaver {
 		try {
 			workbook.write(out);
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new XlBeanException(e);
 		}
 	}
 	

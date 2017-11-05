@@ -21,6 +21,7 @@ import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
 import org.xlbean.excel.XlCellAddress;
 import org.xlbean.excel.XlWorkbook;
+import org.xlbean.exception.XlBeanException;
 import org.xlbean.util.FileUtil;
 
 /**
@@ -63,7 +64,7 @@ public class XlBeanWriter {
         try (OutputStream out = new FileOutputStream(outputExcel);) {
             write(FileUtil.copyToInputStream(excelTemplate), data, out);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new XlBeanException(e);
         }
     }
 
@@ -73,7 +74,7 @@ public class XlBeanWriter {
             write(wb, wb, data, outputExcel);
 
         } catch (EncryptedDocumentException | InvalidFormatException | IOException e) {
-            throw new RuntimeException(e);
+            throw new XlBeanException(e);
         }
     }
    

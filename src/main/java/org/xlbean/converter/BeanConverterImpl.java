@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 
 import org.xlbean.XlBean;
 import org.xlbean.XlList;
+import org.xlbean.exception.XlBeanException;
 import org.xlbean.util.XlBeanFactory;
 
 /**
@@ -87,7 +88,7 @@ public class BeanConverterImpl implements BeanConverter {
                     propertyDescriptorMap.put(pd.getName(), pd);
                 }
             } catch (IntrospectionException e) {
-                throw new RuntimeException(e);
+                throw new XlBeanException(e);
             }
         }
         return propertyDescriptorMap.get(propertyName);
@@ -137,7 +138,7 @@ public class BeanConverterImpl implements BeanConverter {
                     setter.invoke(destinationObj, convertedValue);
                 }
             } catch (ClassNotFoundException | InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+                throw new XlBeanException(e);
             }
         }
         return (T) destinationObj;
@@ -151,7 +152,7 @@ public class BeanConverterImpl implements BeanConverter {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new XlBeanException(e);
         }
     }
 
@@ -208,7 +209,7 @@ public class BeanConverterImpl implements BeanConverter {
             }
         } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
-            throw new RuntimeException(e);
+            throw new XlBeanException(e);
         }
         return retBean;
     }

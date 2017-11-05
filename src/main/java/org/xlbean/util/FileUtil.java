@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
+import org.xlbean.exception.XlBeanException;
+
 public class FileUtil {
 
 	/**
@@ -21,7 +23,7 @@ public class FileUtil {
 			Files.copy(file.toPath(), baos);
 			return new ByteArrayInputStream(baos.toByteArray());
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new XlBeanException(e);
 		}
 	}
 
@@ -41,7 +43,7 @@ public class FileUtil {
 			}
 			return new ByteArrayInputStream(baos.toByteArray());
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new XlBeanException(e);
 		}
 	}
 }
