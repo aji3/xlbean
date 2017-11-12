@@ -4,7 +4,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +14,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -191,8 +189,8 @@ public class XlBeanReaderTest {
     assertThat(tableStr.get(10).get("date"), is("18-3")); // Not the same
     assertThat(tableStr.get(11).get("date"), is("3-17")); // Not the same
     assertThat(tableStr.get(12).get("date"), is("3月-17")); // Not the same
-    //		assertThat(tableStr.get(13).get("date"), is("2017-03-18T00:00:00.000"));// can't even assert
-    //		assertThat(tableStr.get(14).get("date"), is("2017-03-18T00:00:00.000"));// can't even assert
+    // assertThat(tableStr.get(13).get("date"), is("2017-03-18T00:00:00.000"));// can't even assert
+    // assertThat(tableStr.get(14).get("date"), is("2017-03-18T00:00:00.000"));// can't even assert
     assertThat(
         tableStr.get(15).get("date"),
         is(
@@ -261,7 +259,8 @@ public class XlBeanReaderTest {
         america.getPresidents().get(0).getInOfficeFrom(),
         is(new SimpleDateFormat("yyyy-MM-dd").parse("1961-01-20")));
     assertThat(
-        america.getPresidents().get(0).getInOfficeTo(), is(LocalDateTime.of(1963, 11, 22, 0, 0)));
+        america.getPresidents().get(0).getInOfficeTo(),
+        is(LocalDateTime.of(1963, 11, 22, 0, 0)));
     assertThat(america.getPresidents().get(0).getNumberOfDaysInOffice(), comparesEqualTo(1036));
 
     assertThat(america.getPresidents().get(10).getName(), is("Donald Trump"));
@@ -276,7 +275,7 @@ public class XlBeanReaderTest {
 
   @Test
   public void testBigData() {
-    //		InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_bigdata.xlsx");
+    // InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_bigdata.xlsx");
     File file = new File(XlBeanReaderTest.class.getResource("TestBook_bigdata.xlsx").getFile());
     XlBeanReader reader = new XlBeanReader();
     XlBean bean = reader.read(file);
@@ -332,12 +331,12 @@ public class XlBeanReaderTest {
 
   @Test
   public void testCommentDefinitionReader() throws ParseException {
-    //		XlBeanReader reader = new XlBeanReader(){
-    //			@Override
-    //			protected DefinitionLoader<?> createDefinitionLoader(Object definitionSource) {
-    //				return new ExcelCommentDefinitionLoader(wrap((Workbook)definitionSource));
-    //			}
-    //		};
+    // XlBeanReader reader = new XlBeanReader(){
+    // @Override
+    // protected DefinitionLoader<?> createDefinitionLoader(Object definitionSource) {
+    // return new ExcelCommentDefinitionLoader(wrap((Workbook)definitionSource));
+    // }
+    // };
     XlBeanReader reader = new XlBeanReader(new ExcelCommentDefinitionLoader());
     InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_presidents_comment.xlsx");
     XlBean bean = reader.read(in);
@@ -355,7 +354,8 @@ public class XlBeanReaderTest {
         america.getPresidents().get(0).getInOfficeFrom(),
         is(new SimpleDateFormat("yyyy-MM-dd").parse("1961-1-20")));
     assertThat(
-        america.getPresidents().get(0).getInOfficeTo(), is(LocalDateTime.of(1963, 11, 22, 0, 0)));
+        america.getPresidents().get(0).getInOfficeTo(),
+        is(LocalDateTime.of(1963, 11, 22, 0, 0)));
     assertThat(america.getPresidents().get(0).getNumberOfDaysInOffice(), comparesEqualTo(1036));
 
     assertThat(america.getPresidents().get(10).getName(), is("Donald Trump"));
@@ -465,5 +465,52 @@ public class XlBeanReaderTest {
     assertThat(bean.list("error").get(4).get("numberError"), is("After Num error"));
 
     assertThat(bean.list("error").size(), is(5));
+  }
+
+  @Test
+  public void testBeanInBean() {
+    InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_beaninbean.xlsx");
+
+    XlBeanReader reader = new XlBeanReader();
+    XlBean bean = reader.read(in);
+
+    System.out.println(bean);
+
+    assertThat(bean.list("format").get(0).get("aaa"), is("111.0"));
+    assertThat(bean.list("format").get(0).bean("bbb").get("b1"), is("222.0"));
+    assertThat(bean.list("format").get(0).bean("bbb").bean("b2").get("b3"), is("333.0"));
+    assertThat(bean.list("format").get(0).bean("ccc"), is(nullValue()));
+
+    assertThat(bean.list("format").get(1).get("aaa"), is("111.0"));
+    assertThat(bean.list("format").get(1).bean("bbb").get("b1"), is("222.0"));
+    assertThat(bean.list("format").get(1).bean("bbb").bean("b2"), is(nullValue()));
+    assertThat(bean.list("format").get(1).bean("ccc"), is(nullValue()));
+
+    assertThat(bean.list("format").get(2).get("aaa"), is("111.0"));
+    assertThat(bean.list("format").get(2).bean("bbb").get("b1"), is(nullValue()));
+    assertThat(bean.list("format").get(2).bean("bbb").bean("b2").get("b3"), is("333.0"));
+    assertThat(bean.list("format").get(2).bean("ccc"), is(nullValue()));
+
+    assertThat(bean.list("format").get(3).get("aaa"), is("111.0"));
+    assertThat(bean.list("format").get(3).bean("bbb"), is(nullValue()));
+    assertThat(bean.list("format").get(3).bean("ccc"), is(nullValue()));
+
+    assertThat(bean.list("format").get(4).get("aaa"), is(nullValue()));
+    assertThat(bean.list("format").get(4).bean("bbb").get("b1"), is("222.0"));
+    assertThat(bean.list("format").get(4).bean("bbb").bean("b2").get("b3"), is("333.0"));
+    assertThat(bean.list("format").get(4).bean("ccc"), is(nullValue()));
+
+    assertThat(bean.list("format").get(5).get("aaa"), is(nullValue()));
+    assertThat(bean.list("format").get(5).bean("bbb").get("b1"), is("222.0"));
+    assertThat(bean.list("format").get(5).bean("bbb").bean("b2"), is(nullValue()));
+    assertThat(bean.list("format").get(5).bean("ccc"), is(nullValue()));
+
+    assertThat(bean.list("format").get(6).get("aaa"), is(nullValue()));
+    assertThat(bean.list("format").get(6).bean("bbb").get("b1"), is(nullValue()));
+    assertThat(bean.list("format").get(6).bean("bbb").bean("b2").get("b3"), is("333.0"));
+    assertThat(bean.list("format").get(6).bean("ccc"), is(nullValue()));
+
+    assertThat(bean.list("format").get(7).bean("ccc").bean("c1").bean("c2").get("c3"), is("444.0"));
+
   }
 }

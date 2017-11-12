@@ -2,7 +2,6 @@ package org.xlbean.data;
 
 import java.util.List;
 import java.util.Map.Entry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlbean.XlBean;
@@ -45,17 +44,15 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
       for (SingleDefinition attribute : columns) {
         String value = null;
         if (definition.isDirectionDown()) {
-          value =
-              getValue(
-                  attribute,
-                  definition.getStartCell().getRow() + index,
-                  attribute.getCell().getColumn());
+          value = getValue(
+              attribute,
+              definition.getStartCell().getRow() + index,
+              attribute.getCell().getColumn());
         } else {
-          value =
-              getValue(
-                  attribute,
-                  attribute.getCell().getRow(),
-                  definition.getStartCell().getColumn() + index);
+          value = getValue(
+              attribute,
+              attribute.getCell().getRow(),
+              definition.getStartCell().getColumn() + index);
         }
         convertDottedStringToBean(attribute.getName(), value, dataRow);
       }

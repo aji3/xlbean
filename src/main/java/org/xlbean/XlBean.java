@@ -181,6 +181,10 @@ public class XlBean extends HashMap<String, Object> {
             return false;
           }
         }
+      } else if (item instanceof XlBean) {
+        if (!((XlBean)item).isValuesEmpty()) {
+          return false;
+        }
       }
     }
     return true;
