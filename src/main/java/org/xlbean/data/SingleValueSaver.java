@@ -5,17 +5,17 @@ import org.xlbean.definition.SingleDefinition;
 
 public class SingleValueSaver extends ValueSaver<SingleDefinition> {
 
-  public SingleValueSaver(SingleDefinition definition) {
-    super(definition);
-  }
+    public SingleValueSaver(SingleDefinition definition) {
+        super(definition);
+    }
 
-  @Override
-  public void save(XlBean bean) {
-    String value = getValueFromXlBean(getDefinition().getName(), bean);
-    setValue(
-        getDefinition(),
-        getDefinition().getCell().getRow(),
-        getDefinition().getCell().getColumn(),
-        value);
-  }
+    @Override
+    public void save(XlBean bean) {
+        String value = getValueFromXlBean(getDefinition().getName(), bean);
+        setValue(
+            getDefinition(),
+            getDefinition().getCell().getRow(),
+            getDefinition().getCell().getColumn(),
+            value);
+    }
 }

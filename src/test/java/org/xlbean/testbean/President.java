@@ -5,75 +5,76 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 public class President {
-  private String name;
-  private LocalDate dateOfBirth;
-  private String stateOfBirth;
-  private Date inOfficeFrom;
-  private LocalDateTime inOfficeTo;
-  private int numberOfDaysInOffice;
-  // Getter / Setter は省略
-  public String getName() {
-    return name;
-  }
+    private String name;
+    private LocalDate dateOfBirth;
+    private String stateOfBirth;
+    private Date inOfficeFrom;
+    private LocalDateTime inOfficeTo;
+    private int numberOfDaysInOffice;
 
-  public void setName(String name) {
-    this.name = name;
-  }
+    // Getter / Setter は省略
+    public String getName() {
+        return name;
+    }
 
-  public LocalDate getDateOfBirth() {
-    return dateOfBirth;
-  }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public void setDateOfBirth(LocalDate dateOfBirth) {
-    this.dateOfBirth = dateOfBirth;
-  }
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
 
-  public String getStateOfBirth() {
-    return stateOfBirth;
-  }
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
 
-  public void setStateOfBirth(String stateOfBirth) {
-    this.stateOfBirth = stateOfBirth;
-  }
+    public String getStateOfBirth() {
+        return stateOfBirth;
+    }
 
-  public Date getInOfficeFrom() {
-    return inOfficeFrom;
-  }
+    public void setStateOfBirth(String stateOfBirth) {
+        this.stateOfBirth = stateOfBirth;
+    }
 
-  public void setInOfficeFrom(Date inOfficeFrom) {
-    this.inOfficeFrom = inOfficeFrom;
-  }
+    public Date getInOfficeFrom() {
+        return inOfficeFrom;
+    }
 
-  public LocalDateTime getInOfficeTo() {
-    return inOfficeTo;
-  }
+    public void setInOfficeFrom(Date inOfficeFrom) {
+        this.inOfficeFrom = inOfficeFrom;
+    }
 
-  public void setInOfficeTo(LocalDateTime inOfficeTo) {
-    this.inOfficeTo = inOfficeTo;
-  }
+    public LocalDateTime getInOfficeTo() {
+        return inOfficeTo;
+    }
 
-  public int getNumberOfDaysInOffice() {
-    return numberOfDaysInOffice;
-  }
+    public void setInOfficeTo(LocalDateTime inOfficeTo) {
+        this.inOfficeTo = inOfficeTo;
+    }
 
-  public void setNumberOfDaysInOffice(int numberOfDaysInOffice) {
-    this.numberOfDaysInOffice = numberOfDaysInOffice;
-  }
+    public int getNumberOfDaysInOffice() {
+        return numberOfDaysInOffice;
+    }
 
-  @Override
-  public String toString() {
-    return "President [name="
-        + name
-        + ", dateOfBirth="
-        + dateOfBirth
-        + ", stateOfBirth="
-        + stateOfBirth
-        + ", inOfficeFrom="
-        + inOfficeFrom
-        + ", inOfficeTo="
-        + inOfficeTo
-        + ", numberOfDaysInOffice="
-        + numberOfDaysInOffice
-        + "]";
-  }
+    public void setNumberOfDaysInOffice(int numberOfDaysInOffice) {
+        this.numberOfDaysInOffice = numberOfDaysInOffice;
+    }
+
+    @Override
+    public String toString() {
+        return "President [name="
+                + name
+                + ", dateOfBirth="
+                + dateOfBirth
+                + ", stateOfBirth="
+                + stateOfBirth
+                + ", inOfficeFrom="
+                + inOfficeFrom
+                + ", inOfficeTo="
+                + inOfficeTo
+                + ", numberOfDaysInOffice="
+                + numberOfDaysInOffice
+                + "]";
+    }
 }
