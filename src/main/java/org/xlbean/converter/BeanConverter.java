@@ -13,21 +13,21 @@ import org.xlbean.XlBean;
  */
 public interface BeanConverter {
 
-  public <T> T toBean(Object srcObj, Class<?> destinationClazz);
+    public <T> T toBean(Object srcObj, Class<?> destinationClazz);
 
-  /**
-   * Convert {@code srcList} to {@link ArrayList}. If {@code srcList} is not an instance of {@link
-   * Iterable}, then it returns blank {@link ArrayList}.
-   *
-   * @param srcList
-   * @param beanClass
-   * @return
-   */
-  public <T> List<T> toBeanList(Object srcList, Class<?> beanClass);
+    /**
+     * Convert {@code srcList} to {@link ArrayList}. If {@code srcList} is not an
+     * instance of {@link Iterable}, then it returns blank {@link ArrayList}.
+     *
+     * @param srcList
+     * @param beanClass
+     * @return
+     */
+    public <T> List<T> toBeanList(Object srcList, Class<?> beanClass);
 
-  public <T> T toBean(Map<String, Object> sourceMap, Class<?> destinationClass);
+    public <T> T toBean(Map<String, Object> sourceMap, Class<?> destinationClass);
 
-  public <T> T toBean(Map<String, Object> sourceMap, Object destinationObj);
+    public <T> T toBean(Map<String, Object> sourceMap, Object destinationObj);
 
-  public Object toMap(Object value);
+    public Object toMap(Object value);
 }

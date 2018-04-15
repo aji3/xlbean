@@ -13,20 +13,19 @@ import org.xlbean.definition.SingleDefinition;
  */
 public class SingleValueLoader extends ValueLoader<SingleDefinition> {
 
-  private static Logger log = LoggerFactory.getLogger(SingleValueLoader.class);
+    private static Logger log = LoggerFactory.getLogger(SingleValueLoader.class);
 
-  public SingleValueLoader(Definition definition) {
-    super(definition);
-  }
-
-  @Override
-  public void load(XlBean bean) {
-    SingleDefinition definition = getDefinition();
-    String value =
-        getValue(definition, definition.getCell().getRow(), definition.getCell().getColumn());
-    if (log.isTraceEnabled()) {
-      log.trace(value.toString());
+    public SingleValueLoader(Definition definition) {
+        super(definition);
     }
-    convertDottedStringToBean(getDefinition().getName(), value, bean);
-  }
+
+    @Override
+    public void load(XlBean bean) {
+        SingleDefinition definition = getDefinition();
+        String value = getValue(definition, definition.getCell().getRow(), definition.getCell().getColumn());
+        if (log.isTraceEnabled()) {
+            log.trace(value.toString());
+        }
+        convertDottedStringToBean(getDefinition().getName(), value, bean);
+    }
 }
