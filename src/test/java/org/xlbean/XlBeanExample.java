@@ -13,33 +13,33 @@ import org.xlbean.writer.XlBeanWriter;
 
 public class XlBeanExample {
 
-  public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException {
 
-    InputStream in = new FileInputStream("example/presidents.xlsx");
-    XlBeanReader reader = new XlBeanReader();
-    XlBean bean = reader.read(in);
+        InputStream in = new FileInputStream("example/presidents.xlsx");
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
 
-    XlList list = bean.list("presidents");
-    list.forEach(System.out::println);
+        XlList list = bean.list("presidents");
+        list.forEach(System.out::println);
 
-    System.out.println(bean.get("name"));
-    System.out.println(bean.bean("stats").get("totalArea"));
-    System.out.println(bean.bean("stats").get("gdp"));
+        System.out.println(bean.get("name"));
+        System.out.println(bean.bean("stats").get("totalArea"));
+        System.out.println(bean.bean("stats").get("gdp"));
 
-    List<President> presidents = bean.listOf("presidents", President.class);
-    System.out.println(presidents);
+        List<President> presidents = bean.listOf("presidents", President.class);
+        System.out.println(presidents);
 
-    Stats stats = bean.beanOf("stats", Stats.class);
-    Stats stats2 = bean.bean("stats").of(Stats.class);
-    System.out.println(stats);
-    System.out.println(stats2);
+        Stats stats = bean.beanOf("stats", Stats.class);
+        Stats stats2 = bean.bean("stats").of(Stats.class);
+        System.out.println(stats);
+        System.out.println(stats2);
 
-    XlBeanWriter writer = new XlBeanWriter();
-    XlBean outBean = new XlBean();
-    outBean.set("presidents", presidents);
-    writer.write(
-        new FileInputStream("example/presidents_blank.xlsx"),
-        outBean,
-        new FileOutputStream("newPresidents.xlsx"));
-  }
+        XlBeanWriter writer = new XlBeanWriter();
+        XlBean outBean = new XlBean();
+        outBean.set("presidents", presidents);
+        writer.write(
+            new FileInputStream("example/presidents_blank.xlsx"),
+            outBean,
+            new FileOutputStream("newPresidents.xlsx"));
+    }
 }

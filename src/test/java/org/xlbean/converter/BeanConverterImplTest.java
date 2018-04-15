@@ -12,16 +12,16 @@ import org.xlbean.XlList;
 
 public class BeanConverterImplTest {
 
-  @Test
-  public void toMap() {
-    BeanConverterImpl converter = new BeanConverterImpl();
+    @Test
+    public void toMap() {
+        BeanConverterImpl converter = new BeanConverterImpl();
 
-    List<String> list = new ArrayList<>();
-    list.add("test");
+        List<String> list = new ArrayList<>();
+        list.add("test");
 
-    XlList ret = (XlList) converter.toMap(list);
-    XlBean bean = ret.get(0);
+        XlList ret = (XlList) converter.toMap(list);
+        XlBean bean = ret.get(0);
 
-    assertThat(bean.get("value"), is("test"));
-  }
+        assertThat(bean.get("value"), is("test"));
+    }
 }
