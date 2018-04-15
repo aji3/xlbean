@@ -196,7 +196,7 @@ public class XlBean extends HashMap<String, Object> {
                 return false;
             } else if (item instanceof XlList && ((XlList) item).size() != 0) {
                 for (XlBean obj : (XlList) item) {
-                    if (!obj.isValuesEmpty()) {
+                    if (obj != null && !obj.isValuesEmpty()) {
                         return false;
                     }
                 }

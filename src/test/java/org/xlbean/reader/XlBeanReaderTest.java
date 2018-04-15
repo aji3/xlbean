@@ -27,6 +27,7 @@ import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.excel.XlWorkbook;
 import org.xlbean.testbean.Country;
+import org.xlbean.testbean.TestBean;
 import org.xlbean.util.FileUtil;
 
 public class XlBeanReaderTest {
@@ -515,5 +516,24 @@ public class XlBeanReaderTest {
 
         assertThat(bean.list("format").get(7).bean("ccc").bean("c1").bean("c2").get("c3"), is("444.0"));
 
+    }
+
+    @Test
+    public void testSidewayList() {
+
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_sidewaylist.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        System.out.println(bean);
+
+        assertThat(bean.list("data").get(0).bean("bean").list("list").get(0).value("val"), is("1.0"));
+        assertThat(bean.list("data").get(0).bean("bean").list("list").get(1).value("val"), is("2.0"));
+        assertThat(bean.list("data").get(1).bean("bean").list("list").get(0), is(nullValue()));
+        assertThat(bean.list("data").get(1).bean("bean").list("list").get(1).value("val"), is("3.0"));
+        
+        bean.listOf("data", TestBean.class);
+        
     }
 }
