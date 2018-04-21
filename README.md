@@ -27,7 +27,7 @@ This library will be useful when you want to **use excel sheet from Java program
     <dependency>
         <groupId>org.xlbean</groupId>
         <artifactId>xlbean</artifactId>
-        <version>0.1.1</version>
+        <version>0.1.6</version>
     </dependency>
 </dependencies>
 ```
@@ -39,7 +39,7 @@ repositories {
      maven { url "https://raw.github.com/aji3/xlbean/mvn-repo/" }
 }
 dependencies {
-    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.0'
+    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.6'
 }
 ```
 
@@ -190,6 +190,25 @@ This feature might be useful for usecase when the loaded value need to be search
 
 Composite key can be used by defining index option of the same name to multiple columns.
 
+#### Option: listToPropKey, listToPropValue - Define multiple single values in a list
+
+To define a single cell value, definition like below is needed:
+
+|| val1, val2, val3 |
+|---|---|
+| val1 | this is a test value |
+| val2 | another test value |
+| val3 | again another test value |
+
+It is not convenient when a lot of variable names are there in a column. 
+
+Instead of above, by using listToPropKey and listToPropValue option, they can be defined in a simple list:
+
+||some_list#key?listToPropKey=true|some_list#value?listToPropValue=true|
+|---|---|---|
+|some_list#~|val1| this is a test value |
+|| val2 | another test value |
+|| val3 | again another test value |
 
 ### Table to Sideway
 
