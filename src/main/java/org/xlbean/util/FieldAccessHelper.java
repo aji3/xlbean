@@ -77,9 +77,6 @@ public class FieldAccessHelper {
             String thisName = name.substring(0, name.indexOf('.'));
             String childName = name.substring(name.indexOf('.') + 1);
             XlBean childBean = toBean(childName, data);
-            if (childBean == null || childBean.isValuesEmpty()) {
-                return null;
-            }
             if (thisName.contains("[")) {
                 String thisListName = name.substring(0, name.indexOf('['));
                 int index = Integer.parseInt(thisName.substring(thisName.indexOf('[') + 1, thisName.length() - 1));
