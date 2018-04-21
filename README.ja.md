@@ -193,6 +193,26 @@ Excelからの読み込み後に繰り返し検索するようなユースケー
 なお、複数カラムに同一index名を付けることで複合キーとすることもできます。
 
 
+#### Option: listToPropKey, listToPropValue - 複数の単一セルをテーブル形式で定義する
+
+単一セルの値を定義するには、通常は以下ように定義する必要があります。
+
+|| val1, val2, val3 |
+|---|---|
+| val1 | this is a test value |
+| val2 | another test value |
+| val3 | again another test value |
+
+このやり方では変数の数が多い場合、定義が煩雑になってしまいます。
+
+上記のやり方の代わりに、 listToPropKeyとlistToPropValueオプションを利用することでリスト形式で定義することができます:
+
+||some_list#key?listToPropKey=true|some_list#value?listToPropValue=true|
+|---|---|---|
+|some_list#~|val1| this is a test value |
+|| val2 | another test value |
+|| val3 | again another test value |
+
 ### 横向きのテーブル
 
 横に向かってデータを並べるテーブルは以下のように定義してください。
