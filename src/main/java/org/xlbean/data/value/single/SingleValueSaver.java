@@ -1,7 +1,9 @@
-package org.xlbean.data;
+package org.xlbean.data.value.single;
 
 import org.xlbean.XlBean;
+import org.xlbean.data.value.ValueSaver;
 import org.xlbean.definition.SingleDefinition;
+import org.xlbean.util.FieldAccessHelper;
 
 public class SingleValueSaver extends ValueSaver<SingleDefinition> {
 
@@ -11,7 +13,7 @@ public class SingleValueSaver extends ValueSaver<SingleDefinition> {
 
     @Override
     public void save(XlBean bean) {
-        String value = getValueFromXlBean(getDefinition().getName(), bean);
+        String value = FieldAccessHelper.getValue(getDefinition().getName(), bean);
         setValue(
             getDefinition(),
             getDefinition().getCell().getRow(),

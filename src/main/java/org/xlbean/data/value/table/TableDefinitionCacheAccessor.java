@@ -1,4 +1,4 @@
-package org.xlbean.data;
+package org.xlbean.data.value.table;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,5 +86,31 @@ public class TableDefinitionCacheAccessor {
             }
         }
         return indexKeysMap;
+    }
+
+    private boolean isKeyValueOptionInitialized = false;
+    private SingleDefinition listToPropKeyOptionDefinition;
+    private SingleDefinition listToPropValueOptionDefinition;
+
+    public boolean hasListToPropOption() {
+        if (!isKeyValueOptionInitialized) {
+            for (SingleDefinition attr : definition.getAttributes().values()) {
+                if (Boolean.parseBoolean(attr.getOptions().get("listToPropKey"))) {
+                    listToPropKeyOptionDefinition = attr;
+                } else if (Boolean.parseBoolean(attr.getOptions().get("listToPropValue"))) {
+                    listToPropValueOptionDefinition = attr;
+                }
+            }
+            isKeyValueOptionInitialized = true;
+        }
+        return listToPropKeyOptionDefinition != null && listToPropValueOptionDefinition != null;
+    }
+
+    public SingleDefinition getListToPropKeyOptionDefinition() {
+        return listToPropKeyOptionDefinition;
+    }
+
+    public SingleDefinition getListToPropValueOptionDefinition() {
+        return listToPropValueOptionDefinition;
     }
 }

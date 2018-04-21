@@ -1,13 +1,16 @@
-package org.xlbean.data;
+package org.xlbean.data.value.table;
 
 import java.util.List;
 import java.util.Map.Entry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlbean.XlBean;
 import org.xlbean.XlList;
+import org.xlbean.data.value.ValueLoader;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
+import org.xlbean.util.FieldAccessHelper;
 import org.xlbean.util.XlBeanFactory;
 
 /**
@@ -35,13 +38,17 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
             for (Entry<String, List<String>> entry : definitionCache.getIndexKeysMap().entrySet()) {
                 table.addIndex(entry.getKey(), entry.getValue());
             }
-            convertDottedStringToBean(definition.getName(), table, bean);
+            FieldAccessHelper.setValue(definition.getName(), table, bean);
         }
-        List<SingleDefinition> columns = definitionCache.getColumns();
+
         int index = 0;
+        // Loop over lines of table in excel sheet
         while (true) {
+            // Create XlBean instance
             XlBean dataRow = XlBeanFactory.getInstance().createBean();
-            for (SingleDefinition attribute : columns) {
+
+            // Iterate definitions to read out value of cells in the row
+            for (SingleDefinition attribute : definitionCache.getColumns()) {
                 String value = null;
                 if (definition.isDirectionDown()) {
                     value = getValue(
@@ -54,11 +61,15 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
                         attribute.getCell().getRow(),
                         definition.getStartCell().getColumn() + index);
                 }
-                convertDottedStringToBean(attribute.getName(), value, dataRow);
+                FieldAccessHelper.setValue(attribute.getName(), value, dataRow);
             }
             if (log.isTraceEnabled()) {
                 log.trace(dataRow.toString());
             }
+
+            // Check terminate condition
+            // if it does not fulfill the condition, add created bean to table instance.
+            // if it fulfill the condition, throw away dataRow and break from the loop.
             if (checkTerminate(table, dataRow, index)) {
                 break;
             } else {
@@ -69,6 +80,27 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
                 }
             }
             index++;
+        }
+
+        processIsKeyIsValueOption(bean);
+    }
+
+    private void processIsKeyIsValueOption(XlBean rootBean) {
+        if (!definitionCache.hasListToPropOption()) {
+            return;
+        }
+        SingleDefinition key = definitionCache.getListToPropKeyOptionDefinition();
+        SingleDefinition value = definitionCache.getListToPropValueOptionDefinition();
+        String tableName = getDefinition().getName();
+        XlList table = FieldAccessHelper.getValue(tableName, rootBean);
+        XlBean targetBean = rootBean;
+        if (tableName.contains(".")) {
+            targetBean = FieldAccessHelper.getValue(tableName.substring(0, tableName.lastIndexOf('.')), rootBean);
+        }
+        for (XlBean row : table) {
+            String keyObj = FieldAccessHelper.getValue(key.getName(), row);
+            String valueObj = FieldAccessHelper.getValue(value.getName(), row);
+            FieldAccessHelper.setValue(keyObj, valueObj, targetBean);
         }
     }
 
