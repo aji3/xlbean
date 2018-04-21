@@ -1,11 +1,13 @@
-package org.xlbean.data;
+package org.xlbean.data.value.table;
 
 import java.util.List;
 
 import org.xlbean.XlBean;
 import org.xlbean.XlList;
+import org.xlbean.data.value.ValueSaver;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
+import org.xlbean.util.FieldAccessHelper;
 
 public class TableValueSaver extends ValueSaver<TableDefinition> {
 
@@ -19,13 +21,13 @@ public class TableValueSaver extends ValueSaver<TableDefinition> {
     @Override
     public void save(XlBean bean) {
         TableDefinition definition = getDefinition();
-        XlList table = getValueFromXlBean(definition.getName(), bean);
+        XlList table = FieldAccessHelper.getValue(definition.getName(), bean);
 
         List<SingleDefinition> columns = definitionCache.getColumns();
         int index = 0;
         for (XlBean row : table) {
             for (SingleDefinition attribute : columns) {
-                String value = getValueFromXlBean(attribute.getName(), row);
+                String value = FieldAccessHelper.getValue(attribute.getName(), row);
                 if (definition.isDirectionDown()) {
                     setValue(
                         attribute,

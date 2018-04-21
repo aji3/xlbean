@@ -1,4 +1,4 @@
-package org.xlbean.data;
+package org.xlbean.data.value;
 
 import org.xlbean.XlBean;
 import org.xlbean.definition.Definition;
@@ -28,25 +28,6 @@ public abstract class ValueSaver<T extends Definition> {
             definition.getSheet().setCellValue(row, column, value);
         } else {
             definition.getSheet().setCellValue(row, column, value, ValueType.valueOf(type));
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <S> S getValueFromXlBean(String name, XlBean bean) {
-        if (bean == null) {
-            return null;
-        }
-        if (name.contains(".")) {
-            Object value = bean.get(name.substring(0, name.indexOf('.')));
-            if (value instanceof XlBean) {
-                return (S) getValueFromXlBean(
-                    name.substring(name.indexOf('.') + 1, name.length()),
-                    (XlBean) value);
-            } else {
-                return null;
-            }
-        } else {
-            return (S) bean.get(name);
         }
     }
 }
