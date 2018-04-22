@@ -6,6 +6,9 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlbean.XlBean;
+import org.xlbean.data.value.ValueSaver;
+import org.xlbean.data.value.single.SingleValueSaver;
+import org.xlbean.data.value.table.TableValueSaver;
 import org.xlbean.definition.Definition;
 import org.xlbean.definition.DefinitionRepository;
 import org.xlbean.definition.SingleDefinition;
@@ -15,33 +18,36 @@ import org.xlbean.exception.XlBeanException;
 
 public class ExcelDataSaver {
 
-  private static Logger log = LoggerFactory.getLogger(ExcelDataSaver.class);
+    private static Logger log = LoggerFactory.getLogger(ExcelDataSaver.class);
 
-  public void save(
-      XlBean bean, DefinitionRepository definitions, XlWorkbook workbook, OutputStream out) {
-    definitions.validate(workbook);
+    public void save(
+            XlBean bean, DefinitionRepository definitions, XlWorkbook workbook, OutputStream out) {
+        definitions.validate(workbook);
 
-    definitions.forEach(
-        definition -> {
-          long now = System.currentTimeMillis();
-          log.debug("Start saving data: {}", definition.getName());
-          getValueSaver(definition).save(bean);
-          log.info(
-              "Saved data: {} [{} msec]", definition.getName(), (System.currentTimeMillis() - now));
-        });
+        definitions.forEach(
+            definition ->
+            {
+                long now = System.currentTimeMillis();
+                log.debug("Start saving data: {}", definition.getName());
+                getValueSaver(definition).save(bean);
+                log.info(
+                    "Saved data: {} [{} msec]",
+                    definition.getName(),
+                    (System.currentTimeMillis() - now));
+            });
 
-    try {
-      workbook.write(out);
-    } catch (IOException e) {
-      throw new XlBeanException(e);
+        try {
+            workbook.write(out);
+        } catch (IOException e) {
+            throw new XlBeanException(e);
+        }
     }
-  }
 
-  protected ValueSaver<?> getValueSaver(Definition definition) {
-    if (definition instanceof SingleDefinition) {
-      return new SingleValueSaver((SingleDefinition) definition);
-    } else {
-      return new TableValueSaver((TableDefinition) definition);
+    protected ValueSaver<?> getValueSaver(Definition definition) {
+        if (definition instanceof SingleDefinition) {
+            return new SingleValueSaver((SingleDefinition) definition);
+        } else {
+            return new TableValueSaver((TableDefinition) definition);
+        }
     }
-  }
 }

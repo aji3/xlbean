@@ -25,71 +25,75 @@ import org.xlbean.util.FileUtil;
  */
 public class XlBeanReader {
 
-  private DefinitionLoader<?> definitionLoader;
-  private ExcelDataLoader dataLoader;
+    private DefinitionLoader<?> definitionLoader;
+    private ExcelDataLoader dataLoader;
 
-  public XlBeanReader() {
-    this(null, null);
-  }
-
-  public XlBeanReader(DefinitionLoader<?> definitionLoader) {
-    this(definitionLoader, null);
-  }
-
-  public XlBeanReader(DefinitionLoader<?> definitionLoader, ExcelDataLoader dataLoader) {
-    if (definitionLoader == null) {
-      this.definitionLoader = new ExcelR1C1DefinitionLoader();
-    } else {
-      this.definitionLoader = definitionLoader;
+    public XlBeanReader() {
+        this(null, null);
     }
-    if (dataLoader == null) {
-      this.dataLoader = new ExcelDataLoader();
-    } else {
-      this.dataLoader = dataLoader;
+
+    public XlBeanReader(DefinitionLoader<?> definitionLoader) {
+        this(definitionLoader, null);
     }
-  }
 
-  /**
-   * Read definition and data from given {@code in} which is a {@link InputStream} of excel file.
-   *
-   * <p>{@code in} is copied to on-memory stream before opening the file, so that the file can be
-   * read even if it is opened.
-   *
-   * @param in
-   * @return
-   */
-  public XlBean read(InputStream in) {
-
-    try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
-
-      return read(wb, wb);
-
-    } catch (InvalidFormatException | EncryptedDocumentException | IOException e) {
-      throw new RuntimeException(e);
+    public XlBeanReader(DefinitionLoader<?> definitionLoader, ExcelDataLoader dataLoader) {
+        if (definitionLoader == null) {
+            this.definitionLoader = new ExcelR1C1DefinitionLoader();
+        } else {
+            this.definitionLoader = definitionLoader;
+        }
+        if (dataLoader == null) {
+            this.dataLoader = new ExcelDataLoader();
+        } else {
+            this.dataLoader = dataLoader;
+        }
     }
-  }
 
-  /**
-   * Read definition and data from given {@code excelFile} which is a {@link File} of excel file.
-   *
-   * <p>Excel file is copied to on-memory stream before opening the file, so that the file can be
-   * read even if it is opened.
-   *
-   * @param excelFile
-   * @return
-   */
-  public XlBean read(File excelFile) {
-    // Copy excel file to on-memory stream to make it readable even if the
-    // file is opened.
-    return read(FileUtil.copyToInputStream(excelFile));
-  }
+    /**
+     * Read definition and data from given {@code in} which is a {@link InputStream}
+     * of excel file.
+     *
+     * <p>
+     * {@code in} is copied to on-memory stream before opening the file, so that the
+     * file can be read even if it is opened.
+     *
+     * @param in
+     * @return
+     */
+    public XlBean read(InputStream in) {
 
-  public XlBean read(Object definitionSource, Workbook dataSource) {
+        try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
 
-    definitionLoader.initialize(definitionSource);
-    DefinitionRepository definitions = definitionLoader.load();
+            return read(wb, wb);
 
-    XlWorkbook workbook = XlWorkbook.wrap(dataSource);
-    return this.dataLoader.load(definitions, workbook);
-  }
+        } catch (InvalidFormatException | EncryptedDocumentException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Read definition and data from given {@code excelFile} which is a {@link File}
+     * of excel file.
+     *
+     * <p>
+     * Excel file is copied to on-memory stream before opening the file, so that the
+     * file can be read even if it is opened.
+     *
+     * @param excelFile
+     * @return
+     */
+    public XlBean read(File excelFile) {
+        // Copy excel file to on-memory stream to make it readable even if the
+        // file is opened.
+        return read(FileUtil.copyToInputStream(excelFile));
+    }
+
+    public XlBean read(Object definitionSource, Workbook dataSource) {
+
+        definitionLoader.initialize(definitionSource);
+        DefinitionRepository definitions = definitionLoader.load();
+
+        XlWorkbook workbook = XlWorkbook.wrap(dataSource);
+        return this.dataLoader.load(definitions, workbook);
+    }
 }
