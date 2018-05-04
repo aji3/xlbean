@@ -27,7 +27,7 @@ Excelシート上のデータのJavaプログラムからの読み書きを、**
     <dependency>
         <groupId>org.xlbean</groupId>
         <artifactId>xlbean</artifactId>
-        <version>0.1.7</version>
+        <version>0.1.7.1</version>
     </dependency>
 </dependencies>
 ```
@@ -38,7 +38,7 @@ repositories {
      jcenter()
 }
 dependencies {
-    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.7'
+    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.7.1'
 }
 ```
 
