@@ -45,7 +45,7 @@ public class ExcelCommentDefinitionLoader extends ExcelR1C1DefinitionLoader {
     }
 
     protected boolean isProcessingTargetSheet(XlSheet sheet) {
-        return "####".equals(sheet.getCellComment(0, 0));
+        return DefinitionConstants.TARGET_SHEET_MARK.equals(sheet.getCellComment(0, 0));
     }
 
     @Override

@@ -26,6 +26,20 @@ public class BeanDefinitionLoader extends DefinitionLoader<Object> {
 
     private BeanConverter converter = BeanConverterFactory.getInstance().createBeanConverter();
 
+    /**
+     * Number of iterations for list in list. (e.g. if value of this field is 2,
+     * then list#anotherList[0].aaa, list#anotherList[1] will be defined.)
+     */
+    private int numberOfIterations;
+
+    public BeanDefinitionLoader() {
+        this(1);
+    }
+
+    public BeanDefinitionLoader(int numberOfIterations) {
+        this.numberOfIterations = numberOfIterations;
+    }
+
     @Override
     public void initialize(Object definitionSource) {
         setDefinitionSource(definitionSource);
@@ -122,6 +136,7 @@ public class BeanDefinitionLoader extends DefinitionLoader<Object> {
         SingleDefinition single = new SingleDefinition();
         single.setName(context.getCurrentName());
         single.setOriginalKeyString(context.getCurrentName());
+        single.getOptions().put("type", "string");
         definitions.addDefinition(single);
     }
 
@@ -139,7 +154,40 @@ public class BeanDefinitionLoader extends DefinitionLoader<Object> {
             DefinitionRepository attributes = loadInternal(bean, new BeanDefinitionLoaderContext());
             attributesMap.putAll(attributes.toMap());
         }
-        attributesMap.values().forEach(it -> table.addAttribute((SingleDefinition) it));
+        attributesMap.values().forEach(it -> {
+            if (it instanceof SingleDefinition) {
+                table.addAttribute((SingleDefinition) it);
+            } else {
+                convertInternalTableDefinitionToNestedSingleDefinition((TableDefinition) it, table);
+            }
+        });
+    }
+
+    /**
+     * 
+     * 
+     * @param internalTableDefinition
+     * @param table
+     */
+    private void convertInternalTableDefinitionToNestedSingleDefinition(
+            TableDefinition internalTableDefinition,
+            TableDefinition table) {
+        internalTableDefinition.getAttributes().values().forEach(
+            item ->
+            {
+                for (int i = 0; i < numberOfIterations; i++) {
+                    SingleDefinition single = new SingleDefinition();
+                    String newName = String.format(
+                        "%s[%d].%s",
+                        internalTableDefinition.getName(),
+                        i,
+                        item.getOriginalKeyString());
+                    single.setName(newName);
+                    single.setOriginalKeyString(newName);
+                    single.getOptions().put("type", "string");
+                    table.addAttribute(single);
+                }
+            });
     }
 
     /**
