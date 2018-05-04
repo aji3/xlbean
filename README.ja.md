@@ -27,7 +27,7 @@ Excelシート上のデータのJavaプログラムからの読み書きを、**
     <dependency>
         <groupId>org.xlbean</groupId>
         <artifactId>xlbean</artifactId>
-        <version>0.1.6</version>
+        <version>0.1.7</version>
     </dependency>
 </dependencies>
 ```
@@ -38,7 +38,7 @@ repositories {
      jcenter()
 }
 dependencies {
-    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.6'
+    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.7'
 }
 ```
 
@@ -192,7 +192,7 @@ Excelからの読み込み後に繰り返し検索するようなユースケー
 なお、複数カラムに同一index名を付けることで複合キーとすることもできます。
 
 
-#### Option: listToPropKey, listToPropValue - 複数の単一セルをテーブル形式で定義する
+#### Option: listToProp - 複数の単一セルをテーブル形式で定義する
 
 単一セルの値を定義するには、通常は以下ように定義する必要があります。
 
@@ -204,9 +204,9 @@ Excelからの読み込み後に繰り返し検索するようなユースケー
 
 このやり方では変数の数が多い場合、定義が煩雑になってしまいます。
 
-上記のやり方の代わりに、 listToPropKeyとlistToPropValueオプションを利用することでリスト形式で定義することができます:
+上記のやり方の代わりに、 listToProp=keyとlistToProp=valueオプションを利用することでリスト形式で定義することができます:
 
-||some_list#key?listToPropKey=true|some_list#value?listToPropValue=true|
+||some_list#key?listToProp=key|some_list#value?listToProp=value|
 |---|---|---|
 |some_list#~|val1| this is a test value |
 || val2 | another test value |
