@@ -7,7 +7,7 @@ xlbean
 
 Excelシート上のデータのJavaプログラムからの読み書きを、**Excelシート上にマッピング定義を記載**することで実現するユーティリティ。
 
-**Excelシートを多少よごしてもよいから、とにかく早く・シンプルにJavaプログラムから使いたい**という用途におすすめです。
+**とにかく早く・シンプルにExcelに定義した値をJavaプログラムから使いたい**という用途におすすめです。
 
 ## 始め方
 
@@ -20,14 +20,14 @@ Excelシート上のデータのJavaプログラムからの読み書きを、**
 <repositories>
     <repository>
         <id>xlbean</id>
-        <url>https://raw.github.com/aji3/xlbean/mvn-repo/</url>
+        <url>http://jcenter.bintray.com</url>
     </repository>
 </repositories>
 <dependencies>
     <dependency>
         <groupId>org.xlbean</groupId>
         <artifactId>xlbean</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.6</version>
     </dependency>
 </dependencies>
 ```
@@ -35,11 +35,10 @@ Excelシート上のデータのJavaプログラムからの読み書きを、**
 **Gradleの場合**
 ```
 repositories {
-     mavenCentral()
-     maven { url "https://raw.github.com/aji3/xlbean/mvn-repo/" }
+     jcenter()
 }
 dependencies {
-    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.0'
+    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.6'
 }
 ```
 
