@@ -11,6 +11,7 @@ import org.xlbean.excel.XlSheet;
  * @author Kazuya Tanikawa
  */
 public abstract class Definition {
+
     private String originalKeyString;
     private String name;
     private Map<String, String> options = new HashMap<>();

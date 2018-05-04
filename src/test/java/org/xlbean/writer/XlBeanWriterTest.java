@@ -1,5 +1,9 @@
 package org.xlbean.writer;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,6 +60,31 @@ public class XlBeanWriterTest {
             null,
             bean,
             new FileOutputStream("build/XlBeanWriterTest/test_with_bean_definition.xlsx"));
+    }
+
+    @Test
+    public void test_write_with_bean_definition_listinlist() throws IOException {
+        InputStream in = XlBeanWriterTest.class.getResourceAsStream("TestBook_BeanDefinitionLoader.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean expectedBean = reader.read(in);
+
+        System.out.println(expectedBean);
+        String expected = expectedBean.toString();
+
+        XlBeanWriter writer = new XlBeanWriter(new BeanDefinitionLoader());
+        writer.write(
+            expectedBean,
+            null,
+            expectedBean,
+            new FileOutputStream("build/XlBeanWriterTest/test_write_with_bean_definition_listinlist.xlsx"));
+
+        XlBean beanFromWriter = reader.read(
+            new File("build/XlBeanWriterTest/test_write_with_bean_definition_listinlist.xlsx"));
+
+        System.out.println(beanFromWriter);
+
+        assertThat(beanFromWriter.toString(), is(expected));
     }
 
     @Test

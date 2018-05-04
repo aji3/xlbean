@@ -95,9 +95,9 @@ public class TableDefinitionCacheAccessor {
     public boolean hasListToPropOption() {
         if (!isKeyValueOptionInitialized) {
             for (SingleDefinition attr : definition.getAttributes().values()) {
-                if (Boolean.parseBoolean(attr.getOptions().get("listToPropKey"))) {
+                if ("key".equals(attr.getOptions().get("listToProp"))) {
                     listToPropKeyOptionDefinition = attr;
-                } else if (Boolean.parseBoolean(attr.getOptions().get("listToPropValue"))) {
+                } else if ("value".equals(attr.getOptions().get("listToProp"))) {
                     listToPropValueOptionDefinition = attr;
                 }
             }
