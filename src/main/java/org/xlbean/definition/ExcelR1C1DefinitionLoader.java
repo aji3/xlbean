@@ -3,6 +3,7 @@ package org.xlbean.definition;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +67,7 @@ public class ExcelR1C1DefinitionLoader extends DefinitionLoader<XlWorkbook> {
      * @return
      */
     protected boolean isProcessingTargetSheet(XlSheet sheet) {
-        return "####".equals(sheet.getCellValue(0, 0));
+        return DefinitionConstants.TARGET_SHEET_MARK.equals(sheet.getCellValue(0, 0));
     }
 
     protected DefinitionResolver getDefinitionResolver(String value) {
