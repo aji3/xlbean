@@ -17,7 +17,7 @@ apply plugin: 'com.jfrog.bintray'
 
 group = 'org.xlbean'
 archivesBaseName = 'xlbean'
-version = '0.1.7'
+version = '0.1.7.1'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
