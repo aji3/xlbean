@@ -1,6 +1,9 @@
 org.xlbean
 org.xlbean.converter
 org.xlbean.data
+org.xlbean.data.value
+org.xlbean.data.value.single
+org.xlbean.data.value.table
 org.xlbean.definition
 org.xlbean.excel
 org.xlbean.exception

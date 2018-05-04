@@ -27,7 +27,7 @@ This library will be useful when you want to **use excel sheet from Java program
     <dependency>
         <groupId>org.xlbean</groupId>
         <artifactId>xlbean</artifactId>
-        <version>0.1.6</version>
+        <version>0.1.7</version>
     </dependency>
 </dependencies>
 ```
@@ -189,7 +189,7 @@ This feature might be useful for usecase when the loaded value need to be search
 
 Composite key can be used by defining index option of the same name to multiple columns.
 
-#### Option: listToPropKey, listToPropValue - Define multiple single values in a list
+#### Option: listToProp - Define multiple single values in a list
 
 To define a single cell value, definition like below is needed:
 
@@ -201,9 +201,9 @@ To define a single cell value, definition like below is needed:
 
 It is not convenient when a lot of variable names are there in a column. 
 
-Instead of above, by using listToPropKey and listToPropValue option, they can be defined in a simple list:
+Instead of above, by using listToProp=key and listToProp=value option, they can be defined in a simple list:
 
-||some_list#key?listToPropKey=true|some_list#value?listToPropValue=true|
+||some_list#key?listToProp=key|some_list#value?listToProp=value|
 |---|---|---|
 |some_list#~|val1| this is a test value |
 || val2 | another test value |
