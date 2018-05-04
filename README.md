@@ -38,7 +38,7 @@ repositories {
      jcenter()
 }
 dependencies {
-    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.6'
+    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.7'
 }
 ```
 
