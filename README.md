@@ -7,7 +7,7 @@ xlbean
 
 Java utility to read/write data defined in excel sheet **by defining mapping definition on excel sheet itself.**
 
-This library will be useful when you want to **use excel sheet from Java program rapidly and simply, instead of bringing a bit of mess in excel sheet.**
+This library will be useful when you want to **use excel sheet from Java program rapidly and simply.**
 
 ## Getting Started
 
@@ -20,7 +20,7 @@ This library will be useful when you want to **use excel sheet from Java program
 <repositories>
     <repository>
         <id>xlbean</id>
-        <url>https://raw.github.com/aji3/xlbean/mvn-repo/</url>
+        <url>http://jcenter.bintray.com</url>
     </repository>
 </repositories>
 <dependencies>
@@ -35,8 +35,7 @@ This library will be useful when you want to **use excel sheet from Java program
 **For Gradle**
 ```
 repositories {
-     mavenCentral()
-     maven { url "https://raw.github.com/aji3/xlbean/mvn-repo/" }
+     jcenter()
 }
 dependencies {
     compile group: 'org.xlbean', name: 'xlbean', version:'0.1.6'
