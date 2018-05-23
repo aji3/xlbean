@@ -27,7 +27,7 @@ This library will be useful when you want to **use excel sheet from Java program
     <dependency>
         <groupId>org.xlbean</groupId>
         <artifactId>xlbean</artifactId>
-        <version>0.1.7</version>
+        <version>0.1.8</version>
     </dependency>
 </dependencies>
 ```
@@ -38,7 +38,7 @@ repositories {
      jcenter()
 }
 dependencies {
-    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.7'
+    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.8'
 }
 ```
 
