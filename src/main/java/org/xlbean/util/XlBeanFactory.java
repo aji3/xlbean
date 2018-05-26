@@ -1,7 +1,6 @@
 package org.xlbean.util;
 
 import java.util.List;
-import java.util.Map;
 
 import org.xlbean.XlBean;
 import org.xlbean.XlList;
@@ -18,9 +17,8 @@ public class XlBeanFactory {
         XlBeanFactory.INSTANCE = instance;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends Map<String, Object>> T createBean() {
-        return (T) new XlBean();
+    public XlBean createBean() {
+        return new XlBean();
     }
 
     @SuppressWarnings("unchecked")

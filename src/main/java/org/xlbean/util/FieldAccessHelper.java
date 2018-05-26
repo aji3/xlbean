@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.xlbean.XlBean;
-
 /**
  * Utility class to handle dotted fields. (e.g. person.father.name)
  * 
@@ -18,6 +16,8 @@ public class FieldAccessHelper {
 
     private static final Pattern INDEX = Pattern.compile("\\[([0-9]+)\\]");
 
+    private static FieldAccessHelper INSTANCE = new FieldAccessHelper();
+
     /**
      * Parse {@code dottedFieldName}, create new XlBean object if necessary, set
      * {@code data} to {@code bean}.
@@ -27,6 +27,30 @@ public class FieldAccessHelper {
      * @param bean
      */
     public static void setValue(String dottedFieldName, Object data, Map<String, Object> bean) {
+        INSTANCE.set(dottedFieldName, data, bean);
+    }
+
+    /**
+     * Parse dotted fields, scan {@code bean} based on the parsed result and return
+     * value in the descendant object.
+     * 
+     * @param dottedFieldName
+     *            Dotted fields (e.g. person.father.name)
+     * @param bean
+     *            Map object with children of either Map, List or String
+     * @return value in {@code bean}'s descendant object
+     * 
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T getValue(String dottedFieldName, Map<String, Object> bean) {
+        return INSTANCE.get(dottedFieldName, bean);
+    }
+
+    public static void setInstance(FieldAccessHelper helper) {
+        INSTANCE = helper;
+    }
+
+    public void set(String dottedFieldName, Object data, Map<String, Object> bean) {
         if (data == null) {
             return;
         }
@@ -42,7 +66,7 @@ public class FieldAccessHelper {
      * @param dottedFieldName
      * @return
      */
-    private static FieldWrapper parseDottedFieldName(String dottedFieldName) {
+    private FieldWrapper parseDottedFieldName(String dottedFieldName) {
         String[] names = dottedFieldName.split("\\.");
 
         FieldWrapper rootField = null;
@@ -61,24 +85,13 @@ public class FieldAccessHelper {
         return rootField;
     }
 
-    /**
-     * Parse dotted fields, scan {@code bean} based on the parsed result and return
-     * value in the descendant object.
-     * 
-     * @param dottedFieldName
-     *            Dotted fields (e.g. person.father.name)
-     * @param bean
-     *            Map object with children of either Map, List or String
-     * @return value in {@code bean}'s descendant object
-     * 
-     */
     @SuppressWarnings("unchecked")
-    public static <T> T getValue(String dottedFieldName, Map<?, ?> bean) {
+    public <T> T get(String dottedFieldName, Map<String, Object> bean) {
         if (bean == null || dottedFieldName == null) {
             return null;
         }
         FieldWrapper field = parseDottedFieldName(dottedFieldName);
-        field.linkTarget((Map<String, Object>) bean);
+        field.linkTarget(bean);
         return (T) field.getLeaf().getValue();
     }
 
@@ -107,7 +120,7 @@ public class FieldAccessHelper {
      * @author tanikawa
      *
      */
-    private static class FieldWrapper {
+    private class FieldWrapper {
         private String name;
         private List<ListWrapper> lists = new ArrayList<>();
         private FieldWrapper child;
@@ -185,7 +198,7 @@ public class FieldAccessHelper {
                 newValue = child.buildObject(newValue);
             }
             if (target == null) {
-                target = XlBeanFactory.getInstance().createBean();
+                target = createMap();
             }
             for (int i = lists.size() - 1; i >= 0; i--) {
                 ListWrapper list = lists.get(i);
@@ -196,9 +209,9 @@ public class FieldAccessHelper {
         }
     }
 
-    private static class ListWrapper {
+    private class ListWrapper {
         private int index;
-        private List<Object> target;
+        private List<?> target;
 
         public ListWrapper(int index) {
             this.index = index;
@@ -216,15 +229,12 @@ public class FieldAccessHelper {
             }
         }
 
+        @SuppressWarnings("unchecked")
         public Object buildObject(Object value) {
             if (target == null) {
-                if (value instanceof XlBean) {
-                    target = XlBeanFactory.getInstance().createList();
-                } else {
-                    target = new ArrayList<Object>();
-                }
+                target = createList();
             }
-            setFillNull(target, index, value);
+            setFillNull((List<Object>) target, index, value);
             return target;
         }
 
@@ -235,7 +245,14 @@ public class FieldAccessHelper {
                 return null;
             }
         }
+    }
 
+    protected Map<String, Object> createMap() {
+        return XlBeanFactory.getInstance().createBean();
+    }
+
+    protected List<?> createList() {
+        return XlBeanFactory.getInstance().createList();
     }
 
 }
