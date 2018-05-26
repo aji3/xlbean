@@ -21,29 +21,29 @@ public class XlListTest {
 
         System.out.println(bean);
 
-        XlList cities = bean.list("addresses").aggregate("streets", "prefecture", "city");
+        XlList cities = bean.xlist("addresses").aggregate("streets", "prefecture", "city");
         XlList prefectures = cities.aggregate("cities", "prefecture");
 
         System.out.println(prefectures);
 
         assertThat(prefectures.get(0).value("prefecture"), is("Tokyo-to"));
 
-        assertThat(prefectures.get(0).list("cities").get(0).value("city"), is("Chiyoda-ku"));
-        assertThat(prefectures.get(0).list("cities").get(1).value("city"), is("Chuo-ku"));
+        assertThat(prefectures.get(0).xlist("cities").get(0).value("city"), is("Chiyoda-ku"));
+        assertThat(prefectures.get(0).xlist("cities").get(1).value("city"), is("Chuo-ku"));
 
         assertThat(
-            prefectures.get(0).list("cities").get(0).list("streets").get(0).value("street"),
+            prefectures.get(0).xlist("cities").get(0).xlist("streets").get(0).value("street"),
             is("Iidabashi 1-1"));
         assertThat(
-            prefectures.get(0).list("cities").get(0).list("streets").get(8).value("street"),
+            prefectures.get(0).xlist("cities").get(0).xlist("streets").get(8).value("street"),
             is("Iidabashi 3-4"));
 
         assertThat(prefectures.get(1).value("prefecture"), is("Kanagawa-ken"));
 
-        assertThat(prefectures.get(1).list("cities").get(0).value("city"), is("Kawasaki-shi"));
+        assertThat(prefectures.get(1).xlist("cities").get(0).value("city"), is("Kawasaki-shi"));
 
         assertThat(
-            prefectures.get(1).list("cities").get(0).list("streets").get(0).value("street"),
+            prefectures.get(1).xlist("cities").get(0).xlist("streets").get(0).value("street"),
             is("Asano-cho 1-1"));
     }
 
@@ -56,29 +56,29 @@ public class XlListTest {
 
         System.out.println(bean);
 
-        XlList cities = bean.list("addressesIndexed").aggregate("streets", "prefecture", "city");
+        XlList cities = bean.xlist("addressesIndexed").aggregate("streets", "prefecture", "city");
         XlList prefectures = cities.aggregate("cities", "prefecture");
 
         System.out.println(prefectures);
 
         assertThat(prefectures.get(0).value("prefecture"), is("Tokyo-to"));
 
-        assertThat(prefectures.get(0).list("cities").get(0).value("city"), is("Chiyoda-ku"));
-        assertThat(prefectures.get(0).list("cities").get(1).value("city"), is("Chuo-ku"));
+        assertThat(prefectures.get(0).xlist("cities").get(0).value("city"), is("Chiyoda-ku"));
+        assertThat(prefectures.get(0).xlist("cities").get(1).value("city"), is("Chuo-ku"));
 
         assertThat(
-            prefectures.get(0).list("cities").get(0).list("streets").get(0).value("street"),
+            prefectures.get(0).xlist("cities").get(0).xlist("streets").get(0).value("street"),
             is("Iidabashi 1-1"));
         assertThat(
-            prefectures.get(0).list("cities").get(0).list("streets").get(8).value("street"),
+            prefectures.get(0).xlist("cities").get(0).xlist("streets").get(8).value("street"),
             is("Iidabashi 3-4"));
 
         assertThat(prefectures.get(1).value("prefecture"), is("Kanagawa-ken"));
 
-        assertThat(prefectures.get(1).list("cities").get(0).value("city"), is("Kawasaki-shi"));
+        assertThat(prefectures.get(1).xlist("cities").get(0).value("city"), is("Kawasaki-shi"));
 
         assertThat(
-            prefectures.get(1).list("cities").get(0).list("streets").get(0).value("street"),
+            prefectures.get(1).xlist("cities").get(0).xlist("streets").get(0).value("street"),
             is("Asano-cho 1-1"));
     }
 
@@ -91,7 +91,7 @@ public class XlListTest {
         XlBean bean = reader.read(in);
 
         XlBean found = bean
-            .list("addresses")
+            .xlist("addresses")
             .find(
                 new HashMap<String, String>() {
                     {
@@ -111,7 +111,7 @@ public class XlListTest {
 
         @SuppressWarnings("serial")
         XlList list = bean
-            .list("addresses")
+            .xlist("addresses")
             .findAll(
                 new HashMap<String, String>() {
                     {
@@ -131,7 +131,7 @@ public class XlListTest {
 
         @SuppressWarnings("serial")
         XlList list = bean
-            .list("addresses")
+            .xlist("addresses")
             .findAll(
                 new HashMap<String, String>() {
                     {
@@ -149,7 +149,7 @@ public class XlListTest {
         XlBeanReader reader = new XlBeanReader();
         XlBean bean = reader.read(in);
 
-        XlList list = bean.list("addresses").findAll(null);
+        XlList list = bean.xlist("addresses").findAll(null);
 
         assertThat(list.size(), is(0));
     }
@@ -161,7 +161,7 @@ public class XlListTest {
         XlBeanReader reader = new XlBeanReader();
         XlBean bean = reader.read(in);
 
-        XlBean address = bean.list("addresses").find(3);
+        XlBean address = bean.xlist("addresses").find(3);
 
         assertThat(address.value("street"), is("Iidabashi 2-1"));
     }
@@ -175,7 +175,7 @@ public class XlListTest {
         XlBean bean = reader.read(in);
 
         XlBean address = bean
-            .list("addressesMultiIndexed")
+            .xlist("addressesMultiIndexed")
             .findByIndex(
                 new HashMap<String, String>() {
                     {
@@ -187,7 +187,7 @@ public class XlListTest {
         assertThat(address.value("street"), is("Iidabashi 1-1"));
 
         address = bean
-            .list("addressesMultiIndexed")
+            .xlist("addressesMultiIndexed")
             .findByIndex(
                 new HashMap<String, String>() {
                     {
@@ -208,7 +208,7 @@ public class XlListTest {
 
         @SuppressWarnings("serial")
         XlBean address = bean
-            .list("addressesMultiIndexed")
+            .xlist("addressesMultiIndexed")
             .findByIndex(
                 new HashMap<String, String>() {
                     {
@@ -229,7 +229,7 @@ public class XlListTest {
 
         @SuppressWarnings("serial")
         XlBean address = bean
-            .list("addressesMultiIndexed")
+            .xlist("addressesMultiIndexed")
             .findByIndex(
                 new HashMap<String, String>() {
                     {
@@ -247,7 +247,7 @@ public class XlListTest {
         XlBeanReader reader = new XlBeanReader();
         XlBean bean = reader.read(in);
 
-        XlBean address = bean.list("addresses").find(300);
+        XlBean address = bean.xlist("addresses").find(300);
 
         assertThat(address, is(nullValue()));
     }
@@ -259,7 +259,7 @@ public class XlListTest {
         XlBeanReader reader = new XlBeanReader();
         XlBean bean = reader.read(in);
 
-        XlBean streets = bean.list("addresses").toMap("street");
+        XlBean streets = bean.xlist("addresses").toMap("street");
 
         assertThat(streets.bean("Tsukishima 1-3").value("prefecture"), is("Tokyo-to"));
     }

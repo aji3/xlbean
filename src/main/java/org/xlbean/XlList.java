@@ -287,21 +287,4 @@ public class XlList extends ArrayList<XlBean> {
         }
     }
 
-    /**
-     * Set {@code data} at the specified {@code index}. If length of this list is
-     * less than specified, then it will extend the list by filling with null.
-     *
-     * @param index
-     * @param data
-     */
-    public void setFillNull(int index, XlBean data) {
-        while (size() < index) {
-            add(null);
-        }
-        if (size() == index) {
-            add(data);
-        } else {
-            set(index, data);
-        }
-    }
 }

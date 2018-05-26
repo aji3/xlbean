@@ -128,7 +128,7 @@ public class XlBeanTest {
     public void put() {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage(
-            "Value set to XlBean must be XlBean, XlList or String. To set value of any other class to this bean, please use #set(String, Object). #set(String, Object) will scan all the properties in the object and set to this object. (Actual: class java.lang.Integer)");
+            "Value set to XlBean must be XlBean, List<XlBean> or String. To set value of any other class to this bean, please use #set(String, Object). #set(String, Object) will scan all the properties in the object and set to this object. (Actual: class java.lang.Integer)");
 
         XlBean bean = new XlBean();
         bean.put("illegalValue", Integer.valueOf(1));

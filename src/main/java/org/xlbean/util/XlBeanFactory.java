@@ -1,5 +1,8 @@
 package org.xlbean.util;
 
+import java.util.List;
+import java.util.Map;
+
 import org.xlbean.XlBean;
 import org.xlbean.XlList;
 
@@ -15,11 +18,14 @@ public class XlBeanFactory {
         XlBeanFactory.INSTANCE = instance;
     }
 
-    public XlBean createBean() {
-        return new XlBean();
+    @SuppressWarnings("unchecked")
+    public <T extends Map<String, Object>> T createBean() {
+        return (T) new XlBean();
     }
 
-    public XlList createList() {
-        return new XlList();
+    @SuppressWarnings("unchecked")
+    public <T extends List<?>> T createList() {
+        return (T) new XlList();
     }
+
 }

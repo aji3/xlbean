@@ -22,8 +22,7 @@ import org.xlbean.converter.BeanConverterFactory;
  *
  * <ul>
  * <li>{@link XlBean}
- * <li>{@link XlList}
- * <li>{@link SingleValue}
+ * <li>{@link List}
  * <li>{@link String}
  * </ul>
  *
@@ -48,8 +47,7 @@ public class XlBean extends HashMap<String, Object> {
      *
      * <ul>
      * <li>{@link XlBean}
-     * <li>{@link XlList}
-     * <li>{@link SingleValue}
+     * <li>{@link List}
      * <li>{@link String} If the value type is other than above, then
      * {@link IllegalArgumentException} will be thrown.
      * </ul>
@@ -62,7 +60,7 @@ public class XlBean extends HashMap<String, Object> {
         if (!canPut(value)) {
             throw new IllegalArgumentException(
                 String.format(
-                    "Value set to XlBean must be XlBean, XlList or String. To set value of any other class to this bean, please use #set(String, Object). #set(String, Object) will scan all the properties in the object and set to this object. (Actual: %s)",
+                    "Value set to XlBean must be XlBean, List<XlBean> or String. To set value of any other class to this bean, please use #set(String, Object). #set(String, Object) will scan all the properties in the object and set to this object. (Actual: %s)",
                     value.getClass()));
         }
         return super.put(key, value);
@@ -70,14 +68,19 @@ public class XlBean extends HashMap<String, Object> {
 
     protected boolean canPut(Object value) {
         return !(value != null
-                && !(value instanceof XlBean || value instanceof XlList || value instanceof String));
+                && !(value instanceof XlBean || value instanceof List || value instanceof String));
     }
 
     public XlBean bean(String key) {
         return (XlBean) get(key);
     }
 
-    public XlList list(String key) {
+    @SuppressWarnings("unchecked")
+    public <T extends List<XlBean>> T list(String key) {
+        return (T) get(key);
+    }
+
+    public XlList xlist(String key) {
         return (XlList) get(key);
     }
 

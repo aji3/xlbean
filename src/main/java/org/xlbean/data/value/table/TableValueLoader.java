@@ -32,11 +32,13 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
     @Override
     public void load(XlBean bean) {
         TableDefinition definition = getDefinition();
-        XlList table = bean.list(definition.getName());
+        List<XlBean> table = bean.list(definition.getName());
         if (table == null) {
             table = XlBeanFactory.getInstance().createList();
-            for (Entry<String, List<String>> entry : definitionCache.getIndexKeysMap().entrySet()) {
-                table.addIndex(entry.getKey(), entry.getValue());
+            if (table instanceof XlList) {
+                for (Entry<String, List<String>> entry : definitionCache.getIndexKeysMap().entrySet()) {
+                    ((XlList) table).addIndex(entry.getKey(), entry.getValue());
+                }
             }
             FieldAccessHelper.setValue(definition.getName(), table, bean);
         }
@@ -76,23 +78,23 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
                 if (definitionCache.getOffset() == 0) {
                     table.add(dataRow);
                 } else {
-                    table.setFillNull(index + definitionCache.getOffset(), dataRow);
+                    FieldAccessHelper.setFillNull(table, index + definitionCache.getOffset(), dataRow);
                 }
             }
             index++;
         }
 
-        processIsKeyIsValueOption(bean);
+        processListToPropOption(bean);
     }
 
-    private void processIsKeyIsValueOption(XlBean rootBean) {
+    private void processListToPropOption(XlBean rootBean) {
         if (!definitionCache.hasListToPropOption()) {
             return;
         }
         SingleDefinition key = definitionCache.getListToPropKeyOptionDefinition();
         SingleDefinition value = definitionCache.getListToPropValueOptionDefinition();
         String tableName = getDefinition().getName();
-        XlList table = FieldAccessHelper.getValue(tableName, rootBean);
+        List<XlBean> table = FieldAccessHelper.getValue(tableName, rootBean);
         XlBean targetBean = rootBean;
         if (tableName.contains(".")) {
             targetBean = FieldAccessHelper.getValue(tableName.substring(0, tableName.lastIndexOf('.')), rootBean);
@@ -104,7 +106,7 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
         }
     }
 
-    protected boolean checkTerminate(XlList data, XlBean dataRow, int num) {
+    protected boolean checkTerminate(List<XlBean> data, XlBean dataRow, int num) {
         int limit = definitionCache.getLimit();
         if (limit <= num) {
             return true;

@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.comparesEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -532,8 +534,9 @@ public class XlBeanReaderTest {
         assertThat(bean.list("data").get(0).bean("bean").list("list").get(1).value("val"), is("2.0"));
         assertThat(bean.list("data").get(1).bean("bean").list("list").get(0), is(nullValue()));
         assertThat(bean.list("data").get(1).bean("bean").list("list").get(1).value("val"), is("3.0"));
-        
+
         bean.listOf("data", TestBean.class);
-        
+
     }
+
 }
