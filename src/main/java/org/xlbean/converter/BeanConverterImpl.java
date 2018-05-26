@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.xlbean.XlBean;
-import org.xlbean.XlList;
 import org.xlbean.exception.XlBeanException;
 import org.xlbean.util.XlBeanFactory;
 
@@ -175,7 +174,7 @@ public class BeanConverterImpl implements BeanConverter {
             }
             return xlBean;
         } else if (value instanceof Iterable) {
-            XlList xlList = XlBeanFactory.getInstance().createList();
+            List<XlBean> xlList = XlBeanFactory.getInstance().createList();
             List<?> list = (List<?>) value;
             for (Object elem : list) {
                 Object val = toMap(elem);

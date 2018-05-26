@@ -39,6 +39,7 @@ public class XlBeanReaderTest {
 
     @Test
     public void testFormat() {
+
         InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_format.xlsx");
 
         XlBeanReader reader = new XlBeanReader();
@@ -579,4 +580,5 @@ public class XlBeanReaderTest {
         bean.listOf("data", TestBean.class);
 
     }
+
 }

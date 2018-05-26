@@ -1,5 +1,7 @@
 package org.xlbean.util;
 
+import java.util.List;
+
 import org.xlbean.XlBean;
 import org.xlbean.XlList;
 
@@ -19,7 +21,9 @@ public class XlBeanFactory {
         return new XlBean();
     }
 
-    public XlList createList() {
-        return new XlList();
+    @SuppressWarnings("unchecked")
+    public <T extends List<?>> T createList() {
+        return (T) new XlList();
     }
+
 }
