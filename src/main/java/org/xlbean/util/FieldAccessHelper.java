@@ -41,7 +41,6 @@ public class FieldAccessHelper {
      * @return value in {@code bean}'s descendant object
      * 
      */
-    @SuppressWarnings("unchecked")
     public static <T> T getValue(String dottedFieldName, Map<String, Object> bean) {
         return INSTANCE.get(dottedFieldName, bean);
     }
