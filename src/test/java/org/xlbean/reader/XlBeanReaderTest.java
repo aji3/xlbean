@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -29,6 +30,8 @@ import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.excel.XlWorkbook;
 import org.xlbean.testbean.Country;
+import org.xlbean.testbean.PresidentEnum;
+import org.xlbean.testbean.PresidentEnum.States;
 import org.xlbean.testbean.TestBean;
 import org.xlbean.util.FileUtil;
 
@@ -276,6 +279,44 @@ public class XlBeanReaderTest {
             is(new SimpleDateFormat("yyyy-MM-dd").parse("2017-01-20")));
         assertThat(america.getPresidents().get(10).getInOfficeTo(), nullValue());
         assertThat(america.getPresidents().get(10).getNumberOfDaysInOffice(), is(0));
+    }
+
+    @Test
+    public void testBeanMappingForEnum() throws ParseException {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_presidents.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        System.out.println(bean);
+
+        List<PresidentEnum> presidents = bean.listOf("presidents", PresidentEnum.class);
+
+        System.out.println(presidents);
+
+        // check that enum and other values are properly loaded
+        assertThat(presidents.get(0).getName(), is("John F. Kennedy"));
+        assertThat(presidents.get(0).getDateOfBirth(), is(LocalDate.of(1917, 5, 29)));
+        assertThat(presidents.get(0).getStateOfBirth(), is(States.Massachusetts));
+        assertThat(
+            presidents.get(0).getInOfficeFrom(),
+            is(new SimpleDateFormat("yyyy-MM-dd").parse("1961-01-20")));
+        assertThat(
+            presidents.get(0).getInOfficeTo(),
+            is(LocalDateTime.of(1963, 11, 22, 0, 0)));
+        assertThat(presidents.get(0).getNumberOfDaysInOffice(), comparesEqualTo(1036));
+
+        // check that non-enum values are ignored as null without any exception
+        assertThat(presidents.get(10).getName(), is("Donald Trump"));
+        assertThat(presidents.get(10).getDateOfBirth(), is(LocalDate.of(1946, 6, 14)));
+        assertThat(presidents.get(10).getStateOfBirth(), is(nullValue()));
+        assertThat(
+            presidents.get(10).getInOfficeFrom(),
+            is(new SimpleDateFormat("yyyy-MM-dd").parse("2017-01-20")));
+        assertThat(
+            presidents.get(10).getInOfficeTo(),
+            is(nullValue()));
+        assertThat(presidents.get(10).getNumberOfDaysInOffice(), comparesEqualTo(0));
     }
 
     @Test
