@@ -1,5 +1,7 @@
 package org.xlbean.definition;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlbean.excel.XlCellAddress;
@@ -17,6 +19,13 @@ public class SingleDefinition extends Definition {
     private static Logger log = LoggerFactory.getLogger(SingleDefinition.class);
 
     private XlCellAddress cell;
+
+    public SingleDefinition() {};
+
+    public SingleDefinition(String name, Map<String, String> options) {
+        setName(name);
+        setOptions(options);
+    }
 
     public XlCellAddress getCell() {
         return cell;
@@ -52,6 +61,6 @@ public class SingleDefinition extends Definition {
 
     @Override
     public String toString() {
-        return "SingleDefinition [cell=" + cell + "]";
+        return String.format("SingleDefinition [name=%s, cell=%s]", getName(), cell);
     }
 }

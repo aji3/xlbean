@@ -1,6 +1,9 @@
 package org.xlbean.util;
 
+import java.util.List;
+
 import org.xlbean.XlBean;
+import org.xlbean.XlBeanImpl;
 import org.xlbean.XlList;
 
 public class XlBeanFactory {
@@ -16,10 +19,11 @@ public class XlBeanFactory {
     }
 
     public XlBean createBean() {
-        return new XlBean();
+        return new XlBeanImpl();
     }
 
-    public XlList createList() {
+    public List<XlBean> createList() {
         return new XlList();
     }
+
 }

@@ -121,6 +121,9 @@ public class TableDefinition extends Definition {
         return getStartCell() != null && attributes.size() > 0;
     }
 
+    /**
+     * Sets {@code sheet} to this object and SingleDefinition objects in attributes.
+     */
     @Override
     public void setSheet(XlSheet sheet) {
         super.setSheet(sheet);
@@ -129,6 +132,10 @@ public class TableDefinition extends Definition {
         }
     }
 
+    /**
+     * Sets {@code sheetName} to this object and SingleDefinition objects in
+     * attributes.
+     */
     @Override
     public void setSheetName(String sheetName) {
         super.setSheetName(sheetName);
@@ -139,6 +146,6 @@ public class TableDefinition extends Definition {
 
     @Override
     public String toString() {
-        return "TableDefinition [attributes=" + attributes + "]";
+        return String.format("TableDefinition [name=%s, attributes=%s]", getName(), attributes);
     }
 }

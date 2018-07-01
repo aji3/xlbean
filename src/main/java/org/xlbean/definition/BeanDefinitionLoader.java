@@ -79,7 +79,6 @@ public class BeanDefinitionLoader extends DefinitionLoader<Object> {
                     }
                     SingleDefinition start = new SingleDefinition();
                     start.setName("~");
-                    start.setOriginalKeyString("~");
                     start.setCell(new XlCellAddress.Builder().row(1).build());
                     table.addAttribute(start);
                 } else {
@@ -117,8 +116,8 @@ public class BeanDefinitionLoader extends DefinitionLoader<Object> {
                         context.push(key.toString());
                         definitions.merge(loadInternal(value, context));
                     });
-        } else if (obj instanceof XlList) {
-            loadTableDefinition(obj, context, definitions);
+        } else if (obj instanceof List) {
+            loadTableDefinition((List<?>) obj, context, definitions);
         } else {
             // This path is for the "obj" which is not XlBean nor XlList.
             // It should be String.
@@ -135,30 +134,30 @@ public class BeanDefinitionLoader extends DefinitionLoader<Object> {
         }
         SingleDefinition single = new SingleDefinition();
         single.setName(context.getCurrentName());
-        single.setOriginalKeyString(context.getCurrentName());
         single.getOptions().put("type", "string");
         definitions.addDefinition(single);
     }
 
     private void loadTableDefinition(
-            Object obj, BeanDefinitionLoaderContext context, DefinitionRepository definitions) {
+            List<?> list, BeanDefinitionLoaderContext context, DefinitionRepository definitions) {
         if (context.getDepth() == 0) {
             context.push("values");
         }
-        TableDefinition table = new TableDefinition();
+        TableDefinitionForBeanLoader table = new TableDefinitionForBeanLoader(list);
         table.setName(context.getCurrentName());
-        table.setOriginalKeyString(context.getCurrentName());
         definitions.addDefinition(table);
         Map<String, Definition> attributesMap = new HashMap<>();
-        for (XlBean bean : (XlList) obj) {
+        for (Object bean : list) {
             DefinitionRepository attributes = loadInternal(bean, new BeanDefinitionLoaderContext());
             attributesMap.putAll(attributes.toMap());
         }
         attributesMap.values().forEach(it -> {
             if (it instanceof SingleDefinition) {
                 table.addAttribute((SingleDefinition) it);
+            } else if (it instanceof TableDefinitionForBeanLoader) {
+                convertInternalTableDefinitionToNestedSingleDefinition((TableDefinitionForBeanLoader) it, table);
             } else {
-                convertInternalTableDefinitionToNestedSingleDefinition((TableDefinition) it, table);
+                throw new IllegalArgumentException("Illegal definition type");
             }
         });
     }
@@ -170,20 +169,19 @@ public class BeanDefinitionLoader extends DefinitionLoader<Object> {
      * @param table
      */
     private void convertInternalTableDefinitionToNestedSingleDefinition(
-            TableDefinition internalTableDefinition,
-            TableDefinition table) {
+            TableDefinitionForBeanLoader internalTableDefinition,
+            TableDefinitionForBeanLoader table) {
         internalTableDefinition.getAttributes().values().forEach(
             item ->
             {
-                for (int i = 0; i < numberOfIterations; i++) {
+                for (int i = 0; i < Math.min(numberOfIterations, internalTableDefinition.getSourceList().size()); i++) {
                     SingleDefinition single = new SingleDefinition();
                     String newName = String.format(
                         "%s[%d].%s",
                         internalTableDefinition.getName(),
                         i,
-                        item.getOriginalKeyString());
+                        item.getName());
                     single.setName(newName);
-                    single.setOriginalKeyString(newName);
                     single.getOptions().put("type", "string");
                     table.addAttribute(single);
                 }
@@ -214,16 +212,20 @@ public class BeanDefinitionLoader extends DefinitionLoader<Object> {
         }
 
         public String getCurrentName() {
-            StringBuilder sb = new StringBuilder();
-            keys.forEach(
-                it ->
-                {
-                    if (sb.length() > 0) {
-                        sb.append(".");
-                    }
-                    sb.append(it);
-                });
-            return sb.toString();
+            return String.join(".", keys);
         }
+    }
+
+    private class TableDefinitionForBeanLoader extends TableDefinition {
+        private List<?> sourceList;
+
+        public TableDefinitionForBeanLoader(List<?> sourceList) {
+            this.sourceList = sourceList;
+        }
+
+        public List<?> getSourceList() {
+            return sourceList;
+        }
+
     }
 }

@@ -29,6 +29,7 @@ dependencies {
     compile 'org.apache.poi:poi:3.16'
     compile 'org.apache.poi:poi-ooxml:3.16'
     compile 'org.slf4j:slf4j-api:1.7.25'
+    compile 'org.jparsec:jparsec:3.0'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-all:1.3'

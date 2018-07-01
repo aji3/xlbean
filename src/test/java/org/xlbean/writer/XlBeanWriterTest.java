@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xlbean.XlBean;
+import org.xlbean.XlBeanImpl;
 import org.xlbean.converter.BeanConverterImpl;
 import org.xlbean.definition.BeanDefinitionLoader;
 import org.xlbean.definition.DefinitionLoader;
@@ -72,7 +73,7 @@ public class XlBeanWriterTest {
         System.out.println(expectedBean);
         String expected = expectedBean.toString();
 
-        XlBeanWriter writer = new XlBeanWriter(new BeanDefinitionLoader());
+        XlBeanWriter writer = new XlBeanWriter(new BeanDefinitionLoader(10));
         writer.write(
             expectedBean,
             null,
@@ -102,7 +103,7 @@ public class XlBeanWriterTest {
 
         in = XlBeanReaderTest.class.getResourceAsStream("TestBook_format.xlsx");
         XlBeanWriter writer = new XlBeanWriter(new BeanDefinitionLoader());
-        XlBean bean = new XlBean();
+        XlBean bean = new XlBeanImpl();
         bean.put("definitions", new BeanConverterImpl().toMap(definitions));
         writer.write(
             bean,

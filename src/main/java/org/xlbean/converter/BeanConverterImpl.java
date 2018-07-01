@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.xlbean.XlBean;
-import org.xlbean.XlList;
 import org.xlbean.exception.XlBeanException;
 import org.xlbean.util.XlBeanFactory;
 
@@ -30,7 +29,7 @@ public class BeanConverterImpl implements BeanConverter {
 
     /**
      * Convert the object retrieved by the given sourceKey to an object of given
-     * destinationClass.
+     * destinationClass if the instance if an object of Map.
      *
      * @param sourceKey
      * @param destinationClazz
@@ -38,13 +37,14 @@ public class BeanConverterImpl implements BeanConverter {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T toBean(Object srcObj, Class<?> destinationClazz) {
-        Object dstObj = instantiate(destinationClazz);
+    public <T> T toBean(Object srcObj, Class<T> destinationClazz) {
+        T dstObj = instantiate(destinationClazz);
         if (srcObj instanceof Map) {
+            // srcObj is mapped to the instance of destinationClazz only when it is Map
             Map<String, Object> map = (Map<String, Object>) srcObj;
-            return (T) toBean(map, dstObj);
+            return toBean(map, dstObj);
         }
-        return (T) dstObj;
+        return dstObj;
     }
 
     /**
@@ -57,7 +57,7 @@ public class BeanConverterImpl implements BeanConverter {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> List<T> toBeanList(Object srcList, Class<?> beanClass) {
+    public <T> List<T> toBeanList(Object srcList, Class<T> beanClass) {
         List<T> retList = new ArrayList<>();
         if (srcList instanceof Iterable) {
             for (Object obj : (Iterable<?>) srcList) {
@@ -117,8 +117,7 @@ public class BeanConverterImpl implements BeanConverter {
                     setter.invoke(destinationObj, obj);
                 } else if (Iterable.class.isAssignableFrom(value.getClass())
                         && Iterable.class.isAssignableFrom(type)) {
-                    List<Object> obj = (List<Object>) instantiate(
-                        pd.getPropertyType().isInterface() ? ArrayList.class : type);
+                    List<Object> obj = new ArrayList<>();
                     ParameterizedType p = (ParameterizedType) pd.getWriteMethod().getGenericParameterTypes()[0];
                     Type childType = p.getActualTypeArguments()[0];
                     for (Object srcObj : (Iterable<?>) value) {
@@ -149,7 +148,7 @@ public class BeanConverterImpl implements BeanConverter {
         return converter.canConvert(clazz);
     }
 
-    private Object instantiate(Class<?> clazz) {
+    private <T> T instantiate(Class<T> clazz) {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
@@ -175,7 +174,7 @@ public class BeanConverterImpl implements BeanConverter {
             }
             return xlBean;
         } else if (value instanceof Iterable) {
-            XlList xlList = XlBeanFactory.getInstance().createList();
+            List<XlBean> xlList = XlBeanFactory.getInstance().createList();
             List<?> list = (List<?>) value;
             for (Object elem : list) {
                 Object val = toMap(elem);
@@ -189,9 +188,11 @@ public class BeanConverterImpl implements BeanConverter {
             }
             return xlList;
         } else {
+            //
             if (converter.canConvert(value.getClass())) {
                 return converter.toString(value);
             } else {
+                //
                 return toMapInternal(value);
             }
         }

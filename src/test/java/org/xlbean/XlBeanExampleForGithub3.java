@@ -15,7 +15,7 @@ public class XlBeanExampleForGithub3 {
         XlBeanReader reader = new XlBeanReader();
         XlBean bean = reader.read(in);
 
-        XlList presidents = bean.list("presidents");
+        XlList presidents = (XlList) bean.beans("presidents");
         Map<String, String> condition = new HashMap<>();
         condition.put("id", "45");
 
