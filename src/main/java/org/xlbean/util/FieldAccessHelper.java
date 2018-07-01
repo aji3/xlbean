@@ -95,25 +95,6 @@ public class FieldAccessHelper {
     }
 
     /**
-     * Set {@code data} to {@code index} of {@code list}. If index is bigger than
-     * current size of {@code list}, then fills the list with null.
-     * 
-     * @param list
-     * @param index
-     * @param data
-     */
-    public static <T> void setFillNull(List<T> list, int index, T data) {
-        while (list.size() < index) {
-            list.add(null);
-        }
-        if (list.size() == index) {
-            list.add(data);
-        } else {
-            list.set(index, data);
-        }
-    }
-
-    /**
      * Class to wrap field defined in "aaa[0][1]" format.
      * 
      * @author tanikawa
@@ -210,7 +191,7 @@ public class FieldAccessHelper {
 
     private class ListWrapper {
         private int index;
-        private List<?> target;
+        private List<Object> target;
 
         public ListWrapper(int index) {
             this.index = index;
@@ -228,12 +209,11 @@ public class FieldAccessHelper {
             }
         }
 
-        @SuppressWarnings("unchecked")
         public Object buildObject(Object value) {
             if (target == null) {
                 target = createList();
             }
-            setFillNull((List<Object>) target, index, value);
+            BeanHelper.setFillNull(target, index, value);
             return target;
         }
 
@@ -244,14 +224,15 @@ public class FieldAccessHelper {
                 return null;
             }
         }
+
     }
 
     protected Map<String, Object> createMap() {
         return XlBeanFactory.getInstance().createBean();
     }
 
-    protected List<?> createList() {
-        return XlBeanFactory.getInstance().createList();
+    protected List<Object> createList() {
+        return new ArrayList<>();
     }
 
 }

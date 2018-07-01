@@ -3,6 +3,7 @@ package org.xlbean.util;
 import java.util.List;
 
 import org.xlbean.XlBean;
+import org.xlbean.XlBeanImpl;
 import org.xlbean.XlList;
 
 public class XlBeanFactory {
@@ -18,12 +19,11 @@ public class XlBeanFactory {
     }
 
     public XlBean createBean() {
-        return new XlBean();
+        return new XlBeanImpl();
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends List<?>> T createList() {
-        return (T) new XlList();
+    public List<XlBean> createList() {
+        return new XlList();
     }
 
 }

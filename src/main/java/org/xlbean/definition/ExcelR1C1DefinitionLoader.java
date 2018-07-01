@@ -2,11 +2,12 @@ package org.xlbean.definition;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.jparsec.error.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlbean.definition.parser.DefinitionParser;
 import org.xlbean.excel.XlCellAddress;
 import org.xlbean.excel.XlSheet;
 import org.xlbean.excel.XlWorkbook;
@@ -22,7 +23,7 @@ public class ExcelR1C1DefinitionLoader extends DefinitionLoader<XlWorkbook> {
 
     private static Logger log = LoggerFactory.getLogger(ExcelR1C1DefinitionLoader.class);
 
-    private static final List<DefinitionResolver> DEFAULT_DEFINITION_RESOLVERS = Arrays.asList(
+    private static final List<DefinitionBuilder> DEFAULT_DEFINITION_BUILDERS = Arrays.asList(
         new SingleDefinitionResolver(),
         new TableDefinitionResolver());
 
@@ -70,17 +71,8 @@ public class ExcelR1C1DefinitionLoader extends DefinitionLoader<XlWorkbook> {
         return DefinitionConstants.TARGET_SHEET_MARK.equals(sheet.getCellValue(0, 0));
     }
 
-    protected DefinitionResolver getDefinitionResolver(String value) {
-        for (DefinitionResolver resolver : getDefinitionResolvers()) {
-            if (resolver.isResolvable(value)) {
-                return resolver;
-            }
-        }
-        return null;
-    }
-
-    protected List<DefinitionResolver> getDefinitionResolvers() {
-        return DEFAULT_DEFINITION_RESOLVERS;
+    protected List<DefinitionBuilder> getDefinitionBuilders() {
+        return DEFAULT_DEFINITION_BUILDERS;
     }
 
     protected DefinitionRepository readDefinition(XlSheet sheet) {
@@ -114,23 +106,48 @@ public class ExcelR1C1DefinitionLoader extends DefinitionLoader<XlWorkbook> {
         if (value == null) {
             return;
         }
-        List<String> splittedDefinitionStr = Arrays.stream(value.split(",")).map(str -> str.trim()).collect(
-            Collectors.toList());
-        for (String definitionStr : splittedDefinitionStr) {
-            DefinitionResolver resolver = getDefinitionResolver(definitionStr);
-            if (resolver == null) {
-                log.warn("Invalid definition: {}", definitionStr);
-            } else {
-                Definition newDefinition = null;
-                if (isColumn) {
-                    newDefinition = resolver.resolve(definitionStr, new XlCellAddress.Builder().column(num).build());
-                } else {
-                    newDefinition = resolver.resolve(definitionStr, new XlCellAddress.Builder().row(num).build());
-                }
-                newDefinition.setSheetName(sheet.getSheetName());
+        Arrays
+            .stream(value.split(","))
+            .map(str -> str.trim())
+            .map(this::parse)
+            .filter(elem -> elem != null)
+            .map(elem -> build(elem, isColumn, num, sheet.getSheetName()))
+            .forEach(definitions::addDefinition);
 
-                definitions.addDefinition(newDefinition);
+    }
+
+    private Definition build(Object parsedDefinition, boolean isColumn, int num, String sheetName) {
+        DefinitionBuilder definitionBuilder = getDefinitionBuilder(parsedDefinition);
+        Definition newDefinition = null;
+        if (isColumn) {
+            newDefinition = definitionBuilder.build(
+                parsedDefinition,
+                new XlCellAddress.Builder().column(num).build());
+        } else {
+            newDefinition = definitionBuilder.build(
+                parsedDefinition,
+                new XlCellAddress.Builder().row(num).build());
+        }
+        newDefinition.setSheetName(sheetName);
+        return newDefinition;
+    }
+
+    protected Object parse(String definitionStr) {
+        try {
+            return DefinitionParser.parse(definitionStr);
+        } catch (ParserException e) {
+            log.warn("Invalid definition: {}", definitionStr);
+        }
+        return null;
+    }
+
+    protected DefinitionBuilder getDefinitionBuilder(Object parsedObject) {
+        for (DefinitionBuilder resolver : getDefinitionBuilders()) {
+            if (resolver.isBuildable(parsedObject)) {
+                return resolver;
             }
         }
+        return null;
     }
+
 }

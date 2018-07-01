@@ -12,7 +12,6 @@ import org.xlbean.excel.XlSheet;
  */
 public abstract class Definition {
 
-    private String originalKeyString;
     private String name;
     private Map<String, String> options = new HashMap<>();
     private String sheetName;
@@ -43,14 +42,6 @@ public abstract class Definition {
         return sheetName + "_" + name;
     }
 
-    public String getOriginalKeyString() {
-        return originalKeyString;
-    }
-
-    public void setOriginalKeyString(String originalKeyString) {
-        this.originalKeyString = originalKeyString;
-    }
-
     public Map<String, String> getOptions() {
         return options;
     }
@@ -78,4 +69,5 @@ public abstract class Definition {
     public void addOptions(Map<String, String> options) {
         getOptions().putAll(options);
     }
+
 }

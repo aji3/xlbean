@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.xlbean.XlBean;
+import org.xlbean.XlBeanImpl;
 
 public class SimpleXlBeanFactory extends XlBeanFactory {
 
@@ -12,14 +13,13 @@ public class SimpleXlBeanFactory extends XlBeanFactory {
         return new SimpleXlBean();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <T extends List<?>> T createList() {
-        return (T) new ArrayList<Object>();
+    public List<XlBean> createList() {
+        return new ArrayList<XlBean>();
     }
 
     @SuppressWarnings("serial")
-    public static class SimpleXlBean extends XlBean {
+    public static class SimpleXlBean extends XlBeanImpl {
         @Override
         protected boolean canPut(Object value) {
             return true;

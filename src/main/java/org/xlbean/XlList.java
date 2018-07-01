@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import org.xlbean.util.XlBeanFactory;
 
 /**
- * Sub class of {@link ArrayList} with additional utility methods suitable for
+ * Inherits {@link ArrayList} with additional utility methods suitable for
  * common data structure of excel.
  *
  * <p>
@@ -23,6 +23,13 @@ import org.xlbean.util.XlBeanFactory;
 @SuppressWarnings("serial")
 public class XlList extends ArrayList<XlBean> {
 
+    /**
+     * HashMap used for searching elements of this list by hashed keys.
+     * 
+     * <p>
+     * This field will be used when "index" option is defined.
+     * </p>
+     */
     private Map<String, Index> indexMap = new HashMap<>();
 
     /**
@@ -70,7 +77,7 @@ public class XlList extends ArrayList<XlBean> {
      * @return
      */
     public XlList aggregate(String childListName, String... parentKeys) {
-        XlList retList = XlBeanFactory.getInstance().createList();
+        XlList retList = createInstance();
         aggregateIndex(retList, parentKeys);
         Map<String, XlBean> cache = new HashMap<>();
         for (XlBean elem : this) {
@@ -84,7 +91,7 @@ public class XlList extends ArrayList<XlBean> {
             XlList aggregatedList = null;
             Object aggregatedListObject = aggregatedMap.get(childListName);
             if (aggregatedListObject == null || !(aggregatedListObject instanceof XlList)) {
-                aggregatedList = XlBeanFactory.getInstance().createList();
+                aggregatedList = createInstance();
                 aggregatedMap.put(childListName, aggregatedList);
                 final XlBean x = aggregatedMap;
                 Arrays.stream(parentKeys).forEach(k -> x.put(k, elem.get(k)));
@@ -159,7 +166,7 @@ public class XlList extends ArrayList<XlBean> {
      * @return
      */
     public XlList findAll(Map<String, String> conditionMap) {
-        XlList list = XlBeanFactory.getInstance().createList();
+        XlList list = createInstance();
         if (conditionMap == null) {
             return list;
         } else {
@@ -287,4 +294,7 @@ public class XlList extends ArrayList<XlBean> {
         }
     }
 
+    protected XlList createInstance() {
+        return new XlList();
+    }
 }

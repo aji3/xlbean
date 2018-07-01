@@ -9,13 +9,12 @@ import org.xlbean.reader.XlBeanReader;
 
 public class XlBeanExampleForGithub3 {
 
-    @SuppressWarnings({ "unchecked", "rawtypes", "serial" })
     public static void main(String[] args) throws Exception {
         InputStream in = new FileInputStream("example/presidents_index.xlsx");
         XlBeanReader reader = new XlBeanReader();
         XlBean bean = reader.read(in);
 
-        XlList presidents = bean.list("presidents");
+        XlList presidents = (XlList) bean.beans("presidents");
         Map<String, String> condition = new HashMap<>();
         condition.put("id", "45");
 

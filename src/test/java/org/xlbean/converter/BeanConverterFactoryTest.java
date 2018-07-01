@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 
 import org.junit.Test;
 import org.xlbean.XlBean;
+import org.xlbean.XlBeanImpl;
 
 public class BeanConverterFactoryTest {
 
@@ -23,9 +24,9 @@ public class BeanConverterFactoryTest {
                 }
             });
 
-        XlBean bean = new XlBean();
+        XlBean bean = new XlBeanImpl();
 
-        Field f = XlBean.class.getDeclaredField("converter");
+        Field f = XlBeanImpl.class.getDeclaredField("converter");
         f.setAccessible(true);
 
         assertThat(f.get(bean), is(instanceOf(TestBeanConverter.class)));

@@ -2,6 +2,7 @@ package org.xlbean.reader;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.comparesEqualTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -23,6 +24,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.Test;
 import org.xlbean.XlBean;
+import org.xlbean.XlBeanImpl;
 import org.xlbean.XlList;
 import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.DefinitionRepository;
@@ -47,7 +49,7 @@ public class XlBeanReaderTest {
 
         System.out.println(bean);
 
-        XlList table = bean.list("format");
+        List<XlBean> table = bean.beans("format");
 
         assertThat(table.get(0).get("number"), is("12345.6789"));
         assertThat(table.get(1).get("number"), is("12345.6789"));
@@ -146,7 +148,7 @@ public class XlBeanReaderTest {
         assertThat(table.get(4).get("standardAndFormulaInside"), is("1"));
         assertThat(table.get(5).get("standardAndFormulaInside"), is(nullValue()));
 
-        XlList tableStr = bean.list("formatStr");
+        List<XlBean> tableStr = bean.beans("formatStr");
 
         assertThat(tableStr.get(0).get("number"), is("12345.6789"));
         assertThat(tableStr.get(1).get("number"), is("12346"));
@@ -338,7 +340,7 @@ public class XlBeanReaderTest {
         XlBeanReader reader = new XlBeanReader();
         XlBean bean = reader.read(in);
 
-        XlList list = bean.list("bigtable");
+        XlList list = (XlList) bean.beans("bigtable");
         @SuppressWarnings({ "rawtypes", "serial", "unchecked" })
         Map<String, String> conditionMap = new HashMap() {
             {
@@ -368,7 +370,7 @@ public class XlBeanReaderTest {
             definitionLoader.initialize(wb);
             DefinitionRepository definitions = definitionLoader.load();
 
-            XlBean bean = new XlBean();
+            XlBean bean = new XlBeanImpl();
             bean.set("definitions", definitions);
 
         } catch (InvalidFormatException | EncryptedDocumentException | IOException e) {
@@ -422,65 +424,175 @@ public class XlBeanReaderTest {
         XlBeanReader reader = new XlBeanReader();
         XlBean bean = reader.read(in);
 
-        assertThat(bean.list("tests").get(0).list("bbbb").size(), is(6));
-        assertThat(bean.list("tests").get(0).list("bbbb").get(0).value("key"), is("key1"));
-        assertThat(bean.list("tests").get(0).list("bbbb").get(0).value("value"), is("1.0"));
-        assertThat(bean.list("tests").get(0).list("bbbb").get(1).value("key"), is("key2"));
-        assertThat(bean.list("tests").get(0).list("bbbb").get(1).value("value"), is("2.0"));
-        assertThat(bean.list("tests").get(0).list("bbbb").get(2).value("key"), is("key3"));
-        assertThat(bean.list("tests").get(0).list("bbbb").get(2).value("value"), is("3.0"));
-        assertThat(bean.list("tests").get(0).list("bbbb").get(3).value("key"), is("key4"));
-        assertThat(bean.list("tests").get(0).list("bbbb").get(3).value("value"), is("4.0"));
-        assertThat(bean.list("tests").get(0).list("bbbb").get(4).value("key"), is("key5"));
-        assertThat(bean.list("tests").get(0).list("bbbb").get(4).value("value"), is("5.0"));
-        assertThat(bean.list("tests").get(0).list("bbbb").get(5).value("key"), is("key6"));
-        assertThat(bean.list("tests").get(0).list("bbbb").get(5).value("value"), is("6.0"));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").size(), is(6));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").get(0).string("key"), is("key1"));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").get(0).string("value"), is("1.0"));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").get(1).string("key"), is("key2"));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").get(1).string("value"), is("2.0"));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").get(2).string("key"), is("key3"));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").get(2).string("value"), is("3.0"));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").get(3).string("key"), is("key4"));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").get(3).string("value"), is("4.0"));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").get(4).string("key"), is("key5"));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").get(4).string("value"), is("5.0"));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").get(5).string("key"), is("key6"));
+        assertThat(bean.beans("tests").get(0).beans("bbbb").get(5).string("value"), is("6.0"));
 
-        assertThat(bean.list("tests").get(1).list("bbbb").size(), is(5));
-        assertThat(bean.list("tests").get(1).list("bbbb").get(0).value("key"), is("key1"));
-        assertThat(bean.list("tests").get(1).list("bbbb").get(0).value("value"), is("1.0"));
-        assertThat(bean.list("tests").get(1).list("bbbb").get(1).value("key"), is("key2"));
-        assertThat(bean.list("tests").get(1).list("bbbb").get(1).value("value"), is("2.0"));
-        assertThat(bean.list("tests").get(1).list("bbbb").get(2).value("key"), is("key3"));
-        assertThat(bean.list("tests").get(1).list("bbbb").get(2).value("value"), is("3.0"));
-        assertThat(bean.list("tests").get(1).list("bbbb").get(3).value("key"), is("key4"));
-        assertThat(bean.list("tests").get(1).list("bbbb").get(3).value("value"), is("4.0"));
-        assertThat(bean.list("tests").get(1).list("bbbb").get(4).value("key"), is("key5"));
-        assertThat(bean.list("tests").get(1).list("bbbb").get(4).value("value"), is("5.0"));
+        assertThat(bean.beans("tests").get(1).beans("bbbb").size(), is(5));
+        assertThat(bean.beans("tests").get(1).beans("bbbb").get(0).string("key"), is("key1"));
+        assertThat(bean.beans("tests").get(1).beans("bbbb").get(0).string("value"), is("1.0"));
+        assertThat(bean.beans("tests").get(1).beans("bbbb").get(1).string("key"), is("key2"));
+        assertThat(bean.beans("tests").get(1).beans("bbbb").get(1).string("value"), is("2.0"));
+        assertThat(bean.beans("tests").get(1).beans("bbbb").get(2).string("key"), is("key3"));
+        assertThat(bean.beans("tests").get(1).beans("bbbb").get(2).string("value"), is("3.0"));
+        assertThat(bean.beans("tests").get(1).beans("bbbb").get(3).string("key"), is("key4"));
+        assertThat(bean.beans("tests").get(1).beans("bbbb").get(3).string("value"), is("4.0"));
+        assertThat(bean.beans("tests").get(1).beans("bbbb").get(4).string("key"), is("key5"));
+        assertThat(bean.beans("tests").get(1).beans("bbbb").get(4).string("value"), is("5.0"));
 
-        assertThat(bean.list("tests").get(2).list("bbbb").size(), is(5));
-        assertThat(bean.list("tests").get(2).list("bbbb").get(0).value("key"), is("key1"));
-        assertThat(bean.list("tests").get(2).list("bbbb").get(0).value("value"), is("1.0"));
-        assertThat(bean.list("tests").get(2).list("bbbb").get(1), is(nullValue()));
-        assertThat(bean.list("tests").get(2).list("bbbb").get(2).value("key"), is("key3"));
-        assertThat(bean.list("tests").get(2).list("bbbb").get(2).value("value"), is("3.0"));
-        assertThat(bean.list("tests").get(2).list("bbbb").get(3).value("key"), is("key4"));
-        assertThat(bean.list("tests").get(2).list("bbbb").get(3).value("value"), is("4.0"));
-        assertThat(bean.list("tests").get(2).list("bbbb").get(4).value("key"), is("key5"));
-        assertThat(bean.list("tests").get(2).list("bbbb").get(4).value("value"), is("5.0"));
+        assertThat(bean.beans("tests").get(2).beans("bbbb").size(), is(5));
+        assertThat(bean.beans("tests").get(2).beans("bbbb").get(0).string("key"), is("key1"));
+        assertThat(bean.beans("tests").get(2).beans("bbbb").get(0).string("value"), is("1.0"));
+        assertThat(bean.beans("tests").get(2).beans("bbbb").get(1), is(nullValue()));
+        assertThat(bean.beans("tests").get(2).beans("bbbb").get(2).string("key"), is("key3"));
+        assertThat(bean.beans("tests").get(2).beans("bbbb").get(2).string("value"), is("3.0"));
+        assertThat(bean.beans("tests").get(2).beans("bbbb").get(3).string("key"), is("key4"));
+        assertThat(bean.beans("tests").get(2).beans("bbbb").get(3).string("value"), is("4.0"));
+        assertThat(bean.beans("tests").get(2).beans("bbbb").get(4).string("key"), is("key5"));
+        assertThat(bean.beans("tests").get(2).beans("bbbb").get(4).string("value"), is("5.0"));
 
-        assertThat(bean.list("tests").get(3).list("bbbb").size(), is(2));
-        assertThat(bean.list("tests").get(3).list("bbbb").get(0).value("key"), is("key1"));
-        assertThat(bean.list("tests").get(3).list("bbbb").get(0).value("value"), is("1.0"));
-        assertThat(bean.list("tests").get(3).list("bbbb").get(1).value("key"), is("key2"));
-        assertThat(bean.list("tests").get(3).list("bbbb").get(1).value("value"), is("2.0"));
+        assertThat(bean.beans("tests").get(3).beans("bbbb").size(), is(2));
+        assertThat(bean.beans("tests").get(3).beans("bbbb").get(0).string("key"), is("key1"));
+        assertThat(bean.beans("tests").get(3).beans("bbbb").get(0).string("value"), is("1.0"));
+        assertThat(bean.beans("tests").get(3).beans("bbbb").get(1).string("key"), is("key2"));
+        assertThat(bean.beans("tests").get(3).beans("bbbb").get(1).string("value"), is("2.0"));
 
-        assertThat(bean.list("tests").get(4).list("bbbb").size(), is(1));
-        assertThat(bean.list("tests").get(4).list("bbbb").get(0).value("key"), is(nullValue()));
-        assertThat(bean.list("tests").get(4).list("bbbb").get(0).value("value"), is("1.0"));
+        assertThat(bean.beans("tests").get(4).beans("bbbb").size(), is(1));
+        assertThat(bean.beans("tests").get(4).beans("bbbb").get(0).string("key"), is(nullValue()));
+        assertThat(bean.beans("tests").get(4).beans("bbbb").get(0).string("value"), is("1.0"));
 
-        assertThat(bean.list("tests").get(5).list("bbbb").size(), is(6));
-        assertThat(bean.list("tests").get(5).list("bbbb").get(0), is(nullValue()));
-        assertThat(bean.list("tests").get(5).list("bbbb").get(1), is(nullValue()));
-        assertThat(bean.list("tests").get(5).list("bbbb").get(2), is(nullValue()));
-        assertThat(bean.list("tests").get(5).list("bbbb").get(3), is(nullValue()));
-        assertThat(bean.list("tests").get(5).list("bbbb").get(4), is(nullValue()));
-        assertThat(bean.list("tests").get(5).list("bbbb").get(5).value("key"), is("key6"));
-        assertThat(bean.list("tests").get(5).list("bbbb").get(5).value("value"), is("6.0"));
+        assertThat(bean.beans("tests").get(5).beans("bbbb").size(), is(6));
+        assertThat(bean.beans("tests").get(5).beans("bbbb").get(0), is(nullValue()));
+        assertThat(bean.beans("tests").get(5).beans("bbbb").get(1), is(nullValue()));
+        assertThat(bean.beans("tests").get(5).beans("bbbb").get(2), is(nullValue()));
+        assertThat(bean.beans("tests").get(5).beans("bbbb").get(3), is(nullValue()));
+        assertThat(bean.beans("tests").get(5).beans("bbbb").get(4), is(nullValue()));
+        assertThat(bean.beans("tests").get(5).beans("bbbb").get(5).string("key"), is("key6"));
+        assertThat(bean.beans("tests").get(5).beans("bbbb").get(5).string("value"), is("6.0"));
 
-        assertThat(bean.list("tests").get(6).list("bbbb").size(), is(1));
-        assertThat(bean.list("tests").get(6).list("bbbb").get(0).value("key"), is("key1"));
-        assertThat(bean.list("tests").get(6).list("bbbb").get(0).value("value"), is(nullValue()));
+        assertThat(bean.beans("tests").get(6).beans("bbbb").size(), is(1));
+        assertThat(bean.beans("tests").get(6).beans("bbbb").get(0).string("key"), is("key1"));
+        assertThat(bean.beans("tests").get(6).beans("bbbb").get(0).string("value"), is(nullValue()));
+    }
+
+    @Test
+    public void testIndexedListAsLeaf() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_IndexedListColumn.xlsx");
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        assertThat(bean.beans("listAsLeaf").size(), is(4));
+        assertThat(bean.beans("listAsLeaf").get(0).string("test"), is("aaa"));
+
+        assertThat(bean.beans("listAsLeaf").get(0).strings("list").size(), is(3));
+        assertThat(bean.beans("listAsLeaf").get(0).strings("list").get(0), is("bbb"));
+        assertThat(bean.beans("listAsLeaf").get(0).strings("list").get(1), is("ccc"));
+        assertThat(bean.beans("listAsLeaf").get(0).strings("list").get(2), is("ddd"));
+
+        assertThat(bean.beans("listAsLeaf").get(1).strings("list").size(), is(3));
+        assertThat(bean.beans("listAsLeaf").get(1).strings("list").get(0), is("1.0"));
+        assertThat(bean.beans("listAsLeaf").get(1).strings("list").get(1), is("2.0"));
+        assertThat(bean.beans("listAsLeaf").get(1).strings("list").get(2), is("3.0"));
+
+        assertThat(bean.beans("listAsLeaf").get(2).strings("list").size(), is(3));
+        assertThat(bean.beans("listAsLeaf").get(2).strings("list").get(0), is("4.0"));
+        assertThat(bean.beans("listAsLeaf").get(2).strings("list").get(1), is(nullValue()));
+        assertThat(bean.beans("listAsLeaf").get(2).strings("list").get(2), is("5.0"));
+
+        assertThat(bean.beans("listAsLeaf").get(3).strings("list").size(), is(2));
+        assertThat(bean.beans("listAsLeaf").get(3).strings("list").get(0), is(nullValue()));
+        assertThat(bean.beans("listAsLeaf").get(3).strings("list").get(1), is("6.0"));
+    }
+
+    @Test
+    public void testIndexedListAsLeafTestOption() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_IndexedListColumn.xlsx");
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        assertThat(bean.beans("listAsLeafTestOption").size(), is(4));
+        assertThat(bean.beans("listAsLeafTestOption").get(0).string("test"), is("1"));
+
+        assertThat(bean.beans("listAsLeafTestOption").get(0).strings("list").size(), is(3));
+        assertThat(bean.beans("listAsLeafTestOption").get(0).strings("list").get(0), is("bbb"));
+        assertThat(bean.beans("listAsLeafTestOption").get(0).strings("list").get(1), is("ccc"));
+        assertThat(bean.beans("listAsLeafTestOption").get(0).strings("list").get(2), is("ddd"));
+
+        assertThat(bean.beans("listAsLeafTestOption").get(1).strings("list").size(), is(3));
+        assertThat(bean.beans("listAsLeafTestOption").get(1).strings("list").get(0), is("1.0"));
+        assertThat(bean.beans("listAsLeafTestOption").get(1).strings("list").get(1), is("2"));
+        assertThat(bean.beans("listAsLeafTestOption").get(1).strings("list").get(2), is("3.0"));
+
+        assertThat(bean.beans("listAsLeafTestOption").get(2).strings("list").size(), is(3));
+        assertThat(bean.beans("listAsLeafTestOption").get(2).strings("list").get(0), is("4.0"));
+        assertThat(bean.beans("listAsLeafTestOption").get(2).strings("list").get(1), is(nullValue()));
+        assertThat(bean.beans("listAsLeafTestOption").get(2).strings("list").get(2), is("5.0"));
+
+        assertThat(bean.beans("listAsLeafTestOption").get(3).strings("list").size(), is(2));
+        assertThat(bean.beans("listAsLeafTestOption").get(3).strings("list").get(0), is(nullValue()));
+        assertThat(bean.beans("listAsLeafTestOption").get(3).strings("list").get(1), is("6"));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testIndexedListAsLeafTestLeft() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_IndexedListColumn.xlsx");
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        System.out.println(bean);
+
+        List<?> list = (List<?>) bean.get("listAsLeafTestLeft");
+
+        assertThat(list.size(), is(2));
+        assertThat(list, is(instanceOf(List.class)));
+
+        List<XlBean> elemList1 = (List<XlBean>) list.get(0);
+
+        assertThat(elemList1.size(), is(4));
+
+        assertThat(elemList1.get(0).string("test"), is("1"));
+
+        assertThat(elemList1.get(0).strings("list").size(), is(3));
+        assertThat(elemList1.get(0).strings("list").get(0), is("bbb"));
+        assertThat(elemList1.get(0).strings("list").get(1), is("ccc"));
+        assertThat(elemList1.get(0).strings("list").get(2), is("ddd"));
+
+        assertThat(elemList1.get(1).strings("list").size(), is(3));
+        assertThat(elemList1.get(1).strings("list").get(0), is("1.0"));
+        assertThat(elemList1.get(1).strings("list").get(1), is("2"));
+        assertThat(elemList1.get(1).strings("list").get(2), is("3.0"));
+
+        assertThat(elemList1.get(2).strings("list").size(), is(3));
+        assertThat(elemList1.get(2).strings("list").get(0), is("4.0"));
+        assertThat(elemList1.get(2).strings("list").get(1), is(nullValue()));
+        assertThat(elemList1.get(2).strings("list").get(2), is("5.0"));
+
+        assertThat(elemList1.get(3).strings("list").size(), is(2));
+        assertThat(elemList1.get(3).strings("list").get(0), is(nullValue()));
+        assertThat(elemList1.get(3).strings("list").get(1), is("6"));
+
+        List<XlBean> elemList2 = (List<XlBean>) list.get(1);
+
+        assertThat(elemList2.size(), is(1));
+
+        assertThat(elemList2.get(0).string("test"), is("2.0"));
+
+        assertThat(elemList2.get(0).strings("list").size(), is(3));
+        assertThat(elemList2.get(0).strings("list").get(0), is("3.0"));
+        assertThat(elemList2.get(0).strings("list").get(1), is("4"));
+        assertThat(elemList2.get(0).strings("list").get(2), is("5.0"));
+
     }
 
     @Test
@@ -492,27 +604,27 @@ public class XlBeanReaderTest {
 
         System.out.println(bean);
 
-        assertThat(bean.list("error").get(0).get("formulaError"), is("Before Formula error"));
-        assertThat(bean.list("error").get(0).get("refError"), is("Before Ref error"));
-        assertThat(bean.list("error").get(0).get("numberError"), is("Before Num error"));
+        assertThat(bean.beans("error").get(0).get("formulaError"), is("Before Formula error"));
+        assertThat(bean.beans("error").get(0).get("refError"), is("Before Ref error"));
+        assertThat(bean.beans("error").get(0).get("numberError"), is("Before Num error"));
 
-        assertThat(bean.list("error").get(1).get("formulaError"), is(nullValue()));
-        assertThat(bean.list("error").get(1).get("refError"), is("Before Ref error"));
-        assertThat(bean.list("error").get(1).get("numberError"), is("Before Num error"));
+        assertThat(bean.beans("error").get(1).get("formulaError"), is(nullValue()));
+        assertThat(bean.beans("error").get(1).get("refError"), is("Before Ref error"));
+        assertThat(bean.beans("error").get(1).get("numberError"), is("Before Num error"));
 
-        assertThat(bean.list("error").get(2).get("formulaError"), is("After Formula error"));
-        assertThat(bean.list("error").get(2).get("refError"), is(nullValue()));
-        assertThat(bean.list("error").get(2).get("numberError"), is("Before Num error"));
+        assertThat(bean.beans("error").get(2).get("formulaError"), is("After Formula error"));
+        assertThat(bean.beans("error").get(2).get("refError"), is(nullValue()));
+        assertThat(bean.beans("error").get(2).get("numberError"), is("Before Num error"));
 
-        assertThat(bean.list("error").get(3).get("formulaError"), is("After Formula error"));
-        assertThat(bean.list("error").get(3).get("refError"), is("After Ref error"));
-        assertThat(bean.list("error").get(3).get("numberError"), is(nullValue()));
+        assertThat(bean.beans("error").get(3).get("formulaError"), is("After Formula error"));
+        assertThat(bean.beans("error").get(3).get("refError"), is("After Ref error"));
+        assertThat(bean.beans("error").get(3).get("numberError"), is(nullValue()));
 
-        assertThat(bean.list("error").get(4).get("formulaError"), is("After Formula error"));
-        assertThat(bean.list("error").get(4).get("refError"), is("After Ref error"));
-        assertThat(bean.list("error").get(4).get("numberError"), is("After Num error"));
+        assertThat(bean.beans("error").get(4).get("formulaError"), is("After Formula error"));
+        assertThat(bean.beans("error").get(4).get("refError"), is("After Ref error"));
+        assertThat(bean.beans("error").get(4).get("numberError"), is("After Num error"));
 
-        assertThat(bean.list("error").size(), is(5));
+        assertThat(bean.beans("error").size(), is(5));
     }
 
     @Test
@@ -524,41 +636,52 @@ public class XlBeanReaderTest {
 
         System.out.println(bean);
 
-        assertThat(bean.list("format").get(0).get("aaa"), is("111.0"));
-        assertThat(bean.list("format").get(0).bean("bbb").get("b1"), is("222.0"));
-        assertThat(bean.list("format").get(0).bean("bbb").bean("b2").get("b3"), is("333.0"));
-        assertThat(bean.list("format").get(0).bean("ccc"), is(nullValue()));
+        assertThat(bean.beans("format").get(0).get("aaa"), is("111.0"));
+        assertThat(bean.beans("format").get(0).bean("bbb").get("b1"), is("222.0"));
+        assertThat(bean.beans("format").get(0).bean("bbb").bean("b2").get("b3"), is("333.0"));
+        assertThat(bean.beans("format").get(0).bean("ccc"), is(nullValue()));
 
-        assertThat(bean.list("format").get(1).get("aaa"), is("111.0"));
-        assertThat(bean.list("format").get(1).bean("bbb").get("b1"), is("222.0"));
-        assertThat(bean.list("format").get(1).bean("bbb").bean("b2"), is(nullValue()));
-        assertThat(bean.list("format").get(1).bean("ccc"), is(nullValue()));
+        assertThat(bean.beans("format").get(1).get("aaa"), is("111.0"));
+        assertThat(bean.beans("format").get(1).bean("bbb").get("b1"), is("222.0"));
+        assertThat(bean.beans("format").get(1).bean("bbb").bean("b2"), is(nullValue()));
+        assertThat(bean.beans("format").get(1).bean("ccc"), is(nullValue()));
 
-        assertThat(bean.list("format").get(2).get("aaa"), is("111.0"));
-        assertThat(bean.list("format").get(2).bean("bbb").get("b1"), is(nullValue()));
-        assertThat(bean.list("format").get(2).bean("bbb").bean("b2").get("b3"), is("333.0"));
-        assertThat(bean.list("format").get(2).bean("ccc"), is(nullValue()));
+        assertThat(bean.beans("format").get(2).get("aaa"), is("111.0"));
+        assertThat(bean.beans("format").get(2).bean("bbb").get("b1"), is(nullValue()));
+        assertThat(bean.beans("format").get(2).bean("bbb").bean("b2").get("b3"), is("333.0"));
+        assertThat(bean.beans("format").get(2).bean("ccc"), is(nullValue()));
 
-        assertThat(bean.list("format").get(3).get("aaa"), is("111.0"));
-        assertThat(bean.list("format").get(3).bean("bbb"), is(nullValue()));
-        assertThat(bean.list("format").get(3).bean("ccc"), is(nullValue()));
+        assertThat(bean.beans("format").get(3).get("aaa"), is("111.0"));
+        assertThat(bean.beans("format").get(3).bean("bbb"), is(nullValue()));
+        assertThat(bean.beans("format").get(3).bean("ccc"), is(nullValue()));
 
-        assertThat(bean.list("format").get(4).get("aaa"), is(nullValue()));
-        assertThat(bean.list("format").get(4).bean("bbb").get("b1"), is("222.0"));
-        assertThat(bean.list("format").get(4).bean("bbb").bean("b2").get("b3"), is("333.0"));
-        assertThat(bean.list("format").get(4).bean("ccc"), is(nullValue()));
+        assertThat(bean.beans("format").get(4).get("aaa"), is(nullValue()));
+        assertThat(bean.beans("format").get(4).bean("bbb").get("b1"), is("222.0"));
+        assertThat(bean.beans("format").get(4).bean("bbb").bean("b2").get("b3"), is("333.0"));
+        assertThat(bean.beans("format").get(4).bean("ccc"), is(nullValue()));
 
-        assertThat(bean.list("format").get(5).get("aaa"), is(nullValue()));
-        assertThat(bean.list("format").get(5).bean("bbb").get("b1"), is("222.0"));
-        assertThat(bean.list("format").get(5).bean("bbb").bean("b2"), is(nullValue()));
-        assertThat(bean.list("format").get(5).bean("ccc"), is(nullValue()));
+        assertThat(bean.beans("format").get(5).get("aaa"), is(nullValue()));
+        assertThat(bean.beans("format").get(5).bean("bbb").get("b1"), is("222.0"));
+        assertThat(bean.beans("format").get(5).bean("bbb").bean("b2"), is(nullValue()));
+        assertThat(bean.beans("format").get(5).bean("ccc"), is(nullValue()));
 
-        assertThat(bean.list("format").get(6).get("aaa"), is(nullValue()));
-        assertThat(bean.list("format").get(6).bean("bbb").get("b1"), is(nullValue()));
-        assertThat(bean.list("format").get(6).bean("bbb").bean("b2").get("b3"), is("333.0"));
-        assertThat(bean.list("format").get(6).bean("ccc"), is(nullValue()));
+        assertThat(bean.beans("format").get(6).get("aaa"), is(nullValue()));
+        assertThat(bean.beans("format").get(6).bean("bbb").get("b1"), is(nullValue()));
+        assertThat(bean.beans("format").get(6).bean("bbb").bean("b2").get("b3"), is("333.0"));
+        assertThat(bean.beans("format").get(6).bean("ccc"), is(nullValue()));
 
-        assertThat(bean.list("format").get(7).bean("ccc").bean("c1").bean("c2").get("c3"), is("444.0"));
+        assertThat(bean.beans("format").get(7).bean("ccc").bean("c1").bean("c2").get("c3"), is("444.0"));
+
+    }
+
+    @Test
+    public void testListLeaf() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_beaninbean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        System.out.println(bean);
 
     }
 
@@ -572,12 +695,67 @@ public class XlBeanReaderTest {
 
         System.out.println(bean);
 
-        assertThat(bean.list("data").get(0).bean("bean").list("list").get(0).value("val"), is("1.0"));
-        assertThat(bean.list("data").get(0).bean("bean").list("list").get(1).value("val"), is("2.0"));
-        assertThat(bean.list("data").get(1).bean("bean").list("list").get(0), is(nullValue()));
-        assertThat(bean.list("data").get(1).bean("bean").list("list").get(1).value("val"), is("3.0"));
+        assertThat(bean.beans("data").get(0).bean("bean").beans("list").get(0).string("val"), is("1.0"));
+        assertThat(bean.beans("data").get(0).bean("bean").beans("list").get(1).string("val"), is("2.0"));
+        assertThat(bean.beans("data").get(1).bean("bean").beans("list").get(0), is(nullValue()));
+        assertThat(bean.beans("data").get(1).bean("bean").beans("list").get(1).string("val"), is("3.0"));
 
         bean.listOf("data", TestBean.class);
+
+    }
+
+    @Test
+    public void testSidewayTable() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_sidewaytable.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        System.out.println(bean);
+
+        assertThat(bean.beans("sideway").size(), is(3));
+        assertThat(bean.beans("sideway").get(0).string("aaa"), is("aaa1"));
+        assertThat(bean.beans("sideway").get(0).string("bbb"), is("bbb1"));
+        assertThat(bean.beans("sideway").get(1).string("aaa"), is("aaa2"));
+        assertThat(bean.beans("sideway").get(1).string("bbb"), is("bbb2"));
+        assertThat(bean.beans("sideway").get(2).get("aaa"), is(nullValue()));
+        assertThat(bean.beans("sideway").get(2).string("bbb"), is("bbb3"));
+    }
+
+    @Test
+    public void testOptionLimit() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_option.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        System.out.println(bean);
+
+        assertThat(bean.beans("options").size(), is(5));
+        assertThat(bean.beans("options").get(0).string("aaa"), is("1"));
+        assertThat(bean.beans("options").get(1).string("aaa"), is("2"));
+        assertThat(bean.beans("options").get(2).string("aaa"), is("3"));
+        assertThat(bean.beans("options").get(3).string("aaa"), is("4"));
+        assertThat(bean.beans("options").get(4).string("aaa"), is("5"));
+    }
+
+    @Test
+    public void testOptionOffset() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_option.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        System.out.println(bean);
+
+        assertThat(bean.beans("optionsOffset").size(), is(7));
+        assertThat(bean.beans("optionsOffset").get(0), is(nullValue()));
+        assertThat(bean.beans("optionsOffset").get(1), is(nullValue()));
+        assertThat(bean.beans("optionsOffset").get(2).string("aaa"), is("1"));
+        assertThat(bean.beans("optionsOffset").get(3).string("aaa"), is("2"));
+        assertThat(bean.beans("optionsOffset").get(4).string("aaa"), is("3"));
+        assertThat(bean.beans("optionsOffset").get(5).string("aaa"), is("4"));
+        assertThat(bean.beans("optionsOffset").get(6).string("aaa"), is("5"));
 
     }
 

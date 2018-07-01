@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.xlbean.XlBean;
+import org.xlbean.XlBeanImpl;
 import org.xlbean.reader.XlBeanReader;
 import org.xlbean.reader.XlBeanReaderTest;
 
@@ -87,7 +88,7 @@ public class FieldAccessHelperTest {
     @Test
     public void setValue() {
 
-        XlBean bean = new XlBean();
+        XlBean bean = new XlBeanImpl();
         FieldAccessHelper.setValue("aaa", "testValue", bean);
         FieldAccessHelper.setValue("bbb.b1", "bbb.b1test", bean);
         FieldAccessHelper.setValue("bbb.b2.b3", "bbb.b2.b3test", bean);

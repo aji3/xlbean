@@ -23,6 +23,7 @@ import org.xlbean.testbean.Country;
 import org.xlbean.testbean.President;
 import org.xlbean.testbean.Stats;
 import org.xlbean.testbean.TestConverterBean;
+import org.xlbean.util.BeanHelper;
 
 public class XlBeanTest {
 
@@ -128,9 +129,9 @@ public class XlBeanTest {
     public void put() {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage(
-            "Value set to XlBean must be XlBean, List<XlBean> or String. To set value of any other class to this bean, please use #set(String, Object). #set(String, Object) will scan all the properties in the object and set to this object. (Actual: class java.lang.Integer)");
+            "Value set to XlBean must be XlBean, List<XlBean> or String. To set value of any other class to this bean, use #set(String, Object). #set(String, Object) will scan all the properties in the object and set to this object. (Actual: class java.lang.Integer)");
 
-        XlBean bean = new XlBean();
+        XlBean bean = new XlBeanImpl();
         bean.put("illegalValue", Integer.valueOf(1));
     }
 
@@ -154,39 +155,39 @@ public class XlBeanTest {
         country.setStats(stats);
         country.setPresidents(presidents);
 
-        XlBean bean = new XlBean();
+        XlBean bean = new XlBeanImpl();
         bean.set(country);
 
         assertThat(bean.get("name"), is("testName"));
         assertThat(bean.bean("stats").get("gdp"), is("123.45"));
         assertThat(bean.bean("stats").get("totalArea"), is("1234567890"));
-        assertThat(bean.list("presidents").get(0).get("name"), is("1st president"));
-        assertThat(bean.list("presidents").get(1).get("name"), is("2nd president"));
-        assertThat(bean.list("presidents").get(2).get("name"), is("3rd president"));
+        assertThat(bean.beans("presidents").get(0).get("name"), is("1st president"));
+        assertThat(bean.beans("presidents").get(1).get("name"), is("2nd president"));
+        assertThat(bean.beans("presidents").get(2).get("name"), is("3rd president"));
     }
 
     @Test
     public void isValuesEmpty() {
-        XlBean bean = new XlBean();
+        XlBean bean = new XlBeanImpl();
 
-        assertThat(bean.isValuesEmpty(), is(true));
+        assertThat(BeanHelper.isValuesEmpty(bean), is(true));
 
         bean.put("testNull", null);
 
-        assertThat(bean.isValuesEmpty(), is(true));
+        assertThat(BeanHelper.isValuesEmpty(bean), is(true));
 
         XlList list = new XlList();
-        XlBean b = new XlBean();
+        XlBean b = new XlBeanImpl();
         b.put("testNullForList", null);
         list.add(b);
         bean.put("list", list);
 
-        assertThat(bean.isValuesEmpty(), is(true));
+        assertThat(BeanHelper.isValuesEmpty(bean), is(true));
 
-        b = new XlBean();
+        b = new XlBeanImpl();
         b.put("testNonNullForList", "TESTVALUE");
         list.add(b);
 
-        assertThat(bean.isValuesEmpty(), is(false));
+        assertThat(BeanHelper.isValuesEmpty(bean), is(false));
     }
 }
