@@ -1,7 +1,5 @@
 package org.xlbean.definition;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlbean.excel.XlCellAddress;
@@ -21,11 +19,6 @@ public class SingleDefinition extends Definition {
     private XlCellAddress cell;
 
     public SingleDefinition() {};
-
-    public SingleDefinition(String name, Map<String, String> options) {
-        setName(name);
-        setOptions(options);
-    }
 
     public XlCellAddress getCell() {
         return cell;
@@ -47,6 +40,7 @@ public class SingleDefinition extends Definition {
                 "SingleValueDefinition {} cannot be merged to {}.",
                 newDefinition.getName(),
                 getName());
+            return;
         }
         SingleDefinition definition = (SingleDefinition) newDefinition;
         if (cell != null) {

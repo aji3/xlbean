@@ -704,4 +704,59 @@ public class XlBeanReaderTest {
 
     }
 
+    @Test
+    public void testSidewayTable() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_sidewaytable.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        System.out.println(bean);
+
+        assertThat(bean.beans("sideway").size(), is(3));
+        assertThat(bean.beans("sideway").get(0).string("aaa"), is("aaa1"));
+        assertThat(bean.beans("sideway").get(0).string("bbb"), is("bbb1"));
+        assertThat(bean.beans("sideway").get(1).string("aaa"), is("aaa2"));
+        assertThat(bean.beans("sideway").get(1).string("bbb"), is("bbb2"));
+        assertThat(bean.beans("sideway").get(2).get("aaa"), is(nullValue()));
+        assertThat(bean.beans("sideway").get(2).string("bbb"), is("bbb3"));
+    }
+
+    @Test
+    public void testOptionLimit() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_option.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        System.out.println(bean);
+
+        assertThat(bean.beans("options").size(), is(5));
+        assertThat(bean.beans("options").get(0).string("aaa"), is("1"));
+        assertThat(bean.beans("options").get(1).string("aaa"), is("2"));
+        assertThat(bean.beans("options").get(2).string("aaa"), is("3"));
+        assertThat(bean.beans("options").get(3).string("aaa"), is("4"));
+        assertThat(bean.beans("options").get(4).string("aaa"), is("5"));
+    }
+
+    @Test
+    public void testOptionOffset() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_option.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        System.out.println(bean);
+
+        assertThat(bean.beans("optionsOffset").size(), is(7));
+        assertThat(bean.beans("optionsOffset").get(0), is(nullValue()));
+        assertThat(bean.beans("optionsOffset").get(1), is(nullValue()));
+        assertThat(bean.beans("optionsOffset").get(2).string("aaa"), is("1"));
+        assertThat(bean.beans("optionsOffset").get(3).string("aaa"), is("2"));
+        assertThat(bean.beans("optionsOffset").get(4).string("aaa"), is("3"));
+        assertThat(bean.beans("optionsOffset").get(5).string("aaa"), is("4"));
+        assertThat(bean.beans("optionsOffset").get(6).string("aaa"), is("5"));
+
+    }
+
 }
