@@ -27,7 +27,7 @@ This library will be useful when you want to **use excel sheet from Java program
     <dependency>
         <groupId>org.xlbean</groupId>
         <artifactId>xlbean</artifactId>
-        <version>0.1.8</version>
+        <version>0.2.0</version>
     </dependency>
 </dependencies>
 ```
@@ -38,7 +38,7 @@ repositories {
      jcenter()
 }
 dependencies {
-    compile group: 'org.xlbean', name: 'xlbean', version:'0.1.8'
+    compile group: 'org.xlbean', name: 'xlbean', version:'0.2.0'
 }
 ```
 
@@ -56,7 +56,7 @@ dependencies {
 
     Input **"####"** on R1C1.
 
-    ![Excelシートの例](https://user-images.githubusercontent.com/23234132/29244923-4f5cba56-8002-11e7-929d-617a9ea38d83.png "Excelシートの例")
+    ![Example of excel sheet](https://user-images.githubusercontent.com/23234132/29244923-4f5cba56-8002-11e7-929d-617a9ea38d83.png "Excelシートの例")
 
 ##### 3. Java Program
 ```java
@@ -64,7 +64,7 @@ InputStream in = new FileInputStream("example/presidents.xlsx");
 XlBeanReader reader = new XlBeanReader();
 XlBean bean = reader.read(in);
 
-XlList list = bean.list("presidents");
+XlList list = bean.beans("presidents");
 // List filled with Map of String
 System.out.println(list.get(0).get("name")); // John F. Kennedy
 System.out.println(list.get(0).get("dateOfBirth")); // 1917-05-29T00:00:00.000
@@ -88,18 +88,18 @@ XlBeanReader reader = new XlBeanReader();
 XlBean bean = reader.read(in);
 
 // Get the value of the individual cell
-String name = bean.value("name");
+String name = bean.string("name");
 System.out.println(name);// United States of America
 ```
 
 ### Reading Multiple Tables, Cells
 
-If multiple definition to be defined in a cell, **connect the definition by comma.**
+To define multiple definitions in one cell, **connect the definition by comma.**
 
 
 ### Define Map
 
-As shown in the image for "Reading Individual Cell", value can be layered by period separated name.
+As shown in the image for "Reading Individual Cell", bean-in-bean can be defined by connecting each layer by periods.
 
 ```java
 InputStream in = new FileInputStream("example/presidents.xlsx");
@@ -108,8 +108,8 @@ XlBean bean = reader.read(in);
 
 // Get value defined as Map
 XlBean stats = bean.bean("stats");
-System.out.println(stats.value("totalArea"));// 9833520.0
-System.out.println(stats.value("gdp"));// 18558000000000000
+System.out.println(stats.string("totalArea"));// 9833520.0
+System.out.println(stats.string("gdp"));// 18558000000000000
 ```
 
 ### Options for Reading Mode
@@ -124,7 +124,7 @@ InputStream in = new FileInputStream("example/optionExample.xlsx");
 XlBeanReader reader = new XlBeanReader();
 XlBean bean = reader.read(in);
 
-XlList noOptionTable = bean.list("noOptionTable");
+XlList noOptionTable = bean.beans("noOptionTable");
 System.out.println(noOptionTable.get(0).get("defaultCellType"));// 0.0
 System.out.println(noOptionTable.get(0).get("stringCellType")); // 0
 
@@ -146,7 +146,7 @@ Available types：
 <img width="575" alt="example_excel_option_1" src="https://user-images.githubusercontent.com/23234132/29819102-22e46f78-8cfa-11e7-83f6-b8b2d9a50495.PNG">
 
 ```java
-XlList optionTable = bean.list("optionTable");
+XlList optionTable = bean.beans("optionTable");
 System.out.println(optionTable.get(0).get("defaultCellType"));// 0 <= Loaded as String
 System.out.println(optionTable.get(0).get("stringCellType")); // 0
 
@@ -159,10 +159,10 @@ System.out.println(optionTable.get(1).get("stringCellType")); // 1
 <img width="260" alt="example_excel_option_2" src="https://user-images.githubusercontent.com/23234132/29819268-e40a802a-8cfa-11e7-8f56-ce8cf5df61e8.PNG">
 
 ```java
-XlList limitedTable = bean.list("limitedTable");
+XlList limitedTable = bean.beans("limitedTable");
 System.out.println(limitedTable.size());// 5 <= Number of rows loaded is limited to 5
-System.out.println(limitedTable.get(0).value("value"));// 0.0 <= The list is started from row 1
-System.out.println(limitedTable.get(1).value("value"));// 1.0
+System.out.println(limitedTable.get(0).string("value"));// 0.0 <= The list is started from row 1
+System.out.println(limitedTable.get(1).string("value"));// 1.0
 ```
 
 #### Option：index - Enable index search by using value of the column 
@@ -170,7 +170,7 @@ System.out.println(limitedTable.get(1).value("value"));// 1.0
 <img width="450" alt="example_excel_option_3" src="https://user-images.githubusercontent.com/23234132/30059107-b105da8e-9278-11e7-9810-03b2d45a2395.PNG">
 
 ```java
-XlList presidents = bean.list("presidents");
+XlList presidents = bean.beans("presidents");
 Map<String, String> condition = new HashMap<>();
 condition.put("id", "45");
 
