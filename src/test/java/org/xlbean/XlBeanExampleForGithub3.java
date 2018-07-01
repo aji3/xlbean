@@ -9,7 +9,6 @@ import org.xlbean.reader.XlBeanReader;
 
 public class XlBeanExampleForGithub3 {
 
-    @SuppressWarnings({ "unchecked", "rawtypes", "serial" })
     public static void main(String[] args) throws Exception {
         InputStream in = new FileInputStream("example/presidents_index.xlsx");
         XlBeanReader reader = new XlBeanReader();

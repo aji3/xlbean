@@ -83,17 +83,17 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
             index++;
         }
 
-        processIsKeyIsValueOption(bean);
+        processListToPropOption(bean);
     }
 
-    private void processIsKeyIsValueOption(XlBean rootBean) {
+    private void processListToPropOption(XlBean rootBean) {
         if (!definitionCache.hasListToPropOption()) {
             return;
         }
         SingleDefinition key = definitionCache.getListToPropKeyOptionDefinition();
         SingleDefinition value = definitionCache.getListToPropValueOptionDefinition();
         String tableName = getDefinition().getName();
-        XlList table = FieldAccessHelper.getValue(tableName, rootBean);
+        List<XlBean> table = FieldAccessHelper.getValue(tableName, rootBean);
         XlBean targetBean = rootBean;
         if (tableName.contains(".")) {
             targetBean = FieldAccessHelper.getValue(tableName.substring(0, tableName.lastIndexOf('.')), rootBean);

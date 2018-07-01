@@ -2,7 +2,6 @@ package org.xlbean.converter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.xlbean.XlBean;
 
@@ -37,24 +36,6 @@ public interface BeanConverter {
      * @return
      */
     public <T> List<T> toBeanList(Object srcList, Class<T> beanClass);
-
-    /**
-     * Converts {@code sourceMap} to the instance of {@code destinationClazz}
-     * 
-     * @param srcObj
-     * @param destinationClazz
-     * @return
-     */
-    public <T> T toBean(Map<String, Object> sourceMap, Class<?> destinationClass);
-
-    /**
-     * Populates {@code destinationObj} with the key-values in the {@code sourceMap}
-     * 
-     * @param srcObj
-     * @param destinationClazz
-     * @return
-     */
-    public <T> T toBean(Map<String, Object> sourceMap, Object destinationObj);
 
     /**
      * Converts {@code value} to the instance of Map.

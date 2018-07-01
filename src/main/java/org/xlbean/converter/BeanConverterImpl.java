@@ -55,22 +55,15 @@ public class BeanConverterImpl implements BeanConverter {
      * @param beanClass
      * @return
      */
-    @SuppressWarnings("unchecked")
     @Override
     public <T> List<T> toBeanList(Object srcList, Class<T> beanClass) {
         List<T> retList = new ArrayList<>();
         if (srcList instanceof Iterable) {
             for (Object obj : (Iterable<?>) srcList) {
-                retList.add(toBean((Map<String, Object>) obj, beanClass));
+                retList.add(toBean(obj, beanClass));
             }
         }
         return retList;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T toBean(Map<String, Object> sourceMap, Class<?> destinationClass) {
-        return (T) toBean(sourceMap, instantiate(destinationClass));
     }
 
     private Map<Class<?>, Map<String, PropertyDescriptor>> classPropertyDescriptorMap = new HashMap<>();
@@ -94,8 +87,7 @@ public class BeanConverterImpl implements BeanConverter {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public <T> T toBean(Map<String, Object> sourceMap, Object destinationObj) {
+    protected <T> T toBean(Map<String, Object> sourceMap, Object destinationObj) {
         for (Entry<String, Object> entry : sourceMap.entrySet()) {
             try {
                 PropertyDescriptor pd = getPropertyDescriptor(destinationObj.getClass(), entry.getKey());
@@ -113,7 +105,7 @@ public class BeanConverterImpl implements BeanConverter {
                     // If a value of sourceMap is Map and field to be mapped is
                     // not a leaf class,
                     // then this value could be mapped to some bean.
-                    Object obj = toBean((Map<String, Object>) value, type);
+                    Object obj = toBean(value, type);
                     setter.invoke(destinationObj, obj);
                 } else if (Iterable.class.isAssignableFrom(value.getClass())
                         && Iterable.class.isAssignableFrom(type)) {
@@ -124,7 +116,7 @@ public class BeanConverterImpl implements BeanConverter {
                         if (isLeaf(srcObj.getClass())) {
                             obj.add(srcObj);
                         } else {
-                            Object bean = toBean((Map<String, Object>) srcObj, Class.forName(childType.getTypeName()));
+                            Object bean = toBean(srcObj, Class.forName(childType.getTypeName()));
                             obj.add(bean);
                         }
                     }

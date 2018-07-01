@@ -41,6 +41,7 @@ import java.util.List;
  * <li>short.class
  * <li>LocalDateTime.class
  * <li>LocalTime.class
+ * <li>Enum.class
  * </ul>
  *
  * @author Kazuya Tanikawa
@@ -66,7 +67,8 @@ public class ValueConverterImpl implements ValueConverter {
         Date.class,
         LocalDate.class,
         LocalDateTime.class,
-        LocalTime.class);
+        LocalTime.class,
+        Enum.class);
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
     private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -111,6 +113,7 @@ public class ValueConverterImpl implements ValueConverter {
      * @see org.xlbean.converter.ValueConverter#toObject(java.lang.String,
      * java.lang.Class)
      */
+    @SuppressWarnings({ "unchecked", "rawtypes", })
     @Override
     public Object toObject(String value, Class<?> valueClass) {
         if (value == null || valueClass == null) {
@@ -202,6 +205,12 @@ public class ValueConverterImpl implements ValueConverter {
             try {
                 return LocalTime.parse(value, LOCALTIME_FORMAT);
             } catch (DateTimeParseException e) {
+                // ignore
+            }
+        } else if (valueClass.isEnum()) {
+            try {
+                return Enum.valueOf((Class<? extends Enum>) valueClass, value);
+            } catch (Exception e) {
                 // ignore
             }
         }

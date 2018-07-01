@@ -203,6 +203,7 @@ public class DefinitionParserTest {
     }
 
     static void assertParser(Parser<?> parser, String source, List<DefinitionOption> expected) {
+        @SuppressWarnings("unchecked")
         List<DefinitionOption> actual = (List<DefinitionOption>) parser.parse(source);
         assertEq(expected, actual);
     }
