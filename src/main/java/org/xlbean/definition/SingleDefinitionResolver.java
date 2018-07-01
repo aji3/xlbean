@@ -1,32 +1,26 @@
 package org.xlbean.definition;
 
-import java.util.regex.Pattern;
-
+import org.xlbean.definition.parser.DefinitionUnit;
 import org.xlbean.excel.XlCellAddress;
 
-public class SingleDefinitionResolver extends DefinitionResolver {
+public class SingleDefinitionResolver extends DefinitionBuilder {
 
     @Override
-    public boolean isResolvable(String cellValue) {
-        if (cellValue == null) {
+    public boolean isBuildable(Object parsedObject) {
+        if (parsedObject == null) {
             return false;
         }
-        return Pattern.matches(
-            "[a-zA-Z_]\\w*(\\.[a-zA-Z_]\\w*)*(\\?[a-zA-Z_]\\w*=\\w*(&[a-zA-Z_]\\w*=\\w*)*)?",
-            cellValue);
+        return parsedObject instanceof DefinitionUnit;
     }
 
     @Override
-    public Definition resolve(String key, XlCellAddress cell) {
+    public Definition build(Object parsedObject, XlCellAddress cell) {
+        DefinitionUnit unit = (DefinitionUnit) parsedObject;
         SingleDefinition definition = new SingleDefinition();
-        String name = key;
-        if (key.contains("?")) {
-            name = key.substring(0, key.indexOf('?'));
-        }
-        definition.setName(name);
-        definition.setOriginalKeyString(key);
+        definition.setName(unit.getName());
+        definition.addOptions(toMap(unit.getOptions()));
         definition.setCell(cell);
-        definition.addOptions(parseOptions(key));
+
         return definition;
     }
 }

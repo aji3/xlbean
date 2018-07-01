@@ -19,7 +19,7 @@ public class XlBeanExample {
         XlBeanReader reader = new XlBeanReader();
         XlBean bean = reader.read(in);
 
-        XlList list = bean.list("presidents");
+        List<XlBean> list = bean.beans("presidents");
         list.forEach(System.out::println);
 
         System.out.println(bean.get("name"));
@@ -35,7 +35,7 @@ public class XlBeanExample {
         System.out.println(stats2);
 
         XlBeanWriter writer = new XlBeanWriter();
-        XlBean outBean = new XlBean();
+        XlBean outBean = new XlBeanImpl();
         outBean.set("presidents", presidents);
         writer.write(
             new FileInputStream("example/presidents_blank.xlsx"),

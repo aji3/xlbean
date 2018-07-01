@@ -18,6 +18,8 @@ public class SingleDefinition extends Definition {
 
     private XlCellAddress cell;
 
+    public SingleDefinition() {};
+
     public XlCellAddress getCell() {
         return cell;
     }
@@ -38,6 +40,7 @@ public class SingleDefinition extends Definition {
                 "SingleValueDefinition {} cannot be merged to {}.",
                 newDefinition.getName(),
                 getName());
+            return;
         }
         SingleDefinition definition = (SingleDefinition) newDefinition;
         if (cell != null) {
@@ -52,6 +55,6 @@ public class SingleDefinition extends Definition {
 
     @Override
     public String toString() {
-        return "SingleDefinition [cell=" + cell + "]";
+        return String.format("SingleDefinition [name=%s, cell=%s]", getName(), cell);
     }
 }

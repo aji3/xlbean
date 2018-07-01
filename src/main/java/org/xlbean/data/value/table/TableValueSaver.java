@@ -3,7 +3,6 @@ package org.xlbean.data.value.table;
 import java.util.List;
 
 import org.xlbean.XlBean;
-import org.xlbean.XlList;
 import org.xlbean.data.value.ValueSaver;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
@@ -21,7 +20,7 @@ public class TableValueSaver extends ValueSaver<TableDefinition> {
     @Override
     public void save(XlBean bean) {
         TableDefinition definition = getDefinition();
-        XlList table = FieldAccessHelper.getValue(definition.getName(), bean);
+        List<XlBean> table = FieldAccessHelper.getValue(definition.getName(), bean);
 
         List<SingleDefinition> columns = definitionCache.getColumns();
         int index = 0;
