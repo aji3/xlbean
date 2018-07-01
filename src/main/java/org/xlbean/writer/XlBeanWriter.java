@@ -98,7 +98,6 @@ public class XlBeanWriter {
     private void initNewWorkbokToBeXlBeanTarget(XlBean bean, DefinitionRepository definitions) {
         SingleDefinition mark = new SingleDefinition();
         mark.setName(DefinitionConstants.TARGET_SHEET_MARK);
-        mark.setOriginalKeyString(DefinitionConstants.TARGET_SHEET_MARK);
         mark.setCell(new XlCellAddress.Builder().row(0).column(0).build());
         bean.put(DefinitionConstants.TARGET_SHEET_MARK, DefinitionConstants.TARGET_SHEET_MARK);
         mark.setSheetName(newSheetName);
@@ -162,7 +161,6 @@ public class XlBeanWriter {
         String key = String.format("$definition_%d_%d", row, column);
         SingleDefinition definitionDefinition = new SingleDefinition();
         definitionDefinition.setName(key);
-        definitionDefinition.setOriginalKeyString(key);
         definitionDefinition.setCell(new XlCellAddress.Builder().row(row).column(column).build());
         definitionDefinition.setSheetName(newSheetName);
 

@@ -2,8 +2,7 @@ package org.xlbean;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.xlbean.reader.XlBeanReader;
 
@@ -14,7 +13,7 @@ public class XlBeanExampleForGithub4 {
         XlBeanReader reader = new XlBeanReader();
         XlBean bean = reader.read(in);
 
-        XlList forecasts = bean.list("forecasts");
+        List<XlBean> forecasts = bean.beans("forecasts");
         System.out.println(forecasts);
     }
 }

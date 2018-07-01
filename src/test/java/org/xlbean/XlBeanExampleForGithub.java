@@ -15,7 +15,7 @@ public class XlBeanExampleForGithub {
         XlBean bean = reader.read(in);
 
         // Get value as String
-        XlList list = bean.list("presidents");
+        List<XlBean> list = bean.beans("presidents");
         System.out.println(list.get(0).get("name")); // John F. Kennedy
         System.out.println(list.get(0).get("dateOfBirth")); // 1917-05-29T00:00:00.000
 
@@ -24,12 +24,12 @@ public class XlBeanExampleForGithub {
         System.out.println(presidents);
 
         // Get value of a single cell
-        String name = bean.value("name"); // United States of America
+        String name = bean.string("name"); // United States of America
         System.out.println(name);
 
         // Get value of a map
         XlBean stats = bean.bean("stats");
-        System.out.println(stats.value("totalArea")); // 9833520.0
-        System.out.println(stats.value("gdp")); // 18558000000000000
+        System.out.println(stats.string("totalArea")); // 9833520.0
+        System.out.println(stats.string("gdp")); // 18558000000000000
     }
 }

@@ -17,7 +17,10 @@ apply plugin: 'com.jfrog.bintray'
 
 group = 'org.xlbean'
 archivesBaseName = 'xlbean'
-version = '0.1.8'
+version = '0.2.0'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -29,6 +32,7 @@ dependencies {
     compile 'org.apache.poi:poi:3.16'
     compile 'org.apache.poi:poi-ooxml:3.16'
     compile 'org.slf4j:slf4j-api:1.7.25'
+    compile 'org.jparsec:jparsec:3.0'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-all:1.3'

@@ -6,10 +6,10 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.junit.Test;
 import org.xlbean.XlBean;
-import org.xlbean.XlList;
 import org.xlbean.reader.XlBeanReader;
 import org.xlbean.util.FieldAccessHelper;
 
@@ -26,7 +26,7 @@ public class TableValueLoaderTest {
 
         assertThat(bean.get("xldef1"), is(instanceOf(String.class)));
         assertThat(bean.get("xldef3"), is(instanceOf(XlBean.class)));
-        assertThat(bean.get("xldef4"), is(instanceOf(XlList.class)));
+        assertThat(bean.get("xldef4"), is(instanceOf(ArrayList.class)));
 
         assertThat(FieldAccessHelper.getValue("xldef1", bean), is("12345.0"));
         assertThat(FieldAccessHelper.getValue("xldef2", bean), is("aaaaaa"));
@@ -43,7 +43,7 @@ public class TableValueLoaderTest {
         assertThat(bean.get("obj"), is(instanceOf(XlBean.class)));
         assertThat(bean.bean("obj").get("xldef1"), is(instanceOf(String.class)));
         assertThat(bean.bean("obj").get("xldef3"), is(instanceOf(XlBean.class)));
-        assertThat(bean.bean("obj").get("xldef4"), is(instanceOf(XlList.class)));
+        assertThat(bean.bean("obj").get("xldef4"), is(instanceOf(ArrayList.class)));
 
         assertThat(FieldAccessHelper.getValue("obj.xldef1", bean), is("12345.0"));
         assertThat(FieldAccessHelper.getValue("obj.xldef2", bean), is("aaaaaa"));

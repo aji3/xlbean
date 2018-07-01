@@ -2,6 +2,7 @@ package org.xlbean;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.List;
 
 import org.xlbean.reader.XlBeanReader;
 
@@ -12,23 +13,23 @@ public class XlBeanExampleForGithub2 {
         XlBeanReader reader = new XlBeanReader();
         XlBean bean = reader.read(in);
 
-        XlList noOptionTable = bean.list("noOptionTable");
+        List<XlBean> noOptionTable = bean.beans("noOptionTable");
         System.out.println(noOptionTable.get(0).get("defaultCellType")); // 0.0
         System.out.println(noOptionTable.get(0).get("stringCellType")); // 0
 
         System.out.println(noOptionTable.get(1).get("defaultCellType")); // 1.0
         System.out.println(noOptionTable.get(1).get("stringCellType")); // 1
 
-        XlList optionTable = bean.list("optionTable");
+        List<XlBean> optionTable = bean.beans("optionTable");
         System.out.println(optionTable.get(0).get("defaultCellType")); // 0 <= Treated as string
         System.out.println(optionTable.get(0).get("stringCellType")); // 0
 
         System.out.println(optionTable.get(1).get("defaultCellType")); // 1 <= Treated as string
         System.out.println(optionTable.get(1).get("stringCellType")); // 1
 
-        XlList limitedTable = bean.list("limitedTable");
+        List<XlBean> limitedTable = bean.beans("limitedTable");
         System.out.println(limitedTable.size()); // 5 <= Number of rows loaded is limited to 5
-        System.out.println(limitedTable.get(0).value("value")); // 0.0 <= The list is started from row 1
-        System.out.println(limitedTable.get(1).value("value")); // 1.0
+        System.out.println(limitedTable.get(0).string("value")); // 0.0 <= The list is started from row 1
+        System.out.println(limitedTable.get(1).string("value")); // 1.0
     }
 }

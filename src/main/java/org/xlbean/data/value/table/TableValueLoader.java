@@ -10,6 +10,7 @@ import org.xlbean.XlList;
 import org.xlbean.data.value.ValueLoader;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
+import org.xlbean.util.BeanHelper;
 import org.xlbean.util.FieldAccessHelper;
 import org.xlbean.util.XlBeanFactory;
 
@@ -32,13 +33,11 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
     @Override
     public void load(XlBean bean) {
         TableDefinition definition = getDefinition();
-        List<XlBean> table = bean.list(definition.getName());
+        List<XlBean> table = bean.beans(definition.getName());
         if (table == null) {
             table = XlBeanFactory.getInstance().createList();
-            if (table instanceof XlList) {
-                for (Entry<String, List<String>> entry : definitionCache.getIndexKeysMap().entrySet()) {
-                    ((XlList) table).addIndex(entry.getKey(), entry.getValue());
-                }
+            for (Entry<String, List<String>> entry : definitionCache.getIndexKeysMap().entrySet()) {
+                ((XlList) table).addIndex(entry.getKey(), entry.getValue());
             }
             FieldAccessHelper.setValue(definition.getName(), table, bean);
         }
@@ -78,7 +77,7 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
                 if (definitionCache.getOffset() == 0) {
                     table.add(dataRow);
                 } else {
-                    FieldAccessHelper.setFillNull(table, index + definitionCache.getOffset(), dataRow);
+                    BeanHelper.setFillNull(table, index + definitionCache.getOffset(), dataRow);
                 }
             }
             index++;
@@ -111,6 +110,6 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
         if (limit <= num) {
             return true;
         }
-        return dataRow.isValuesEmpty();
+        return BeanHelper.isValuesEmpty(dataRow);
     }
 }

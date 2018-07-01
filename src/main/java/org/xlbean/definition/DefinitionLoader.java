@@ -24,4 +24,5 @@ public abstract class DefinitionLoader<T> {
     protected void setDefinitionSource(T definitionSource) {
         this.definitionSource = definitionSource;
     }
+
 }

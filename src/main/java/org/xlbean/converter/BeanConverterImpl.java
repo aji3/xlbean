@@ -29,7 +29,7 @@ public class BeanConverterImpl implements BeanConverter {
 
     /**
      * Convert the object retrieved by the given sourceKey to an object of given
-     * destinationClass.
+     * destinationClass if the instance if an object of Map.
      *
      * @param sourceKey
      * @param destinationClazz
@@ -37,13 +37,14 @@ public class BeanConverterImpl implements BeanConverter {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T toBean(Object srcObj, Class<?> destinationClazz) {
-        Object dstObj = instantiate(destinationClazz);
+    public <T> T toBean(Object srcObj, Class<T> destinationClazz) {
+        T dstObj = instantiate(destinationClazz);
         if (srcObj instanceof Map) {
+            // srcObj is mapped to the instance of destinationClazz only when it is Map
             Map<String, Object> map = (Map<String, Object>) srcObj;
-            return (T) toBean(map, dstObj);
+            return toBean(map, dstObj);
         }
-        return (T) dstObj;
+        return dstObj;
     }
 
     /**
@@ -54,22 +55,15 @@ public class BeanConverterImpl implements BeanConverter {
      * @param beanClass
      * @return
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public <T> List<T> toBeanList(Object srcList, Class<?> beanClass) {
+    public <T> List<T> toBeanList(Object srcList, Class<T> beanClass) {
         List<T> retList = new ArrayList<>();
         if (srcList instanceof Iterable) {
             for (Object obj : (Iterable<?>) srcList) {
-                retList.add(toBean((Map<String, Object>) obj, beanClass));
+                retList.add(toBean(obj, beanClass));
             }
         }
         return retList;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T toBean(Map<String, Object> sourceMap, Class<?> destinationClass) {
-        return (T) toBean(sourceMap, instantiate(destinationClass));
     }
 
     private Map<Class<?>, Map<String, PropertyDescriptor>> classPropertyDescriptorMap = new HashMap<>();
@@ -93,8 +87,7 @@ public class BeanConverterImpl implements BeanConverter {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public <T> T toBean(Map<String, Object> sourceMap, Object destinationObj) {
+    protected <T> T toBean(Map<String, Object> sourceMap, Object destinationObj) {
         for (Entry<String, Object> entry : sourceMap.entrySet()) {
             try {
                 PropertyDescriptor pd = getPropertyDescriptor(destinationObj.getClass(), entry.getKey());
@@ -112,19 +105,18 @@ public class BeanConverterImpl implements BeanConverter {
                     // If a value of sourceMap is Map and field to be mapped is
                     // not a leaf class,
                     // then this value could be mapped to some bean.
-                    Object obj = toBean((Map<String, Object>) value, type);
+                    Object obj = toBean(value, type);
                     setter.invoke(destinationObj, obj);
                 } else if (Iterable.class.isAssignableFrom(value.getClass())
                         && Iterable.class.isAssignableFrom(type)) {
-                    List<Object> obj = (List<Object>) instantiate(
-                        pd.getPropertyType().isInterface() ? ArrayList.class : type);
+                    List<Object> obj = new ArrayList<>();
                     ParameterizedType p = (ParameterizedType) pd.getWriteMethod().getGenericParameterTypes()[0];
                     Type childType = p.getActualTypeArguments()[0];
                     for (Object srcObj : (Iterable<?>) value) {
                         if (isLeaf(srcObj.getClass())) {
                             obj.add(srcObj);
                         } else {
-                            Object bean = toBean((Map<String, Object>) srcObj, Class.forName(childType.getTypeName()));
+                            Object bean = toBean(srcObj, Class.forName(childType.getTypeName()));
                             obj.add(bean);
                         }
                     }
@@ -148,7 +140,7 @@ public class BeanConverterImpl implements BeanConverter {
         return converter.canConvert(clazz);
     }
 
-    private Object instantiate(Class<?> clazz) {
+    private <T> T instantiate(Class<T> clazz) {
         try {
             return clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
@@ -188,9 +180,11 @@ public class BeanConverterImpl implements BeanConverter {
             }
             return xlList;
         } else {
+            //
             if (converter.canConvert(value.getClass())) {
                 return converter.toString(value);
             } else {
+                //
                 return toMapInternal(value);
             }
         }
