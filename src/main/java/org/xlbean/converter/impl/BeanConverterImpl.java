@@ -1,4 +1,4 @@
-package org.xlbean.converter;
+package org.xlbean.converter.impl;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.xlbean.XlBean;
+import org.xlbean.converter.BeanConverter;
+import org.xlbean.converter.ValueConverter;
+import org.xlbean.converter.ValueConverterFactory;
 import org.xlbean.exception.XlBeanException;
 import org.xlbean.util.XlBeanFactory;
 
@@ -25,7 +28,7 @@ import org.xlbean.util.XlBeanFactory;
  */
 public class BeanConverterImpl implements BeanConverter {
 
-    private ValueConverter converter = ValueConverterFactory.getInstance().createValueConverter();
+    private ValueConverter<?> converter = ValueConverterFactory.getInstance().createValueConverter();
 
     /**
      * Convert the object retrieved by the given sourceKey to an object of given

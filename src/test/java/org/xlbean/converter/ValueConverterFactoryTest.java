@@ -9,10 +9,12 @@ import java.lang.reflect.Field;
 import org.junit.Test;
 import org.xlbean.XlBean;
 import org.xlbean.XlBeanImpl;
+import org.xlbean.converter.impl.BeanConverterImpl;
+import org.xlbean.converter.impl.DelegateValueConverter;
 
 public class ValueConverterFactoryTest {
 
-    private static class TestValueConverter extends ValueConverterImpl {}
+    private static class TestValueConverter extends DelegateValueConverter {}
 
     @Test
     public void setInstance() throws Exception {

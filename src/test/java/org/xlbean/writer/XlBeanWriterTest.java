@@ -19,7 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xlbean.XlBean;
 import org.xlbean.XlBeanImpl;
-import org.xlbean.converter.BeanConverterImpl;
+import org.xlbean.converter.impl.BeanConverterImpl;
 import org.xlbean.definition.BeanDefinitionLoader;
 import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.DefinitionRepository;
