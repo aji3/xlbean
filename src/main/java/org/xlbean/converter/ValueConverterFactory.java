@@ -1,5 +1,7 @@
 package org.xlbean.converter;
 
+import org.xlbean.converter.impl.DelegateValueConverter;
+
 public class ValueConverterFactory {
 
     private static ValueConverterFactory INSTANCE = new ValueConverterFactory();
@@ -12,7 +14,7 @@ public class ValueConverterFactory {
         INSTANCE = factory;
     }
 
-    public ValueConverter createValueConverter() {
-        return new ValueConverterImpl();
+    public ValueConverter<?> createValueConverter() {
+        return new DelegateValueConverter();
     }
 }

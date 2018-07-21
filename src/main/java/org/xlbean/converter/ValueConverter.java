@@ -1,6 +1,7 @@
 package org.xlbean.converter;
 
 import org.xlbean.XlBean;
+import org.xlbean.converter.impl.DelegateValueConverter;
 
 /**
  * Converter used for converting String values in {@link XlBean} to object or
@@ -12,9 +13,12 @@ import org.xlbean.XlBean;
  * convertable is treated as custom object and dug down into the object to
  * convert all the elements inside the object.
  *
+ * @see DelegateValueConverter
+ * 
  * @author Kazuya Tanikawa
+ * 
  */
-public interface ValueConverter {
+public interface ValueConverter<T> {
 
     /**
      * Returns true when the given {@code clazz} is convertable by this converter.
@@ -45,5 +49,5 @@ public interface ValueConverter {
      * @param valueClass
      * @return
      */
-    public Object toObject(String value, Class<?> valueClass);
+    public T toObject(String value, Class<?> valueClass);
 }

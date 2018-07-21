@@ -1,5 +1,7 @@
 package org.xlbean.converter;
 
+import org.xlbean.converter.impl.BeanConverterImpl;
+
 /**
  * Factory for {@link BeanConverterImpl} for the implementation of
  * {@link BeanConverter} interface.
