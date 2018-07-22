@@ -17,7 +17,7 @@ import java.util.Date;
 import org.junit.Test;
 import org.xlbean.converter.impl.DelegateValueConverter;
 
-public class ValueConverterImplTest {
+public class DelegateValueConverterTest {
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     @Test

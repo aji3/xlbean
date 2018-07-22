@@ -22,6 +22,9 @@ public class ByteValueConverter implements ValueConverter<Byte> {
 
     @Override
     public Byte toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return Byte.parseByte(value.replaceAll("\\..*$", ""));
         } catch (NumberFormatException e) {

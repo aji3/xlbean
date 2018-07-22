@@ -24,6 +24,9 @@ public class BigIntegerValueConverter implements ValueConverter<BigInteger> {
 
     @Override
     public BigInteger toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return new BigInteger(value.replaceAll("\\..*$", ""));
         } catch (NumberFormatException e) {

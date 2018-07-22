@@ -22,6 +22,9 @@ public class CharValueConverter implements ValueConverter<Character> {
 
     @Override
     public Character toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return value.charAt(0);
         } catch (StringIndexOutOfBoundsException e) {

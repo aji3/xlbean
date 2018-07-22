@@ -22,6 +22,9 @@ public class ShortValueConverter implements ValueConverter<Short> {
 
     @Override
     public Short toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return Short.parseShort(value.replaceAll("\\..*$", ""));
         } catch (NumberFormatException e) {

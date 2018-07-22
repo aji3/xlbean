@@ -26,6 +26,9 @@ public class LocalTimeValueCoverter implements ValueConverter<LocalTime> {
 
     @Override
     public LocalTime toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return LocalTime.parse(value, LOCALTIME_FORMAT);
         } catch (DateTimeParseException e) {

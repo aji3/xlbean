@@ -29,6 +29,9 @@ public class LocalDateValueConverter implements ValueConverter<LocalDate> {
 
     @Override
     public LocalDate toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return LocalDate.parse(value, DATETIME_FORMAT);
         } catch (DateTimeParseException e) {

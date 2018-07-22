@@ -24,6 +24,9 @@ public class EnumValueConverter implements ValueConverter<Enum> {
     @SuppressWarnings({ "unchecked", })
     @Override
     public Enum toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return Enum.valueOf((Class<? extends Enum>) valueClass, value);
         } catch (Exception e) {

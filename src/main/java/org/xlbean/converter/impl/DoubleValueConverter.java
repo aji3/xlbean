@@ -22,6 +22,9 @@ public class DoubleValueConverter implements ValueConverter<Double> {
 
     @Override
     public Double toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
