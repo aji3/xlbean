@@ -22,6 +22,9 @@ public class FloatValueConverter implements ValueConverter<Float> {
 
     @Override
     public Float toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return Float.parseFloat(value);
         } catch (NumberFormatException e) {

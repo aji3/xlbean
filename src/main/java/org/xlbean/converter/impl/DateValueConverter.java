@@ -29,6 +29,9 @@ public class DateValueConverter implements ValueConverter<Date> {
 
     @Override
     public Date toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return DATE_FORMAT.parse(value);
         } catch (ParseException e) {

@@ -22,6 +22,9 @@ public class LongValueConverter implements ValueConverter<Long> {
 
     @Override
     public Long toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return Long.parseLong(value.replaceAll("\\..*$", ""));
         } catch (NumberFormatException e) {

@@ -2,9 +2,18 @@ package org.xlbean;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.xlbean.converter.BeanConverter;
 import org.xlbean.converter.BeanConverterFactory;
+import org.xlbean.converter.ValueConverter;
+import org.xlbean.converter.impl.BooleanValueConverter;
+import org.xlbean.converter.impl.CharValueConverter;
+import org.xlbean.converter.impl.DoubleValueConverter;
+import org.xlbean.converter.impl.FloatValueConverter;
+import org.xlbean.converter.impl.IntValueConverter;
+import org.xlbean.converter.impl.LongValueConverter;
+import org.xlbean.converter.impl.ShortValueConverter;
 
 /**
  * Implementation of XlBean which inherits {@link HashMap}.
@@ -153,6 +162,150 @@ public class XlBeanImpl extends HashMap<String, Object> implements XlBean {
     @Override
     public List<String> strings(String key) {
         return (List<String>) get(key);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#inte(java.lang.String)
+     */
+    @Override
+    public Integer integer(String key) {
+        return new IntValueConverter().toObject(string(key), int.class);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#ints(java.lang.String)
+     */
+    @Override
+    public List<Integer> integers(String key) {
+        return toList(key, Integer.class, new IntValueConverter());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#lng(java.lang.String)
+     */
+    @Override
+    public Long lng(String key) {
+        return new LongValueConverter().toObject(string(key), long.class);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#longs(java.lang.String)
+     */
+    @Override
+    public List<Long> longs(String key) {
+        return toList(key, Long.class, new LongValueConverter());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#shrt(java.lang.String)
+     */
+    @Override
+    public Short shrt(String key) {
+        return new ShortValueConverter().toObject(string(key), short.class);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#shorts(java.lang.String)
+     */
+    @Override
+    public List<Short> shorts(String key) {
+        return toList(key, Short.class, new ShortValueConverter());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#flt(java.lang.String)
+     */
+    @Override
+    public Float flt(String key) {
+        return new FloatValueConverter().toObject(string(key), short.class);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#floats(java.lang.String)
+     */
+    @Override
+    public List<Float> floats(String key) {
+        return toList(key, Float.class, new FloatValueConverter());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#dbl(java.lang.String)
+     */
+    @Override
+    public Double dbl(String key) {
+        return new DoubleValueConverter().toObject(string(key), short.class);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#doubles(java.lang.String)
+     */
+    @Override
+    public List<Double> doubles(String key) {
+        return toList(key, Double.class, new DoubleValueConverter());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#bool(java.lang.String)
+     */
+    @Override
+    public Boolean bool(String key) {
+        return new BooleanValueConverter().toObject(string(key), short.class);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#bools(java.lang.String)
+     */
+    @Override
+    public List<Boolean> bools(String key) {
+        return toList(key, Boolean.class, new BooleanValueConverter());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#chr(java.lang.String)
+     */
+    @Override
+    public Character character(String key) {
+        return new CharValueConverter().toObject(string(key), short.class);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.xlbean.XlBean#chars(java.lang.String)
+     */
+    @Override
+    public List<Character> characters(String key) {
+        return toList(key, Character.class, new CharValueConverter());
+    }
+
+    private <T> List<T> toList(String key, Class<?> clazz, ValueConverter<T> converter) {
+        return strings(key).stream().map(v -> converter.toObject(v, clazz)).collect(Collectors.toList());
     }
 
 }

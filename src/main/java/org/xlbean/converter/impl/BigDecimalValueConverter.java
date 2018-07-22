@@ -24,6 +24,9 @@ public class BigDecimalValueConverter implements ValueConverter<BigDecimal> {
 
     @Override
     public BigDecimal toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return new BigDecimal(value);
         } catch (NumberFormatException e) {

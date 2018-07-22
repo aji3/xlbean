@@ -20,6 +20,7 @@ import org.xlbean.converter.ValueConverter;
  * <li>Character.class
  * <li>Date.class
  * <li>Double.class
+ * <li>Float.class
  * <li>Integer.class
  * <li>LocalDate.class
  * <li>Long.class
@@ -28,6 +29,7 @@ import org.xlbean.converter.ValueConverter;
  * <li>boolean.class
  * <li>char.class
  * <li>double.class
+ * <li>float.class
  * <li>int.class
  * <li>long.class
  * <li>short.class

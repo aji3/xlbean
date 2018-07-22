@@ -138,4 +138,201 @@ public interface XlBean extends Map<String, Object> {
      */
     public void set(String key, Object obj);
 
+    /**
+     * Convert a value registered by {@code key} to Integer and return.
+     * 
+     * <p>
+     * Exception handling in case of NumberFormatException depends on the
+     * implementation. By default, IntValueConverter is used hence exception will be
+     * ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public Integer integer(String key);
+
+    /**
+     * Convert all values in a list registered by {@code key} to Integer and return
+     * a new instance of list with the Integer values.
+     * 
+     * <p>
+     * Exception handling in case of NumberFormatException depends on the
+     * implementation. By default, IntValueConverter is used hence exception will be
+     * ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public List<Integer> integers(String key);
+
+    /**
+     * Convert a value registered by {@code key} to Long and return.
+     * 
+     * <p>
+     * Exception handling in case of NumberFormatException depends on the
+     * implementation. By default, LongValueConverter is used hence exception will
+     * be ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public Long lng(String key);
+
+    /**
+     * Convert all values in a list registered by {@code key} to Long and return a
+     * new instance of list with the Long values.
+     * 
+     * <p>
+     * Exception handling in case of NumberFormatException depends on the
+     * implementation. By default, LongValueConverter is used hence exception will
+     * be ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public List<Long> longs(String key);
+
+    /**
+     * Convert a value registered by {@code key} to Short and return.
+     * 
+     * <p>
+     * Exception handling in case of NumberFormatException depends on the
+     * implementation. By default, ShortValueConverter is used hence exception will
+     * be ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public Short shrt(String key);
+
+    /**
+     * Convert all values in a list registered by {@code key} to Short and return a
+     * new instance of list with the Short values.
+     * 
+     * <p>
+     * Exception handling in case of NumberFormatException depends on the
+     * implementation. By default, ShortValueConverter is used hence exception will
+     * be ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public List<Short> shorts(String key);
+
+    /**
+     * Convert a value registered by {@code key} to Float and return.
+     * 
+     * <p>
+     * Exception handling in case of NumberFormatException depends on the
+     * implementation. By default, FloatValueConverter is used hence exception will
+     * be ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public Float flt(String key);
+
+    /**
+     * Convert all values in a list registered by {@code key} to Float and return a
+     * new instance of list with the Float values.
+     * 
+     * <p>
+     * Exception handling in case of NumberFormatException depends on the
+     * implementation. By default, FloatValueConverter is used hence exception will
+     * be ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public List<Float> floats(String key);
+
+    /**
+     * Convert a value registered by {@code key} to Double and return.
+     * 
+     * <p>
+     * Exception handling in case of NumberFormatException depends on the
+     * implementation. By default, DoubleValueConverter is used hence exception will
+     * be ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public Double dbl(String key);
+
+    /**
+     * Convert all values in a list registered by {@code key} to Double and return a
+     * new instance of list with the Double values.
+     * 
+     * <p>
+     * Exception handling in case of NumberFormatException depends on the
+     * implementation. By default, DoubleValueConverter is used hence exception will
+     * be ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public List<Double> doubles(String key);
+
+    /**
+     * Convert a value registered by {@code key} to Boolean and return.
+     * 
+     * <p>
+     * By default, BooleanValueConverter.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public Boolean bool(String key);
+
+    /**
+     * Convert all values in a list registered by {@code key} to Boolean and return
+     * a new instance of list with the Boolean values.
+     * 
+     * <p>
+     * By default, BooleanValueConverter is used hence exception will be ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public List<Boolean> bools(String key);
+
+    /**
+     * Convert a value registered by {@code key} to Character and return.
+     * 
+     * <p>
+     * Exception handling in case of NumberFormatException depends on the
+     * implementation. By default, CharacterValueConverter is used hence exception
+     * will be ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public Character character(String key);
+
+    /**
+     * Convert all values in a list registered by {@code key} to Character and
+     * return a new instance of list with the Character values.
+     * 
+     * <p>
+     * By default, CharValueConverter is used hence exception will be ignored.
+     * </p>
+     * 
+     * @param key
+     * @return
+     */
+    public List<Character> characters(String key);
+
 }

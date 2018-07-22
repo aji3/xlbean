@@ -1,6 +1,7 @@
 package org.xlbean;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.InputStream;
@@ -190,4 +191,262 @@ public class XlBeanTest {
 
         assertThat(BeanHelper.isValuesEmpty(bean), is(false));
     }
+
+    @Test
+    public void testInteger() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        assertThat(bean.integer("int1"), is(1));
+        assertThat(bean.integer("int2"), is(0));
+        assertThat(bean.integer("int3"), is(-1));
+        assertThat(bean.integer("int4"), is(100));
+        assertThat(bean.integer("error1"), is(nullValue()));
+        assertThat(bean.integer("error2"), is(nullValue()));
+        assertThat(bean.integer("last"), is(9999));
+
+    }
+
+    @Test
+    public void testIntegers() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        List<Integer> ints = bean.integers("ints");
+        assertThat(ints.get(0), is(1));
+        assertThat(ints.get(1), is(0));
+        assertThat(ints.get(2), is(-1));
+        assertThat(ints.get(3), is(100));
+        assertThat(ints.get(4), is(nullValue()));
+        assertThat(ints.get(5), is(nullValue()));
+        assertThat(ints.get(6), is(9999));
+
+    }
+
+    @Test
+    public void testLng() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        assertThat(bean.lng("long1"), is(1l));
+        assertThat(bean.lng("long2"), is(0l));
+        assertThat(bean.lng("long3"), is(-1l));
+        assertThat(bean.lng("long4"), is(100l));
+        assertThat(bean.lng("long5"), is(9223372036854775807l));
+        assertThat(bean.lng("error1"), is(nullValue()));
+        assertThat(bean.lng("error2"), is(nullValue()));
+        assertThat(bean.lng("last"), is(9999l));
+
+    }
+
+    @Test
+    public void testLongs() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        List<Long> longs = bean.longs("longs");
+        assertThat(longs.size(), is(8));
+        assertThat(longs.get(0), is(1l));
+        assertThat(longs.get(1), is(0l));
+        assertThat(longs.get(2), is(-1l));
+        assertThat(longs.get(3), is(100l));
+        assertThat(longs.get(4), is(9223372036854775807l));
+        assertThat(longs.get(5), is(nullValue()));
+        assertThat(longs.get(6), is(nullValue()));
+        assertThat(longs.get(7), is(9999l));
+
+    }
+
+    @Test
+    public void testShort() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        assertThat(bean.shrt("short1"), is(Short.valueOf("1")));
+        assertThat(bean.shrt("short2"), is(Short.valueOf("0")));
+        assertThat(bean.shrt("short3"), is(Short.valueOf("-1")));
+        assertThat(bean.shrt("short4"), is(Short.valueOf("100")));
+        assertThat(bean.shrt("short5"), is(nullValue()));
+        assertThat(bean.shrt("error1"), is(nullValue()));
+        assertThat(bean.shrt("error2"), is(nullValue()));
+        assertThat(bean.shrt("last"), is(Short.valueOf("9999")));
+
+    }
+
+    @Test
+    public void testShorts() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        List<Short> shorts = bean.shorts("shorts");
+        assertThat(shorts.size(), is(8));
+        assertThat(shorts.get(0), is(Short.valueOf("1")));
+        assertThat(shorts.get(1), is(Short.valueOf("0")));
+        assertThat(shorts.get(2), is(Short.valueOf("-1")));
+        assertThat(shorts.get(3), is(Short.valueOf("100")));
+        assertThat(shorts.get(4), is(nullValue()));
+        assertThat(shorts.get(5), is(nullValue()));
+        assertThat(shorts.get(6), is(nullValue()));
+        assertThat(shorts.get(7), is(Short.valueOf("9999")));
+
+    }
+
+    @Test
+    public void testFloat() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        assertThat(bean.flt("float1"), is(1f));
+        assertThat(bean.flt("float2"), is(0f));
+        assertThat(bean.flt("float3"), is(-1f));
+        assertThat(bean.flt("float4"), is(100.1f));
+        assertThat(bean.flt("float5"), is(9223372000000000000f));
+        assertThat(bean.flt("error1"), is(nullValue()));
+        assertThat(bean.flt("error2"), is(nullValue()));
+        assertThat(bean.flt("last"), is(9999f));
+
+    }
+
+    @Test
+    public void testFloats() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        List<Float> floats = bean.floats("floats");
+        assertThat(floats.size(), is(8));
+        assertThat(floats.get(0), is(1f));
+        assertThat(floats.get(1), is(0f));
+        assertThat(floats.get(2), is(-1f));
+        assertThat(floats.get(3), is(100.1f));
+        assertThat(floats.get(4), is(9223372000000000000f));
+        assertThat(floats.get(5), is(nullValue()));
+        assertThat(floats.get(6), is(nullValue()));
+        assertThat(floats.get(7), is(9999f));
+
+    }
+
+    @Test
+    public void testDouble() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        assertThat(bean.dbl("double1"), is(1d));
+        assertThat(bean.dbl("double2"), is(0d));
+        assertThat(bean.dbl("double3"), is(-1d));
+        assertThat(bean.dbl("double4"), is(100.1d));
+        assertThat(bean.dbl("double5"), is(9223372036854775807d));
+        assertThat(bean.dbl("error1"), is(nullValue()));
+        assertThat(bean.dbl("error2"), is(nullValue()));
+        assertThat(bean.dbl("last"), is(9999d));
+
+    }
+
+    @Test
+    public void testDoubles() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        List<Double> doubles = bean.doubles("doubles");
+        assertThat(doubles.size(), is(8));
+        assertThat(doubles.get(0), is(1d));
+        assertThat(doubles.get(1), is(0d));
+        assertThat(doubles.get(2), is(-1d));
+        assertThat(doubles.get(3), is(100.1d));
+        assertThat(doubles.get(4), is(9223372036854775807d));
+        assertThat(doubles.get(5), is(nullValue()));
+        assertThat(doubles.get(6), is(nullValue()));
+        assertThat(doubles.get(7), is(9999d));
+
+    }
+
+    @Test
+    public void testBool() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        assertThat(bean.bool("bool1"), is(true));
+        assertThat(bean.bool("bool2"), is(false));
+        assertThat(bean.bool("bool3"), is(true));
+        assertThat(bean.bool("bool4"), is(false));
+        assertThat(bean.bool("bool_error1"), is(false));
+        assertThat(bean.bool("bool_error2"), is(false));
+        assertThat(bean.bool("bool5"), is(false));
+
+    }
+
+    @Test
+    public void testBools() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        List<Boolean> bools = bean.bools("bools");
+        assertThat(bools.size(), is(7));
+        assertThat(bools.get(0), is(true));
+        assertThat(bools.get(1), is(false));
+        assertThat(bools.get(2), is(true));
+        assertThat(bools.get(3), is(false));
+        assertThat(bools.get(4), is(false));
+        assertThat(bools.get(5), is(false));
+        assertThat(bools.get(6), is(false));
+
+    }
+
+    @Test
+    public void testCharacter() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        assertThat(bean.character("character1"), is('a'));
+        assertThat(bean.character("character2"), is('1'));
+        assertThat(bean.character("character3"), is('b'));
+        assertThat(bean.character("character4"), is('t'));
+        assertThat(bean.character("character5"), is(nullValue()));
+        assertThat(bean.character("character6"), is('-'));
+
+    }
+
+    @Test
+    public void testCharacters() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        List<Character> characters = bean.characters("characters");
+        assertThat(characters.size(), is(6));
+        assertThat(characters.get(0), is('a'));
+        assertThat(characters.get(1), is('1'));
+        assertThat(characters.get(2), is('b'));
+        assertThat(characters.get(3), is('t'));
+        assertThat(characters.get(4), is(nullValue()));
+        assertThat(characters.get(5), is('-'));
+
+    }
+
 }

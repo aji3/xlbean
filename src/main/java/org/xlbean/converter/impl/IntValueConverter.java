@@ -22,6 +22,9 @@ public class IntValueConverter implements ValueConverter<Integer> {
 
     @Override
     public Integer toObject(String value, Class<?> valueClass) {
+        if (value == null) {
+            return null;
+        }
         try {
             return Integer.parseInt(value.replaceAll("\\..*$", ""));
         } catch (NumberFormatException e) {
