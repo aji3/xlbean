@@ -19,7 +19,7 @@ import org.xlbean.excel.XlWorkbook;
  *
  * @author Kazuya Tanikawa
  */
-public class ExcelR1C1DefinitionLoader extends DefinitionLoader<XlWorkbook> {
+public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
 
     private static Logger log = LoggerFactory.getLogger(ExcelR1C1DefinitionLoader.class);
 
@@ -27,23 +27,14 @@ public class ExcelR1C1DefinitionLoader extends DefinitionLoader<XlWorkbook> {
         new SingleDefinitionResolver(),
         new TableDefinitionResolver());
 
-    @Override
-    public void initialize(Object definitionSource) {
-        if (definitionSource == null || !(definitionSource instanceof Workbook)) {
-            throw new IllegalArgumentException(
-                String.format("Definition source should be an instance of %s", Workbook.class.getName()));
-        }
-        setDefinitionSource(XlWorkbook.wrap((Workbook) definitionSource));
-    }
-
     /**
      * Scan all the sheets and read definition from row 1 and column 1.
      *
      * @param context
      */
     @Override
-    public DefinitionRepository load() {
-        XlWorkbook workbook = getDefinitionSource();
+    public DefinitionRepository load(Object definitionSource) {
+        XlWorkbook workbook = initialize(definitionSource);
         DefinitionRepository definitions = new DefinitionRepository();
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             XlSheet sheet = workbook.getSheetAt(i);
@@ -52,13 +43,24 @@ public class ExcelR1C1DefinitionLoader extends DefinitionLoader<XlWorkbook> {
             }
             long now = System.currentTimeMillis();
             log.debug("Start loading table definition from sheet {}", sheet.getSheetName());
-            definitions.merge(readDefinition(sheet));
+            definitions.merge(readAllSheetDefinition(sheet));
             log.info(
                 "Loaded table definition from sheet {} [{} msec]",
                 sheet.getSheetName(),
                 (System.currentTimeMillis() - now));
         }
+
+        definitions.validateAll();
+        definitions.activate(workbook);
         return definitions;
+    }
+
+    private XlWorkbook initialize(Object definitionSource) {
+        if (definitionSource == null || !(definitionSource instanceof Workbook)) {
+            throw new IllegalArgumentException(
+                String.format("Definition source should be an instance of %s", Workbook.class.getName()));
+        }
+        return XlWorkbook.wrap((Workbook) definitionSource);
     }
 
     /**
@@ -75,7 +77,18 @@ public class ExcelR1C1DefinitionLoader extends DefinitionLoader<XlWorkbook> {
         return DEFAULT_DEFINITION_BUILDERS;
     }
 
-    protected DefinitionRepository readDefinition(XlSheet sheet) {
+    /**
+     * Read all definitions in given {@code sheet}.
+     * 
+     * <p>
+     * This method is intended to be overridden by inheriting classes to realize
+     * variation of definitions.
+     * </p>
+     * 
+     * @param sheet
+     * @return
+     */
+    protected DefinitionRepository readAllSheetDefinition(XlSheet sheet) {
         DefinitionRepository definitions = new DefinitionRepository();
         int maxRow = sheet.getMaxRow();
         int maxCol = sheet.getMaxColumn();
@@ -85,17 +98,17 @@ public class ExcelR1C1DefinitionLoader extends DefinitionLoader<XlWorkbook> {
 
         // read column definition
         for (int col = 1; col <= maxCol; col++) {
-            resolveDefinition(definitions, sheet, col, true);
+            readCellDefinition(definitions, sheet, col, true);
         }
 
         // read row definition
         for (int row = 1; row <= maxRow; row++) {
-            resolveDefinition(definitions, sheet, row, false);
+            readCellDefinition(definitions, sheet, row, false);
         }
         return definitions;
     }
 
-    private void resolveDefinition(
+    private void readCellDefinition(
             DefinitionRepository definitions, XlSheet sheet, int num, boolean isColumn) {
         String value = null;
         if (isColumn) {

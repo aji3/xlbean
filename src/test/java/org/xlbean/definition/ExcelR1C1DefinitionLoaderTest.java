@@ -12,7 +12,7 @@ public class ExcelR1C1DefinitionLoaderTest extends ExcelR1C1DefinitionLoader {
     public void testValidationError() {
         ExcelR1C1DefinitionLoader loader = new ExcelR1C1DefinitionLoader();
         try {
-            loader.initialize(null);
+            loader.load(null);
         } catch (IllegalArgumentException e) {
             assertThat(
                 e.getMessage(),

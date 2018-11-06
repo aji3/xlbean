@@ -40,7 +40,7 @@ public class DefinitionRepositoryTest {
             message,
             is(
                 containsString(
-                    "WARN  o.x.definition.DefinitionRepository - Invalid definition [columnOnly] (org.xlbean.definition.SingleDefinition)")));
+                    "WARN  o.x.definition.BeanDefinitionLoader - Invalid definition [columnOnly] (org.xlbean.definition.SingleDefinition)")));
     }
 
     @Test
@@ -64,8 +64,7 @@ public class DefinitionRepositoryTest {
 
         DefinitionRepository repo = new DefinitionRepository();
         repo.addDefinition(def);
-
-        repo.validate(xlwb);
+        repo.activate(xlwb);
 
         System.setOut(originalPs);
 
@@ -75,6 +74,6 @@ public class DefinitionRepositoryTest {
             message,
             is(
                 containsString(
-                    "WARN  o.x.definition.DefinitionRepository - No sheet named \"errorSheet\" was found for definition \"errorDef\". (org.xlbean.definition.SingleDefinition)")));
+                    "WARN  o.x.definition.BeanDefinitionLoader - No sheet named \"errorSheet\" was found for definition \"errorDef\". (org.xlbean.definition.SingleDefinition)")));
     }
 }

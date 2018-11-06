@@ -11,7 +11,7 @@ import org.xlbean.data.value.ValueLoader;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
 import org.xlbean.util.BeanHelper;
-import org.xlbean.util.FieldAccessHelper;
+import org.xlbean.util.Accessors;
 import org.xlbean.util.XlBeanFactory;
 
 /**
@@ -39,7 +39,7 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
             for (Entry<String, List<String>> entry : definitionCache.getIndexKeysMap().entrySet()) {
                 ((XlList) table).addIndex(entry.getKey(), entry.getValue());
             }
-            FieldAccessHelper.setValue(definition.getName(), table, bean);
+            Accessors.setValue(definition.getName(), table, bean);
         }
 
         int index = 0;
@@ -62,7 +62,7 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
                         attribute.getCell().getRow(),
                         definition.getStartCell().getColumn() + index);
                 }
-                FieldAccessHelper.setValue(attribute.getName(), value, dataRow);
+                Accessors.setValue(attribute.getName(), value, dataRow);
             }
             if (log.isTraceEnabled()) {
                 log.trace(dataRow.toString());
@@ -93,15 +93,15 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
         SingleDefinition key = definitionCache.getListToPropKeyOptionDefinition();
         SingleDefinition value = definitionCache.getListToPropValueOptionDefinition();
         String tableName = getDefinition().getName();
-        List<XlBean> table = FieldAccessHelper.getValue(tableName, rootBean);
+        List<XlBean> table = Accessors.getValue(tableName, rootBean);
         XlBean targetBean = rootBean;
         if (tableName.contains(".")) {
-            targetBean = FieldAccessHelper.getValue(tableName.substring(0, tableName.lastIndexOf('.')), rootBean);
+            targetBean = Accessors.getValue(tableName.substring(0, tableName.lastIndexOf('.')), rootBean);
         }
         for (XlBean row : table) {
-            String keyObj = FieldAccessHelper.getValue(key.getName(), row);
-            String valueObj = FieldAccessHelper.getValue(value.getName(), row);
-            FieldAccessHelper.setValue(keyObj, valueObj, targetBean);
+            String keyObj = Accessors.getValue(key.getName(), row);
+            String valueObj = Accessors.getValue(value.getName(), row);
+            Accessors.setValue(keyObj, valueObj, targetBean);
         }
     }
 

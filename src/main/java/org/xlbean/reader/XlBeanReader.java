@@ -25,18 +25,18 @@ import org.xlbean.util.FileUtil;
  */
 public class XlBeanReader {
 
-    private DefinitionLoader<?> definitionLoader;
+    private DefinitionLoader definitionLoader;
     private ExcelDataLoader dataLoader;
 
     public XlBeanReader() {
         this(null, null);
     }
 
-    public XlBeanReader(DefinitionLoader<?> definitionLoader) {
+    public XlBeanReader(DefinitionLoader definitionLoader) {
         this(definitionLoader, null);
     }
 
-    public XlBeanReader(DefinitionLoader<?> definitionLoader, ExcelDataLoader dataLoader) {
+    public XlBeanReader(DefinitionLoader definitionLoader, ExcelDataLoader dataLoader) {
         if (definitionLoader == null) {
             this.definitionLoader = new ExcelR1C1DefinitionLoader();
         } else {
@@ -90,10 +90,10 @@ public class XlBeanReader {
 
     public XlBean read(Object definitionSource, Workbook dataSource) {
 
-        definitionLoader.initialize(definitionSource);
-        DefinitionRepository definitions = definitionLoader.load();
+        DefinitionRepository definitions = definitionLoader.load(definitionSource);
 
         XlWorkbook workbook = XlWorkbook.wrap(dataSource);
         return this.dataLoader.load(definitions, workbook);
     }
+
 }

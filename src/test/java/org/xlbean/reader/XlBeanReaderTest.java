@@ -30,7 +30,6 @@ import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.DefinitionRepository;
 import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
-import org.xlbean.excel.XlWorkbook;
 import org.xlbean.testbean.Country;
 import org.xlbean.testbean.PresidentEnum;
 import org.xlbean.testbean.PresidentEnum.States;
@@ -366,9 +365,8 @@ public class XlBeanReaderTest {
 
         try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
 
-            DefinitionLoader<XlWorkbook> definitionLoader = new ExcelR1C1DefinitionLoader();
-            definitionLoader.initialize(wb);
-            DefinitionRepository definitions = definitionLoader.load();
+            DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader();
+            DefinitionRepository definitions = definitionLoader.load(wb);
 
             XlBean bean = new XlBeanImpl();
             bean.set("definitions", definitions);
