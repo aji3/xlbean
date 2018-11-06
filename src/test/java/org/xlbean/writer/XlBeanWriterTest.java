@@ -27,6 +27,7 @@ import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.reader.XlBeanReader;
 import org.xlbean.reader.XlBeanReaderTest;
 import org.xlbean.util.FileUtil;
+import org.xlbean.writer.XlBeanWriter.XlBeanWriterBuilder;
 
 public class XlBeanWriterTest {
 
@@ -55,7 +56,7 @@ public class XlBeanWriterTest {
         XlBeanReader reader = new XlBeanReader();
         XlBean bean = reader.read(in);
 
-        XlBeanWriter writer = new XlBeanWriter(new BeanDefinitionLoader());
+        XlBeanWriter writer = new XlBeanWriterBuilder().definitionLoader(new BeanDefinitionLoader()).build();
         writer.write(
             bean,
             null,
@@ -73,7 +74,7 @@ public class XlBeanWriterTest {
         System.out.println(expectedBean);
         String expected = expectedBean.toString();
 
-        XlBeanWriter writer = new XlBeanWriter(new BeanDefinitionLoader(10));
+        XlBeanWriter writer = new XlBeanWriterBuilder().definitionLoader(new BeanDefinitionLoader(10)).build();
         writer.write(
             expectedBean,
             null,
@@ -102,7 +103,7 @@ public class XlBeanWriterTest {
         }
 
         in = XlBeanReaderTest.class.getResourceAsStream("TestBook_format.xlsx");
-        XlBeanWriter writer = new XlBeanWriter(new BeanDefinitionLoader());
+        XlBeanWriter writer = new XlBeanWriterBuilder().definitionLoader(new BeanDefinitionLoader()).build();
         XlBean bean = new XlBeanImpl();
         bean.put("definitions", new BeanConverterImpl().toMap(definitions));
         writer.write(

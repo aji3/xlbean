@@ -13,10 +13,12 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.xlbean.XlBean;
 import org.xlbean.data.ExcelDataSaver;
+import org.xlbean.definition.BeanDefinitionLoader;
 import org.xlbean.definition.Definition;
 import org.xlbean.definition.DefinitionConstants;
 import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.DefinitionRepository;
+import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
@@ -28,35 +30,24 @@ import org.xlbean.util.FileUtil;
 /** @author Kazuya Tanikawa */
 public class XlBeanWriter {
 
-    private DefinitionLoader<?> definitionLoader;
-    private ExcelDataSaver dataSaver;
+    private DefinitionLoader<?> definitionLoader = new ExcelR1C1DefinitionLoader();
+    private ExcelDataSaver dataSaver = new ExcelDataSaver();
     private String newSheetName = "data";
 
-    public XlBeanWriter() {
-        this(null, null);
-    }
-
-    public XlBeanWriter(DefinitionLoader<?> definitionLoader) {
-        this(definitionLoader, null);
-    }
-
-    public XlBeanWriter(ExcelDataSaver dataSaver) {
-        this(null, dataSaver);
-    }
-
-    public XlBeanWriter(DefinitionLoader<?> definitionLoader, ExcelDataSaver dataSaver) {
-        if (definitionLoader == null) {
-            this.definitionLoader = new ExcelR1C1DefinitionLoader();
-        } else {
-            this.definitionLoader = definitionLoader;
-        }
-        if (dataSaver == null) {
-            this.dataSaver = new ExcelDataSaver();
-        } else {
-            this.dataSaver = dataSaver;
-        }
-    }
-
+    /**
+     * Write {@code data} to {@code outputExcel} using {@code excelTemplate} as a
+     * template.
+     * 
+     * <p>
+     * This method allows {@code excelTemplate} and {@code outputExcel} to point to
+     * the same file, which means to write {@code data} directly to format excel
+     * file.
+     * </p>
+     * 
+     * @param excelTemplate
+     * @param data
+     * @param outputExcel
+     */
     public void write(File excelTemplate, XlBean data, File outputExcel) {
         try (OutputStream out = new FileOutputStream(outputExcel);) {
             write(FileUtil.copyToInputStream(excelTemplate), data, out);
@@ -180,4 +171,52 @@ public class XlBeanWriter {
             }
         }
     }
+
+    public static class XlBeanWriterBuilder {
+
+        private DefinitionLoader<?> definitionLoader;
+        private ExcelDataSaver dataSaver;
+
+        public XlBeanWriter build() {
+            if (definitionLoader == null) {
+                definitionLoader = new ExcelR1C1DefinitionLoader();
+            }
+            if (dataSaver == null) {
+                dataSaver = new ExcelDataSaver();
+            }
+            XlBeanWriter writer = new XlBeanWriter();
+            writer.definitionLoader = definitionLoader;
+            writer.dataSaver = dataSaver;
+            return writer;
+        }
+
+        /**
+         * Set DefinitionLoader of the XlBeanWriter instance.
+         * 
+         * @see ExcelR1C1DefinitionLoader
+         * @see ExcelCommentDefinitionLoader
+         * @see BeanDefinitionLoader
+         * 
+         * @param definitionLoader
+         * @return
+         */
+        public XlBeanWriterBuilder definitionLoader(DefinitionLoader<?> definitionLoader) {
+            this.definitionLoader = definitionLoader;
+            return this;
+        }
+
+        /**
+         * Set ExcelDataSaver of the XlBeanWriter instance.
+         * 
+         * @see ExcelDataSaver
+         * @param dataSaver
+         * @return
+         */
+        public XlBeanWriterBuilder dataSaver(ExcelDataSaver dataSaver) {
+            this.dataSaver = dataSaver;
+            return this;
+        }
+
+    }
+
 }
