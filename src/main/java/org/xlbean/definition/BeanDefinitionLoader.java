@@ -156,7 +156,6 @@ public class BeanDefinitionLoader implements DefinitionLoader {
     }
 
     private Stream<Definition> createDefinitionForDefinition(Definition definition, XlBean bean) {
-        // definition.setSheetName(newSheetName);
         List<Definition> retList = new ArrayList<>();
         if (definition instanceof TableDefinition) {
             TableDefinition table = (TableDefinition) definition;

@@ -30,7 +30,6 @@ public class XlBeanWriter {
 
     private DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader();
     private ExcelDataSaver dataSaver = new ExcelDataSaver();
-    private String newSheetName = "data";
 
     /**
      * Write {@code data} to {@code outputExcel} using {@code excelTemplate} as a
@@ -83,11 +82,6 @@ public class XlBeanWriter {
      *            Object to be passed to {@code definitionLoader} for source of
      *            definition. Type of object depends on implementation of
      *            {@code definitionLoader}.
-     * @param templateWorkbook
-     *            Excel workbook which has template information. If
-     *            {@code templateWorkbook} is null, then blank excel book with
-     *            {@code newSheetName} will be created and definitions created by
-     *            {@code definitionLoader} will be populated to the excel book.
      * @param bean
      *            Data bean to write out to the outputExcel using templateWorkbook.
      * @param outputExcel
