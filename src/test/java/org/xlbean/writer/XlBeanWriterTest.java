@@ -62,6 +62,8 @@ public class XlBeanWriterTest {
      */
     @Test
     public void test_write2() throws FileNotFoundException {
+        test_write();
+
         XlBean bean = new XlBeanImpl();
         bean.put("testDate", "2018-10-30T11:22:33.123");
 
