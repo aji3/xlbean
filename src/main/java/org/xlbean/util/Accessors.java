@@ -12,11 +12,11 @@ import java.util.regex.Pattern;
  * @author tanikawa
  *
  */
-public class FieldAccessHelper {
+public class Accessors {
 
     private static final Pattern INDEX = Pattern.compile("\\[([0-9]+)\\]");
 
-    private static FieldAccessHelper INSTANCE = new FieldAccessHelper();
+    private static Accessors INSTANCE = new Accessors();
 
     /**
      * Parse {@code dottedFieldName}, create new XlBean object if necessary, set
@@ -45,7 +45,7 @@ public class FieldAccessHelper {
         return INSTANCE.get(dottedFieldName, bean);
     }
 
-    public static void setInstance(FieldAccessHelper helper) {
+    public static void setInstance(Accessors helper) {
         INSTANCE = helper;
     }
 
@@ -224,7 +224,6 @@ public class FieldAccessHelper {
                 return null;
             }
         }
-
     }
 
     protected Map<String, Object> createMap() {

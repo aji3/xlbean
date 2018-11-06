@@ -9,20 +9,8 @@ package org.xlbean.definition;
  * @see BeanDefinitionLoader
  * @author Kazuya Tanikawa
  */
-public abstract class DefinitionLoader<T> {
+public interface DefinitionLoader {
 
-    public abstract DefinitionRepository load();
-
-    public abstract void initialize(Object definitionSource);
-
-    private T definitionSource;
-
-    protected T getDefinitionSource() {
-        return definitionSource;
-    }
-
-    protected void setDefinitionSource(T definitionSource) {
-        this.definitionSource = definitionSource;
-    }
+    public DefinitionRepository load(Object definitionSource);
 
 }
