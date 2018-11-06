@@ -13,8 +13,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.xlbean.XlBean;
 import org.xlbean.data.ExcelDataSaver;
+import org.xlbean.definition.BeanDefinitionLoader;
 import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.DefinitionRepository;
+import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.exception.XlBeanException;
 import org.xlbean.util.FileUtil;
@@ -26,33 +28,9 @@ import org.xlbean.util.FileUtil;
  */
 public class XlBeanWriter {
 
-    private DefinitionLoader definitionLoader;
-    private ExcelDataSaver dataSaver;
-
-    public XlBeanWriter() {
-        this(null, null);
-    }
-
-    public XlBeanWriter(DefinitionLoader definitionLoader) {
-        this(definitionLoader, null);
-    }
-
-    public XlBeanWriter(ExcelDataSaver dataSaver) {
-        this(null, dataSaver);
-    }
-
-    public XlBeanWriter(DefinitionLoader definitionLoader, ExcelDataSaver dataSaver) {
-        if (definitionLoader == null) {
-            this.definitionLoader = new ExcelR1C1DefinitionLoader();
-        } else {
-            this.definitionLoader = definitionLoader;
-        }
-        if (dataSaver == null) {
-            this.dataSaver = new ExcelDataSaver();
-        } else {
-            this.dataSaver = dataSaver;
-        }
-    }
+    private DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader();
+    private ExcelDataSaver dataSaver = new ExcelDataSaver();
+    private String newSheetName = "data";
 
     /**
      * Write {@code data} to {@code outputExcel} using {@code excelTemplate} as a
@@ -147,6 +125,53 @@ public class XlBeanWriter {
         } catch (InvalidFormatException | EncryptedDocumentException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static class XlBeanWriterBuilder {
+
+        private DefinitionLoader definitionLoader;
+        private ExcelDataSaver dataSaver;
+
+        public XlBeanWriter build() {
+            if (definitionLoader == null) {
+                definitionLoader = new ExcelR1C1DefinitionLoader();
+            }
+            if (dataSaver == null) {
+                dataSaver = new ExcelDataSaver();
+            }
+            XlBeanWriter writer = new XlBeanWriter();
+            writer.definitionLoader = definitionLoader;
+            writer.dataSaver = dataSaver;
+            return writer;
+        }
+
+        /**
+         * Set DefinitionLoader of the XlBeanWriter instance.
+         * 
+         * @see ExcelR1C1DefinitionLoader
+         * @see ExcelCommentDefinitionLoader
+         * @see BeanDefinitionLoader
+         * 
+         * @param definitionLoader
+         * @return
+         */
+        public XlBeanWriterBuilder definitionLoader(DefinitionLoader definitionLoader) {
+            this.definitionLoader = definitionLoader;
+            return this;
+        }
+
+        /**
+         * Set ExcelDataSaver of the XlBeanWriter instance.
+         * 
+         * @see ExcelDataSaver
+         * @param dataSaver
+         * @return
+         */
+        public XlBeanWriterBuilder dataSaver(ExcelDataSaver dataSaver) {
+            this.dataSaver = dataSaver;
+            return this;
+        }
+
     }
 
 }

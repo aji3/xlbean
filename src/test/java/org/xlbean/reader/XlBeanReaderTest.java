@@ -30,6 +30,8 @@ import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.DefinitionRepository;
 import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
+import org.xlbean.excel.XlWorkbook;
+import org.xlbean.reader.XlBeanReader.XlBeanReaderBuilder;
 import org.xlbean.testbean.Country;
 import org.xlbean.testbean.PresidentEnum;
 import org.xlbean.testbean.PresidentEnum.States;
@@ -378,14 +380,8 @@ public class XlBeanReaderTest {
 
     @Test
     public void testCommentDefinitionReader() throws ParseException {
-        // XlBeanReader reader = new XlBeanReader(){
-        // @Override
-        // protected DefinitionLoader<?> createDefinitionLoader(Object definitionSource)
-        // {
-        // return new ExcelCommentDefinitionLoader(wrap((Workbook)definitionSource));
-        // }
-        // };
-        XlBeanReader reader = new XlBeanReader(new ExcelCommentDefinitionLoader());
+
+        XlBeanReader reader = new XlBeanReaderBuilder().definitionLoader(new ExcelCommentDefinitionLoader()).build();
         InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_presidents_comment.xlsx");
         XlBean bean = reader.read(in);
 
