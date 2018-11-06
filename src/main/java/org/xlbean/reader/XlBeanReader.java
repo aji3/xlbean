@@ -27,7 +27,7 @@ import org.xlbean.util.FileUtil;
  */
 public class XlBeanReader {
 
-    private DefinitionLoader<?> definitionLoader = new ExcelR1C1DefinitionLoader();
+    private DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader();
     private ExcelDataLoader dataLoader = new ExcelDataLoader();
 
     /**
@@ -78,7 +78,7 @@ public class XlBeanReader {
     }
 
     public static class XlBeanReaderBuilder {
-        private DefinitionLoader<?> definitionLoader;
+        private DefinitionLoader definitionLoader;
         private ExcelDataLoader dataLoader;
 
         public XlBeanReader build() {
@@ -104,7 +104,7 @@ public class XlBeanReader {
          * @param definitionLoader
          * @return
          */
-        public XlBeanReaderBuilder definitionLoader(DefinitionLoader<?> definitionLoader) {
+        public XlBeanReaderBuilder definitionLoader(DefinitionLoader definitionLoader) {
             this.definitionLoader = definitionLoader;
             return this;
         }

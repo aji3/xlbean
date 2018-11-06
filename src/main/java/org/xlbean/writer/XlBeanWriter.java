@@ -14,8 +14,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.xlbean.XlBean;
 import org.xlbean.data.ExcelDataSaver;
 import org.xlbean.definition.BeanDefinitionLoader;
-import org.xlbean.definition.Definition;
-import org.xlbean.definition.DefinitionConstants;
 import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.DefinitionRepository;
 import org.xlbean.definition.ExcelCommentDefinitionLoader;
@@ -30,7 +28,7 @@ import org.xlbean.util.FileUtil;
  */
 public class XlBeanWriter {
 
-    private DefinitionLoader<?> definitionLoader = new ExcelR1C1DefinitionLoader();
+    private DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader();
     private ExcelDataSaver dataSaver = new ExcelDataSaver();
     private String newSheetName = "data";
 
@@ -131,7 +129,7 @@ public class XlBeanWriter {
 
     public static class XlBeanWriterBuilder {
 
-        private DefinitionLoader<?> definitionLoader;
+        private DefinitionLoader definitionLoader;
         private ExcelDataSaver dataSaver;
 
         public XlBeanWriter build() {
@@ -157,7 +155,7 @@ public class XlBeanWriter {
          * @param definitionLoader
          * @return
          */
-        public XlBeanWriterBuilder definitionLoader(DefinitionLoader<?> definitionLoader) {
+        public XlBeanWriterBuilder definitionLoader(DefinitionLoader definitionLoader) {
             this.definitionLoader = definitionLoader;
             return this;
         }
