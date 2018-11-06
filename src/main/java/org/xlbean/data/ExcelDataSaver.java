@@ -13,17 +13,13 @@ import org.xlbean.definition.Definition;
 import org.xlbean.definition.DefinitionRepository;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
-import org.xlbean.excel.XlWorkbook;
 import org.xlbean.exception.XlBeanException;
 
 public class ExcelDataSaver {
 
     private static Logger log = LoggerFactory.getLogger(ExcelDataSaver.class);
 
-    public void save(
-            XlBean bean, DefinitionRepository definitions, XlWorkbook workbook, OutputStream out) {
-        definitions.validate(workbook);
-
+    public void save(XlBean bean, DefinitionRepository definitions, OutputStream out) {
         definitions.forEach(
             definition ->
             {
@@ -37,7 +33,7 @@ public class ExcelDataSaver {
             });
 
         try {
-            workbook.write(out);
+            definitions.write(out);
         } catch (IOException e) {
             throw new XlBeanException(e);
         }

@@ -71,8 +71,7 @@ public class XlBeanReader {
 
     public XlBean read(Object definitionSource, Workbook dataSource) {
 
-        definitionLoader.initialize(definitionSource);
-        DefinitionRepository definitions = definitionLoader.load();
+        DefinitionRepository definitions = definitionLoader.load(definitionSource);
 
         XlWorkbook workbook = XlWorkbook.wrap(dataSource);
         return this.dataLoader.load(definitions, workbook);

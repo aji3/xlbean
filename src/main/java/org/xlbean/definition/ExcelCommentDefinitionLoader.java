@@ -3,21 +3,10 @@ package org.xlbean.definition;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.ss.usermodel.Workbook;
 import org.xlbean.excel.XlCellAddress;
 import org.xlbean.excel.XlSheet;
-import org.xlbean.excel.XlWorkbook;
 
 public class ExcelCommentDefinitionLoader extends ExcelR1C1DefinitionLoader {
-
-    @Override
-    public void initialize(Object definitionSource) {
-        if (definitionSource == null || !(definitionSource instanceof Workbook)) {
-            throw new IllegalArgumentException(
-                String.format("Definition source should be an instance of %s", Workbook.class.getName()));
-        }
-        setDefinitionSource(XlWorkbook.wrap((Workbook) definitionSource));
-    }
 
     private static final List<DefinitionBuilder> EXCEL_COMMENT_DEFINITION_RESOLVERS = Arrays.asList(
         new SingleDefinitionResolver(),
@@ -43,7 +32,7 @@ public class ExcelCommentDefinitionLoader extends ExcelR1C1DefinitionLoader {
     }
 
     @Override
-    protected DefinitionRepository readDefinition(XlSheet sheet) {
+    protected DefinitionRepository readAllSheetDefinition(XlSheet sheet) {
         DefinitionRepository definitions = new DefinitionRepository();
         int maxRow = sheet.getMaxRow();
         int maxCol = sheet.getMaxColumn();
@@ -54,14 +43,14 @@ public class ExcelCommentDefinitionLoader extends ExcelR1C1DefinitionLoader {
         // read column definition
         for (int row = 0; row <= maxRow; row++) {
             for (int col = 0; col <= sheet.getMaxColumn(row); col++) {
-                resolveDefinition(definitions, sheet, row, col);
+                readCellDefinition(definitions, sheet, row, col);
             }
         }
 
         return definitions;
     }
 
-    private void resolveDefinition(DefinitionRepository definitions, XlSheet sheet, int row, int col) {
+    private void readCellDefinition(DefinitionRepository definitions, XlSheet sheet, int row, int col) {
         String value = sheet.getCellComment(row, col);
         if (value == null) {
             return;

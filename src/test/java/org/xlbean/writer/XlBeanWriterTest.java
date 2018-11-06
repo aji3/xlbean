@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -36,6 +37,9 @@ public class XlBeanWriterTest {
         Files.createDirectories(Paths.get("build", "XlBeanWriterTest"));
     }
 
+    /**
+     * Format excel file to other excel file.
+     */
     @Test
     public void test_write() throws FileNotFoundException {
         InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_format.xlsx");
@@ -45,10 +49,36 @@ public class XlBeanWriterTest {
 
         System.out.println(bean);
         in = XlBeanReaderTest.class.getResourceAsStream("TestBook_format.xlsx");
+
         XlBeanWriter writer = new XlBeanWriter();
-        writer.write(in, bean, new FileOutputStream("build/XlBeanWriterTest/test.xlsx"));
+        try (OutputStream resultFile = new FileOutputStream("build/XlBeanWriterTest/test.xlsx");) {
+            writer.write(in, bean, resultFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    /**
+     * Write data directly to format excel file
+     */
+    @Test
+    public void test_write2() throws FileNotFoundException {
+        test_write();
+
+        XlBean bean = new XlBeanImpl();
+        bean.put("testDate", "2018-10-30T11:22:33.123");
+
+        System.out.println(bean);
+
+        XlBeanWriter writer = new XlBeanWriter();
+        writer.write(new File("build/XlBeanWriterTest/test.xlsx"), bean, new File("build/XlBeanWriterTest/test.xlsx"));
+
+    }
+
+    /**
+     * Bean definition
+     * 
+     */
     @Test
     public void test_write_with_bean_definition() throws IOException {
         InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_presidents.xlsx");
@@ -59,11 +89,13 @@ public class XlBeanWriterTest {
         XlBeanWriter writer = new XlBeanWriterBuilder().definitionLoader(new BeanDefinitionLoader()).build();
         writer.write(
             bean,
-            null,
             bean,
             new FileOutputStream("build/XlBeanWriterTest/test_with_bean_definition.xlsx"));
     }
 
+    /**
+     * Bean definition with list in list
+     */
     @Test
     public void test_write_with_bean_definition_listinlist() throws IOException {
         InputStream in = XlBeanWriterTest.class.getResourceAsStream("TestBook_BeanDefinitionLoader.xlsx");
@@ -77,7 +109,6 @@ public class XlBeanWriterTest {
         XlBeanWriter writer = new XlBeanWriterBuilder().definitionLoader(new BeanDefinitionLoader(10)).build();
         writer.write(
             expectedBean,
-            null,
             expectedBean,
             new FileOutputStream("build/XlBeanWriterTest/test_write_with_bean_definition_listinlist.xlsx"));
 
@@ -95,9 +126,8 @@ public class XlBeanWriterTest {
 
         DefinitionRepository definitions = null;
         try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
-            DefinitionLoader<?> loader = new ExcelR1C1DefinitionLoader();
-            loader.initialize(wb);
-            definitions = loader.load();
+            DefinitionLoader loader = new ExcelR1C1DefinitionLoader();
+            definitions = loader.load(wb);
         } catch (EncryptedDocumentException | InvalidFormatException e) {
             throw new RuntimeException(e);
         }
@@ -108,7 +138,6 @@ public class XlBeanWriterTest {
         bean.put("definitions", new BeanConverterImpl().toMap(definitions));
         writer.write(
             bean,
-            null,
             bean,
             new FileOutputStream("build/XlBeanWriterTest/test_with_bean_definition2.xlsx"));
     }

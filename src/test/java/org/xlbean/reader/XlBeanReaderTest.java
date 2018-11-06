@@ -367,9 +367,8 @@ public class XlBeanReaderTest {
 
         try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
 
-            DefinitionLoader<XlWorkbook> definitionLoader = new ExcelR1C1DefinitionLoader();
-            definitionLoader.initialize(wb);
-            DefinitionRepository definitions = definitionLoader.load();
+            DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader();
+            DefinitionRepository definitions = definitionLoader.load(wb);
 
             XlBean bean = new XlBeanImpl();
             bean.set("definitions", definitions);
