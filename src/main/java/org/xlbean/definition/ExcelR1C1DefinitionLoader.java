@@ -2,11 +2,14 @@ package org.xlbean.definition;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.Workbook;
 import org.jparsec.error.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xlbean.definition.InTableOptionDefinition.OptionKey;
 import org.xlbean.definition.parser.DefinitionParser;
 import org.xlbean.excel.XlCellAddress;
 import org.xlbean.excel.XlSheet;
@@ -15,8 +18,6 @@ import org.xlbean.excel.XlWorkbook;
 /**
  * Read definitions from row R1 and colum C1 of excel sheets.
  *
- * <p>
- *
  * @author Kazuya Tanikawa
  */
 public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
@@ -24,8 +25,9 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
     private static Logger log = LoggerFactory.getLogger(ExcelR1C1DefinitionLoader.class);
 
     private static final List<DefinitionBuilder> DEFAULT_DEFINITION_BUILDERS = Arrays.asList(
-        new SingleDefinitionResolver(),
-        new TableDefinitionResolver());
+        new SingleDefinitionBuilder(),
+        new TableDefinitionBuilder(),
+        new InTableOptionDefinitionBuilder());
 
     /**
      * Scan all the sheets and read definition from row 1 and column 1.
@@ -105,7 +107,74 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
         for (int row = 1; row <= maxRow; row++) {
             readCellDefinition(definitions, sheet, row, false);
         }
+
+        processInTableOptionAndRemoveFromDefinitions(definitions, sheet);
+
         return definitions;
+    }
+
+    private void processInTableOptionAndRemoveFromDefinitions(DefinitionRepository definitions, XlSheet sheet) {
+        List<Definition> intableOptions = definitions
+            .stream()
+            .filter(def -> InTableOptionDefinition.class.equals(def.getClass()))
+            .collect(Collectors.toList());
+
+        if (intableOptions.size() > 0) {
+            Map<String, List<Definition>> defKeyToDefinitionsMap = definitions
+                .stream()
+                .filter(def -> !InTableOptionDefinition.class.equals(def.getClass()))
+                .collect(Collectors.groupingBy(Definition::getName));
+
+            intableOptions.forEach(intableOptionDefinition -> {
+                processInTableOption(
+                    (InTableOptionDefinition) intableOptionDefinition,
+                    defKeyToDefinitionsMap.get(intableOptionDefinition.getName()),
+                    sheet);
+            });
+
+            definitions.getDefinitions().removeAll(intableOptions);
+        }
+    }
+
+    private void processInTableOption(
+            InTableOptionDefinition optionDef,
+            List<Definition> definitionsToReflectInTableOption,
+            XlSheet sheet) {
+        if (definitionsToReflectInTableOption == null) {
+            return;
+        }
+        optionDef.getOptionKeys().forEach(optionKey -> {
+            definitionsToReflectInTableOption.forEach(targetDefinition -> {
+                if (targetDefinition instanceof TableDefinition) {
+                    TableDefinition tableDefinition = (TableDefinition) targetDefinition;
+                    tableDefinition.getAttributes().values().forEach(attr -> {
+                        loadInTableOptionAndAddToDefinition(optionKey, attr, sheet);
+                    });
+                } else if (targetDefinition instanceof SingleDefinition) {
+                    SingleDefinition singleDefinition = (SingleDefinition) targetDefinition;
+                    loadInTableOptionAndAddToDefinition(optionKey, singleDefinition, sheet);
+                } else {
+                    throw new UnsupportedOperationException("Unsupported Definition class");
+                }
+            });
+        });
+    }
+
+    private void loadInTableOptionAndAddToDefinition(
+            OptionKey optionKey,
+            SingleDefinition singleDefinition,
+            XlSheet sheet) {
+        String optionValue = loadOptionCell(optionKey.getCell(), singleDefinition.getCell(), sheet);
+        singleDefinition.addOption(optionKey.getOptionKey(), optionValue);
+    }
+
+    private String loadOptionCell(XlCellAddress inTableOptionCell, XlCellAddress definitionCell, XlSheet sheet) {
+        if (inTableOptionCell.getRow() != null && definitionCell.getColumn() != null) {
+            return sheet.getCellValue(inTableOptionCell.getRow(), definitionCell.getColumn());
+        } else if (inTableOptionCell.getColumn() != null && definitionCell.getRow() != null) {
+            return sheet.getCellValue(definitionCell.getRow(), inTableOptionCell.getColumn());
+        }
+        return null;
     }
 
     private void readCellDefinition(
@@ -126,7 +195,6 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
             .filter(elem -> elem != null)
             .map(elem -> build(elem, isColumn, num, sheet.getSheetName()))
             .forEach(definitions::addDefinition);
-
     }
 
     private Definition build(Object parsedDefinition, boolean isColumn, int num, String sheetName) {

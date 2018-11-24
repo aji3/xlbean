@@ -9,8 +9,8 @@ import org.xlbean.excel.XlSheet;
 public class ExcelCommentDefinitionLoader extends ExcelR1C1DefinitionLoader {
 
     private static final List<DefinitionBuilder> EXCEL_COMMENT_DEFINITION_RESOLVERS = Arrays.asList(
-        new SingleDefinitionResolver(),
-        new TableDefinitionResolver() {
+        new SingleDefinitionBuilder(),
+        new TableDefinitionBuilder() {
             @Override
             public Definition build(Object parsedObject, XlCellAddress cell) {
                 TableDefinition definition = (TableDefinition) super.build(parsedObject, cell.clone());

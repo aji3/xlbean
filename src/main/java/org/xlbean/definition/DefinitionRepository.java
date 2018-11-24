@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -40,15 +40,16 @@ public class DefinitionRepository {
      * @param definition
      */
     public void addDefinition(Definition definition) {
-        Definition dupulicatedDefinition = definitions
+        Definition duplicatedDefinition = definitions
             .stream()
+            .filter(d -> d.getClass().equals(definition.getClass()))
             .filter(d -> d.getDefinitionId().equals(definition.getDefinitionId()))
             .findFirst()
             .orElse(null);
-        if (dupulicatedDefinition == null) {
+        if (duplicatedDefinition == null) {
             definitions.add(definition);
         } else {
-            dupulicatedDefinition.merge(definition);
+            duplicatedDefinition.merge(definition);
         }
     }
 
@@ -88,16 +89,13 @@ public class DefinitionRepository {
     }
 
     public Map<String, Definition> toMap() {
-        Map<String, Definition> retMap = new HashMap<>();
-        definitions.forEach(
-            it ->
-            {
-                Definition registered = retMap.get(it.getName());
-                if (registered == null) {
-                    retMap.put(it.getName(), it);
-                }
-            });
-        return retMap;
+        return definitions
+            .stream()
+            .collect(
+                Collectors.groupingBy(
+                    Definition::getName,
+                    Collectors.reducing(null, (i, t) -> t)));
+
     }
 
     /**

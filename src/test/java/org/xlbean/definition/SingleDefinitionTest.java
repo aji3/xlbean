@@ -34,7 +34,9 @@ public class SingleDefinitionTest {
         assertThat(def.getCell().getColumn(), is(2));
         assertThat(def.getSheetName(), is("testSheet"));
 
-        assertThat(def.toString(), is("SingleDefinition [name=test, cell=XlCellAddress [row=1, column=2]]"));
+        assertThat(
+            def.toString(),
+            is("SingleDefinition [name=test, cell=XlCellAddress [row=1, column=2], options={}]"));
 
     }
 }

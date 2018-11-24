@@ -4,7 +4,7 @@ import org.xlbean.definition.parser.DefinitionPair;
 import org.xlbean.definition.parser.DefinitionUnit;
 import org.xlbean.excel.XlCellAddress;
 
-public class TableDefinitionResolver extends DefinitionBuilder {
+public class TableDefinitionBuilder extends DefinitionBuilder {
 
     @Override
     public boolean isBuildable(Object parsedDefinition) {
