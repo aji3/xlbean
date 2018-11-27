@@ -7,9 +7,6 @@ public class InTableOptionDefinitionBuilder extends DefinitionBuilder {
 
     @Override
     public boolean isBuildable(Object parsedObject) {
-        if (parsedObject == null) {
-            return false;
-        }
         return parsedObject instanceof InTableOptionUnit;
     }
 

@@ -51,7 +51,8 @@ public class ExcelDataLoader {
         } else if (definition instanceof TableDefinition) {
             return new TableValueLoader((TableDefinition) definition);
         } else {
-            throw new IllegalArgumentException("Unexpected Definition class. " + definition);
+            throw new IllegalArgumentException(
+                "Unexpected Definition class. " + (definition == null ? "null" : definition.getClass().getName()));
         }
     }
 }
