@@ -48,8 +48,11 @@ public class ExcelDataLoader {
     protected ValueLoader<?> getValueLoader(Definition definition) {
         if (definition instanceof SingleDefinition) {
             return new SingleValueLoader((SingleDefinition) definition);
-        } else {
+        } else if (definition instanceof TableDefinition) {
             return new TableValueLoader((TableDefinition) definition);
+        } else {
+            throw new IllegalArgumentException(
+                "Unexpected Definition class. " + (definition == null ? "null" : definition.getClass().getName()));
         }
     }
 }

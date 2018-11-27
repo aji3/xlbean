@@ -35,6 +35,16 @@ public class DefinitionParserTest {
 
         DefinitionPair pair = DefinitionParser.TABLE_DEFINITION.parse("table#~");
         System.out.println(pair);
+
+        InTableOptionUnit intableoption = DefinitionParser.IN_TABLE_OPTION_DEFINITION.parse("test?aaa");
+        System.out.println(intableoption);
+
+        DefinitionParser.parse("test?aaa=bbb&bbb=ccc");
+        DefinitionParser.parse("test?aaa=bbb&bbb=ccc#aaa");
+        DefinitionParser.parse("test?aaa=bbb&bbb=ccc#aaa?aaa=");
+        DefinitionParser.parse("test?aaa");
+        DefinitionParser.parse("table#~");
+        // System.out.println(obj);
     }
 
     @Test
@@ -163,6 +173,78 @@ public class DefinitionParserTest {
                 new DefinitionUnit("~", Arrays.asList())));
     }
 
+    @Test
+    public void test_IN_CELL_OPTION() {
+        assertParser(
+            DefinitionParser.IN_TABLE_OPTION_DEFINITION,
+            "test?opt",
+            new InTableOptionUnit("test", "opt"));
+
+        assertParser(
+            DefinitionParser.IN_TABLE_OPTION_DEFINITION,
+            "test.aaa.bbb?opt",
+            new InTableOptionUnit("test.aaa.bbb", "opt"));
+
+        assertParser(
+            DefinitionParser.IN_TABLE_OPTION_DEFINITION,
+            "test.aaa[0].bbb?opt",
+            new InTableOptionUnit("test.aaa[0].bbb", "opt"));
+
+        assertFailure(DefinitionParser.IN_TABLE_OPTION_DEFINITION, "key=val1", 1, 4);
+
+        assertFailure(DefinitionParser.IN_TABLE_OPTION_DEFINITION, "key?val1=aaa", 1, 9);
+
+    }
+
+    @Test
+    public void test_DEFINITION() {
+        assertParser(
+            DefinitionParser.DEFINITION,
+            "singleDef",
+            new DefinitionUnit("singleDef", Arrays.asList()));
+        assertParser(
+            DefinitionParser.DEFINITION,
+            "singleDef?opt1=0&opt2=true&testValue=",
+            new DefinitionUnit(
+                "singleDef",
+                Arrays.asList(
+                    new DefinitionOption("opt1", "0"),
+                    new DefinitionOption("opt2", "true"),
+                    new DefinitionOption("testValue", ""))));
+
+        assertParser(
+            DefinitionParser.DEFINITION,
+            "table#column",
+            new DefinitionPair(
+                new DefinitionUnit("table", Arrays.asList()),
+                new DefinitionUnit("column", Arrays.asList())));
+
+        assertParser(
+            DefinitionParser.DEFINITION,
+            "table#~",
+            new DefinitionPair(
+                new DefinitionUnit("table", Arrays.asList()),
+                new DefinitionUnit("~", Arrays.asList())));
+
+        assertParser(
+            DefinitionParser.DEFINITION,
+            "test?opt",
+            new InTableOptionUnit("test", "opt"));
+
+        assertParser(
+            DefinitionParser.DEFINITION,
+            "test.aaa.bbb?opt",
+            new InTableOptionUnit("test.aaa.bbb", "opt"));
+
+        assertParser(
+            DefinitionParser.DEFINITION,
+            "test.aaa[0].bbb?opt",
+            new InTableOptionUnit("test.aaa[0].bbb", "opt"));
+
+        assertFailure(DefinitionParser.DEFINITION, "key=val1", 1, 4);
+
+    }
+
     static void assertParser(Parser<?> parser, String source, Object value) {
         assertEquals(value, parser.parse(source));
     }
@@ -180,6 +262,11 @@ public class DefinitionParserTest {
         assertEq(value, pair);
     }
 
+    static void assertParser(Parser<?> parser, String source, InTableOptionUnit value) {
+        InTableOptionUnit option = (InTableOptionUnit) parser.parse(source);
+        assertEq(value, option);
+    }
+
     static void assertEq(DefinitionOption expected, DefinitionOption actual) {
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getValue(), actual.getValue());
@@ -193,6 +280,11 @@ public class DefinitionParserTest {
     static void assertEq(DefinitionPair expected, DefinitionPair actual) {
         assertEq(expected.getLeft(), actual.getLeft());
         assertEq(expected.getRight(), actual.getRight());
+    }
+
+    static void assertEq(InTableOptionUnit expected, InTableOptionUnit actual) {
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getOptionKey(), actual.getOptionKey());
     }
 
     static void assertEq(List<DefinitionOption> expected, List<DefinitionOption> actual) {

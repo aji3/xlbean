@@ -146,6 +146,10 @@ public class TableDefinition extends Definition {
 
     @Override
     public String toString() {
-        return String.format("TableDefinition [name=%s, attributes=%s]", getName(), attributes);
+        return String.format(
+            "TableDefinition [name=%s, attributes=%s, options=%s]",
+            getName(),
+            attributes,
+            getOptions());
     }
 }
