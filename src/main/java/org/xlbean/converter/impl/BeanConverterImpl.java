@@ -116,6 +116,10 @@ public class BeanConverterImpl implements BeanConverter {
                     ParameterizedType p = (ParameterizedType) pd.getWriteMethod().getGenericParameterTypes()[0];
                     Type childType = p.getActualTypeArguments()[0];
                     for (Object srcObj : (Iterable<?>) value) {
+                        if (srcObj == null) {
+                            obj.add(srcObj);
+                            continue;
+                        }
                         if (isLeaf(srcObj.getClass())) {
                             obj.add(srcObj);
                         } else {

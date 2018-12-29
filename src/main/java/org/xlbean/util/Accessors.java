@@ -84,6 +84,22 @@ public class Accessors {
         return rootField;
     }
 
+    /**
+     * Parse {@code dottedFieldName} and get corresponding data from {@code bean}.
+     * 
+     * <p>
+     * {@code dottedFieldName} can be a value like "field",
+     * "parentBean.childElement", "list[1]", "parent.list[0]", etc
+     * </p>
+     * 
+     * <p>
+     * This method will not do any validation for {@code dottedFieldName}.
+     * </p>
+     * 
+     * @param dottedFieldName
+     * @param bean
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public <T> T get(String dottedFieldName, Map<String, Object> bean) {
         if (bean == null || dottedFieldName == null) {

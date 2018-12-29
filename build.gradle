@@ -97,6 +97,7 @@ javadoc {
     failOnError = false
     destinationDir = file('docs')
     options.locale = 'en_US'
+    options.noTimestamp = true
 }
 
 jacocoTestReport {
