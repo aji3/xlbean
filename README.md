@@ -1,5 +1,3 @@
-[[Japanese]](https://github.com/aji3/xlbean/blob/master/README.ja.md)
-
 xlbean
 ====
 [![Build Status](https://travis-ci.org/aji3/xlbean.svg?branch=master)](https://travis-ci.org/aji3/xlbean)
