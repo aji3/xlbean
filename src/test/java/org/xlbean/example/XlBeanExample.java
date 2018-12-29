@@ -1,4 +1,4 @@
-package org.xlbean;
+package org.xlbean.example;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.List;
 
+import org.xlbean.XlBean;
+import org.xlbean.XlBeanImpl;
 import org.xlbean.reader.XlBeanReader;
 import org.xlbean.testbean.President;
 import org.xlbean.testbean.Stats;

@@ -26,11 +26,14 @@ import org.junit.Test;
 import org.xlbean.XlBean;
 import org.xlbean.XlBeanImpl;
 import org.xlbean.XlList;
+import org.xlbean.definition.Definition;
 import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.DefinitionRepository;
 import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
-import org.xlbean.excel.XlWorkbook;
+import org.xlbean.definition.SingleDefinition;
+import org.xlbean.definition.TableDefinition;
+import org.xlbean.reader.XlBeanReader.XlBeanReaderBuilder;
 import org.xlbean.testbean.Country;
 import org.xlbean.testbean.PresidentEnum;
 import org.xlbean.testbean.PresidentEnum.States;
@@ -366,9 +369,8 @@ public class XlBeanReaderTest {
 
         try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
 
-            DefinitionLoader<XlWorkbook> definitionLoader = new ExcelR1C1DefinitionLoader();
-            definitionLoader.initialize(wb);
-            DefinitionRepository definitions = definitionLoader.load();
+            DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader();
+            DefinitionRepository definitions = definitionLoader.load(wb);
 
             XlBean bean = new XlBeanImpl();
             bean.set("definitions", definitions);
@@ -380,14 +382,8 @@ public class XlBeanReaderTest {
 
     @Test
     public void testCommentDefinitionReader() throws ParseException {
-        // XlBeanReader reader = new XlBeanReader(){
-        // @Override
-        // protected DefinitionLoader<?> createDefinitionLoader(Object definitionSource)
-        // {
-        // return new ExcelCommentDefinitionLoader(wrap((Workbook)definitionSource));
-        // }
-        // };
-        XlBeanReader reader = new XlBeanReader(new ExcelCommentDefinitionLoader());
+
+        XlBeanReader reader = new XlBeanReaderBuilder().definitionLoader(new ExcelCommentDefinitionLoader()).build();
         InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_presidents_comment.xlsx");
         XlBean bean = reader.read(in);
 
@@ -757,6 +753,54 @@ public class XlBeanReaderTest {
         assertThat(bean.beans("optionsOffset").get(5).string("aaa"), is("4"));
         assertThat(bean.beans("optionsOffset").get(6).string("aaa"), is("5"));
 
+    }
+
+    @Test
+    public void testInTableOption() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_option.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBeanReaderContext context = reader.readContext(in);
+        XlBean bean = context.getXlBean();
+
+        System.out.println(bean);
+
+        assertThat(bean.string("single"), is("100"));
+
+        assertThat(bean.beans("optionsInTable").size(), is(8));
+        assertThat(bean.beans("optionsInTable").get(0).string("field1"), is("1"));
+        assertThat(bean.beans("optionsInTable").get(1).string("field1"), is("2"));
+        assertThat(bean.beans("optionsInTable").get(2).string("field1"), is("3"));
+        assertThat(bean.beans("optionsInTable").get(3).string("field1"), is("4"));
+        assertThat(bean.beans("optionsInTable").get(4).string("field1"), is("5"));
+        assertThat(bean.beans("optionsInTable").get(5).string("field1"), is("6"));
+        assertThat(bean.beans("optionsInTable").get(6).string("field1"), is("7"));
+        assertThat(bean.beans("optionsInTable").get(7).string("field1"), is("8"));
+        assertThat(bean.beans("optionsInTable").get(0).string("field2"), is("101.0"));
+        assertThat(bean.beans("optionsInTable").get(1).string("field2"), is("102.0"));
+        assertThat(bean.beans("optionsInTable").get(2).string("field2"), is("103.0"));
+        assertThat(bean.beans("optionsInTable").get(3).string("field2"), is("104.0"));
+        assertThat(bean.beans("optionsInTable").get(4).string("field2"), is("105.0"));
+        assertThat(bean.beans("optionsInTable").get(5).string("field2"), is("106.0"));
+        assertThat(bean.beans("optionsInTable").get(6).string("field2"), is("107.0"));
+        assertThat(bean.beans("optionsInTable").get(7).string("field2"), is("108.0"));
+
+        Map<String, Definition> definitionMap = context.getDefinitions().toMap();
+        TableDefinition optionsInTableDef = (TableDefinition) definitionMap.get("optionsInTable");
+
+        assertThat(optionsInTableDef.getAttributes().get("field1").getOptions().get("type"), is("string"));
+        assertThat(optionsInTableDef.getAttributes().get("field1").getOptions().get("customType"), is("hoge"));
+        assertThat(optionsInTableDef.getAttributes().get("field2").getOptions().get("type"), is(nullValue()));
+        assertThat(optionsInTableDef.getAttributes().get("field2").getOptions().get("customType"), is("fuga"));
+
+        SingleDefinition singleDef = (SingleDefinition) definitionMap.get("single");
+        assertThat(singleDef.getOptions().get("type"), is("string"));
+        assertThat(singleDef.getOptions().get("custom"), is("test value for custom option"));
+
+        Definition optionToOtherDirection = definitionMap.get("optionToOtherDirection");
+        System.out.println(optionToOtherDirection);
+
+        assertThat(optionToOtherDirection.getOptions().get("testOption"), is("value for option"));
     }
 
 }

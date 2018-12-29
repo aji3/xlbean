@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.Test;
 import org.xlbean.XlBean;
 import org.xlbean.XlList;
+import org.xlbean.converter.impl.BeanConverterImpl;
 
 public class BeanConverterImplTest {
 

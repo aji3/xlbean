@@ -15,13 +15,14 @@ import java.time.LocalTime;
 import java.util.Date;
 
 import org.junit.Test;
+import org.xlbean.converter.impl.DelegateValueConverter;
 
-public class ValueConverterImplTest {
+public class DelegateValueConverterTest {
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     @Test
     public void toStringTest() throws ParseException {
-        ValueConverterImpl converter = new ValueConverterImpl();
+        DelegateValueConverter converter = new DelegateValueConverter();
         assertThat(converter.toString(null), is(nullValue()));
 
         assertThat(
@@ -36,7 +37,7 @@ public class ValueConverterImplTest {
 
     @Test
     public void toObject() throws ParseException {
-        ValueConverterImpl converter = new ValueConverterImpl();
+        DelegateValueConverter converter = new DelegateValueConverter();
 
         assertThat(converter.toObject(null, null), is(nullValue()));
         assertThat(converter.toObject("test", null), is(nullValue()));

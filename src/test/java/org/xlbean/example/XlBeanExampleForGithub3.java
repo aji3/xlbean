@@ -1,10 +1,12 @@
-package org.xlbean;
+package org.xlbean.example;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.xlbean.XlBean;
+import org.xlbean.XlList;
 import org.xlbean.reader.XlBeanReader;
 
 public class XlBeanExampleForGithub3 {

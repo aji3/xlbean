@@ -3,7 +3,7 @@ package org.xlbean.definition;
 import org.xlbean.definition.parser.DefinitionUnit;
 import org.xlbean.excel.XlCellAddress;
 
-public class SingleDefinitionResolver extends DefinitionBuilder {
+public class SingleDefinitionBuilder extends DefinitionBuilder {
 
     @Override
     public boolean isBuildable(Object parsedObject) {

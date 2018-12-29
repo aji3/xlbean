@@ -8,6 +8,8 @@ import org.xlbean.excel.XlSheet;
 /**
  * Super class for all definitions.
  *
+ * @see SingleDefinition
+ * @see TableDefinition
  * @author Kazuya Tanikawa
  */
 public abstract class Definition {
@@ -68,6 +70,10 @@ public abstract class Definition {
 
     public void addOptions(Map<String, String> options) {
         getOptions().putAll(options);
+    }
+
+    public void addOption(String optionKey, String optionValue) {
+        getOptions().put(optionKey, optionValue);
     }
 
 }

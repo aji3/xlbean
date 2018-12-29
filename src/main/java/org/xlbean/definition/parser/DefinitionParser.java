@@ -97,6 +97,22 @@ public class DefinitionParser {
     static Parser<String> LAYERED_VARIABLE = VARIABLE.sepBy(Scanners.isChar('.')).map(vars -> String.join(".", vars));
 
     /**
+     * Parser for IN_TABLE_OPTION.
+     * 
+     * e.g.
+     * <ul>
+     * <li>test?type</li>
+     * <li>test.aaa?testOption</li>
+     * <li>test[0].aaa[1]?testOption</li>
+     * </ul>
+     */
+    static Parser<InTableOptionUnit> IN_TABLE_OPTION_DEFINITION = Parsers.sequence(
+        LAYERED_VARIABLE,
+        Scanners.isChar('?'),
+        VARIABLE_NAME,
+        (key, symbol, value) -> new InTableOptionUnit(key, value));
+
+    /**
      * Parser for option.
      * 
      * e.g.
@@ -171,9 +187,11 @@ public class DefinitionParser {
         (left, sep, right) -> new DefinitionPair(left, right));
 
     /**
-     * 
+     * Entry point.
      */
-    static Parser<?> DEFINITION = Parsers.or(TABLE_DEFINITION, SINGLE_DEFINITION);
+    static Parser<?> DEFINITION = Parsers.longer(
+        IN_TABLE_OPTION_DEFINITION,
+        Parsers.or(TABLE_DEFINITION, SINGLE_DEFINITION));
 
     public static Object parse(String str) {
         return DEFINITION.parse(str);

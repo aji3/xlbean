@@ -1,11 +1,14 @@
 package org.xlbean.definition;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +22,11 @@ import org.xlbean.excel.XlWorkbook;
  */
 public class DefinitionRepository {
 
-    private static Logger log = LoggerFactory.getLogger(DefinitionRepository.class);
+    private static Logger log = LoggerFactory.getLogger(BeanDefinitionLoader.class);
 
     private List<Definition> definitions = new ArrayList<>();
+
+    private XlWorkbook workbook;
 
     /**
      * Add {@link Definition} to this repository.
@@ -35,49 +40,16 @@ public class DefinitionRepository {
      * @param definition
      */
     public void addDefinition(Definition definition) {
-        Definition dupulicatedDefinition = null;
-        for (Definition d : definitions) {
-            if (d.getDefinitionId().equals(definition.getDefinitionId())) {
-                dupulicatedDefinition = d;
-                break;
-            }
-        }
-        if (dupulicatedDefinition == null) {
+        Definition duplicatedDefinition = definitions
+            .stream()
+            .filter(d -> d.getClass().equals(definition.getClass()))
+            .filter(d -> d.getDefinitionId().equals(definition.getDefinitionId()))
+            .findFirst()
+            .orElse(null);
+        if (duplicatedDefinition == null) {
             definitions.add(definition);
         } else {
-            dupulicatedDefinition.merge(definition);
-        }
-    }
-
-    /**
-     * Calls {@link Definition#validate()} of all the {@link Definition} instances
-     * in this repository, then set the corresponding excel sheet instance to each
-     * definitions.
-     *
-     * @param workbook
-     */
-    public void validate(XlWorkbook workbook) {
-        for (Definition definition : definitions) {
-            // Check if the definition is valid
-            if (!definition.validate()) {
-                log.warn(
-                    "Invalid definition [{}] ({})",
-                    definition.getName(),
-                    definition.getClass().getName());
-                continue;
-            }
-
-            // Link the definition with excel sheet
-            XlSheet sheet = workbook.getSheet(definition.getSheetName());
-            if (sheet == null) {
-                log.warn(
-                    "No sheet named \"{}\" was found for definition \"{}\". ({})",
-                    definition.getSheetName(),
-                    definition.getName(),
-                    definition.getClass().getName());
-                continue;
-            }
-            definition.setSheet(sheet);
+            duplicatedDefinition.merge(definition);
         }
     }
 
@@ -90,6 +62,10 @@ public class DefinitionRepository {
         DefinitionValidationContext validationContext = new DefinitionValidationContext();
         for (Definition definition : definitions) {
             if (!definition.validate()) {
+                log.warn(
+                    "Invalid definition [{}] ({})",
+                    definition.getName(),
+                    definition.getClass().getName());
                 validationContext.addErrorDefinition(definition);
             }
         }
@@ -113,16 +89,13 @@ public class DefinitionRepository {
     }
 
     public Map<String, Definition> toMap() {
-        Map<String, Definition> retMap = new HashMap<>();
-        definitions.forEach(
-            it ->
-            {
-                Definition registered = retMap.get(it.getName());
-                if (registered == null) {
-                    retMap.put(it.getName(), it);
-                }
-            });
-        return retMap;
+        return definitions
+            .stream()
+            .collect(
+                Collectors.groupingBy(
+                    Definition::getName,
+                    Collectors.reducing(null, (i, t) -> t)));
+
     }
 
     /**
@@ -144,6 +117,32 @@ public class DefinitionRepository {
 
     public void forEach(Consumer<? super Definition> c) {
         definitions.forEach(c);
+    }
+
+    public Stream<Definition> stream() {
+        return definitions.stream();
+    }
+
+    public void activate(XlWorkbook workbook) {
+        this.workbook = workbook;
+        definitions.forEach(this::activateOne);
+    }
+
+    private void activateOne(Definition definition) {
+        XlSheet sheet = workbook.getSheet(definition.getSheetName());
+        if (sheet == null) {
+            log.warn(
+                "No sheet named \"{}\" was found for definition \"{}\". ({})",
+                definition.getSheetName(),
+                definition.getName(),
+                definition.getClass().getName());
+            return;
+        }
+        definition.setSheet(sheet);
+    }
+
+    public void write(OutputStream os) throws IOException {
+        workbook.write(os);
     }
 
     @Override

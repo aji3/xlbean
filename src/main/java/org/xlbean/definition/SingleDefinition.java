@@ -5,10 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.xlbean.excel.XlCellAddress;
 
 /**
- * Definition for a value defined in a single cell.
- *
+ * Definition for a value defined in a single cell or column in a table.
+ * 
  * <p>
- * {@link XlCellAddress} is the information
+ * When it is used for column definition for {@link TableDefinition},
+ * {@link XlCellAddress} could only have either of row or column.
+ * </p>
  *
  * @author Kazuya Tanikawa
  */
@@ -55,6 +57,6 @@ public class SingleDefinition extends Definition {
 
     @Override
     public String toString() {
-        return String.format("SingleDefinition [name=%s, cell=%s]", getName(), cell);
+        return String.format("SingleDefinition [name=%s, cell=%s, options=%s]", getName(), cell, getOptions());
     }
 }
