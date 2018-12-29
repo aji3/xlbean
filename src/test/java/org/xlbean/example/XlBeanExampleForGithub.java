@@ -1,9 +1,10 @@
-package org.xlbean;
+package org.xlbean.example;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 
+import org.xlbean.XlBean;
 import org.xlbean.reader.XlBeanReader;
 import org.xlbean.testbean.President;
 

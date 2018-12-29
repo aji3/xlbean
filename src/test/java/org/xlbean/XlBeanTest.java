@@ -24,6 +24,7 @@ import org.xlbean.testbean.Country;
 import org.xlbean.testbean.President;
 import org.xlbean.testbean.Stats;
 import org.xlbean.testbean.TestConverterBean;
+import org.xlbean.testbean.TestOfBean;
 import org.xlbean.util.BeanHelper;
 
 public class XlBeanTest {
@@ -428,7 +429,6 @@ public class XlBeanTest {
         assertThat(bean.character("character4"), is('t'));
         assertThat(bean.character("character5"), is(nullValue()));
         assertThat(bean.character("character6"), is('-'));
-
     }
 
     @Test
@@ -446,7 +446,180 @@ public class XlBeanTest {
         assertThat(characters.get(3), is('t'));
         assertThat(characters.get(4), is(nullValue()));
         assertThat(characters.get(5), is('-'));
+    }
 
+    @Test
+    public void testOf() {
+        InputStream in = XlBeanTest.class.getResourceAsStream("TestBook_XlBean.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+        bean.beans("testOf").forEach(System.out::println);
+
+        List<TestOfBean> testBeans = bean.listOf("testOf", TestOfBean.class);
+        testBeans.forEach(System.out::println);
+
+        assertTestOf(testBeans.get(0), "aaa", "bbb", "bbb", "ccc", "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(1), "aaa", "bbb", "bbb", "ccc", "ddd", "ccc", null);
+        assertTestOf(testBeans.get(2), "aaa", "bbb", "bbb", "ccc", "ddd", null, "ddd");
+        assertTestOf(testBeans.get(3), "aaa", "bbb", "bbb", "ccc", "ddd", null, null);
+        assertTestOf(testBeans.get(4), "aaa", "bbb", "bbb", "ccc", null, "ccc", "ddd");
+        assertTestOf(testBeans.get(5), "aaa", "bbb", "bbb", "ccc", null, "ccc", null);
+        assertTestOf(testBeans.get(6), "aaa", "bbb", "bbb", "ccc", null, null, "ddd");
+        assertTestOf(testBeans.get(7), "aaa", "bbb", "bbb", "ccc", null, null, null);
+        assertTestOf(testBeans.get(8), "aaa", "bbb", "bbb", null, "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(9), "aaa", "bbb", "bbb", null, "ddd", "ccc", null);
+        assertTestOf(testBeans.get(10), "aaa", "bbb", "bbb", null, "ddd", null, "ddd");
+        assertTestOf(testBeans.get(11), "aaa", "bbb", "bbb", null, "ddd", null, null);
+        assertTestOf(testBeans.get(12), "aaa", "bbb", "bbb", null, null, "ccc", "ddd");
+        assertTestOf(testBeans.get(13), "aaa", "bbb", "bbb", null, null, "ccc", null);
+        assertTestOf(testBeans.get(14), "aaa", "bbb", "bbb", null, null, null, "ddd");
+        assertTestOf(testBeans.get(15), "aaa", "bbb", "bbb", null, null, null, null);
+        assertTestOf(testBeans.get(16), "aaa", "bbb", null, "ccc", "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(17), "aaa", "bbb", null, "ccc", "ddd", "ccc", null);
+        assertTestOf(testBeans.get(18), "aaa", "bbb", null, "ccc", "ddd", null, "ddd");
+        assertTestOf(testBeans.get(19), "aaa", "bbb", null, "ccc", "ddd", null, null);
+        assertTestOf(testBeans.get(20), "aaa", "bbb", null, "ccc", null, "ccc", "ddd");
+        assertTestOf(testBeans.get(21), "aaa", "bbb", null, "ccc", null, "ccc", null);
+        assertTestOf(testBeans.get(22), "aaa", "bbb", null, "ccc", null, null, "ddd");
+        assertTestOf(testBeans.get(23), "aaa", "bbb", null, "ccc", null, null, null);
+        assertTestOf(testBeans.get(24), "aaa", "bbb", null, null, "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(25), "aaa", "bbb", null, null, "ddd", "ccc", null);
+        assertTestOf(testBeans.get(26), "aaa", "bbb", null, null, "ddd", null, "ddd");
+        assertTestOf(testBeans.get(27), "aaa", "bbb", null, null, "ddd", null, null);
+        assertTestOf(testBeans.get(28), "aaa", "bbb", null, null, null, "ccc", "ddd");
+        assertTestOf(testBeans.get(29), "aaa", "bbb", null, null, null, "ccc", null);
+        assertTestOf(testBeans.get(30), "aaa", "bbb", null, null, null, null, "ddd");
+        assertTestOf(testBeans.get(31), "aaa", "bbb", null, null, null, null, null);
+        assertTestOf(testBeans.get(32), "aaa", null, "bbb", "ccc", "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(33), "aaa", null, "bbb", "ccc", "ddd", "ccc", null);
+        assertTestOf(testBeans.get(34), "aaa", null, "bbb", "ccc", "ddd", null, "ddd");
+        assertTestOf(testBeans.get(35), "aaa", null, "bbb", "ccc", "ddd", null, null);
+        assertTestOf(testBeans.get(36), "aaa", null, "bbb", "ccc", null, "ccc", "ddd");
+        assertTestOf(testBeans.get(37), "aaa", null, "bbb", "ccc", null, "ccc", null);
+        assertTestOf(testBeans.get(38), "aaa", null, "bbb", "ccc", null, null, "ddd");
+        assertTestOf(testBeans.get(39), "aaa", null, "bbb", "ccc", null, null, null);
+        assertTestOf(testBeans.get(40), "aaa", null, "bbb", null, "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(41), "aaa", null, "bbb", null, "ddd", "ccc", null);
+        assertTestOf(testBeans.get(42), "aaa", null, "bbb", null, "ddd", null, "ddd");
+        assertTestOf(testBeans.get(43), "aaa", null, "bbb", null, "ddd", null, null);
+        assertTestOf(testBeans.get(44), "aaa", null, "bbb", null, null, "ccc", "ddd");
+        assertTestOf(testBeans.get(45), "aaa", null, "bbb", null, null, "ccc", null);
+        assertTestOf(testBeans.get(46), "aaa", null, "bbb", null, null, null, "ddd");
+        assertTestOf(testBeans.get(47), "aaa", null, "bbb", null, null, null, null);
+        assertTestOf(testBeans.get(48), "aaa", null, null, "ccc", "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(49), "aaa", null, null, "ccc", "ddd", "ccc", null);
+        assertTestOf(testBeans.get(50), "aaa", null, null, "ccc", "ddd", null, "ddd");
+        assertTestOf(testBeans.get(51), "aaa", null, null, "ccc", "ddd", null, null);
+        assertTestOf(testBeans.get(52), "aaa", null, null, "ccc", null, "ccc", "ddd");
+        assertTestOf(testBeans.get(53), "aaa", null, null, "ccc", null, "ccc", null);
+        assertTestOf(testBeans.get(54), "aaa", null, null, "ccc", null, null, "ddd");
+        assertTestOf(testBeans.get(55), "aaa", null, null, "ccc", null, null, null);
+        assertTestOf(testBeans.get(56), "aaa", null, null, null, "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(57), "aaa", null, null, null, "ddd", "ccc", null);
+        assertTestOf(testBeans.get(58), "aaa", null, null, null, "ddd", null, "ddd");
+        assertTestOf(testBeans.get(59), "aaa", null, null, null, "ddd", null, null);
+        assertTestOf(testBeans.get(60), "aaa", null, null, null, null, "ccc", "ddd");
+        assertTestOf(testBeans.get(61), "aaa", null, null, null, null, "ccc", null);
+        assertTestOf(testBeans.get(62), "aaa", null, null, null, null, null, "ddd");
+        assertTestOf(testBeans.get(63), "aaa", null, null, null, null, null, null);
+        assertTestOf(testBeans.get(64), null, "bbb", "bbb", "ccc", "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(65), null, "bbb", "bbb", "ccc", "ddd", "ccc", null);
+        assertTestOf(testBeans.get(66), null, "bbb", "bbb", "ccc", "ddd", null, "ddd");
+        assertTestOf(testBeans.get(67), null, "bbb", "bbb", "ccc", "ddd", null, null);
+        assertTestOf(testBeans.get(68), null, "bbb", "bbb", "ccc", null, "ccc", "ddd");
+        assertTestOf(testBeans.get(69), null, "bbb", "bbb", "ccc", null, "ccc", null);
+        assertTestOf(testBeans.get(70), null, "bbb", "bbb", "ccc", null, null, "ddd");
+        assertTestOf(testBeans.get(71), null, "bbb", "bbb", "ccc", null, null, null);
+        assertTestOf(testBeans.get(72), null, "bbb", "bbb", null, "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(73), null, "bbb", "bbb", null, "ddd", "ccc", null);
+        assertTestOf(testBeans.get(74), null, "bbb", "bbb", null, "ddd", null, "ddd");
+        assertTestOf(testBeans.get(75), null, "bbb", "bbb", null, "ddd", null, null);
+        assertTestOf(testBeans.get(76), null, "bbb", "bbb", null, null, "ccc", "ddd");
+        assertTestOf(testBeans.get(77), null, "bbb", "bbb", null, null, "ccc", null);
+        assertTestOf(testBeans.get(78), null, "bbb", "bbb", null, null, null, "ddd");
+        assertTestOf(testBeans.get(79), null, "bbb", "bbb", null, null, null, null);
+        assertTestOf(testBeans.get(80), null, "bbb", null, "ccc", "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(81), null, "bbb", null, "ccc", "ddd", "ccc", null);
+        assertTestOf(testBeans.get(82), null, "bbb", null, "ccc", "ddd", null, "ddd");
+        assertTestOf(testBeans.get(83), null, "bbb", null, "ccc", "ddd", null, null);
+        assertTestOf(testBeans.get(84), null, "bbb", null, "ccc", null, "ccc", "ddd");
+        assertTestOf(testBeans.get(85), null, "bbb", null, "ccc", null, "ccc", null);
+        assertTestOf(testBeans.get(86), null, "bbb", null, "ccc", null, null, "ddd");
+        assertTestOf(testBeans.get(87), null, "bbb", null, "ccc", null, null, null);
+        assertTestOf(testBeans.get(88), null, "bbb", null, null, "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(89), null, "bbb", null, null, "ddd", "ccc", null);
+        assertTestOf(testBeans.get(90), null, "bbb", null, null, "ddd", null, "ddd");
+        assertTestOf(testBeans.get(91), null, "bbb", null, null, "ddd", null, null);
+        assertTestOf(testBeans.get(92), null, "bbb", null, null, null, "ccc", "ddd");
+        assertTestOf(testBeans.get(93), null, "bbb", null, null, null, "ccc", null);
+        assertTestOf(testBeans.get(94), null, "bbb", null, null, null, null, "ddd");
+        assertTestOf(testBeans.get(95), null, "bbb", null, null, null, null, null);
+        assertTestOf(testBeans.get(96), null, null, "bbb", "ccc", "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(97), null, null, "bbb", "ccc", "ddd", "ccc", null);
+        assertTestOf(testBeans.get(98), null, null, "bbb", "ccc", "ddd", null, "ddd");
+        assertTestOf(testBeans.get(99), null, null, "bbb", "ccc", "ddd", null, null);
+        assertTestOf(testBeans.get(100), null, null, "bbb", "ccc", null, "ccc", "ddd");
+        assertTestOf(testBeans.get(101), null, null, "bbb", "ccc", null, "ccc", null);
+        assertTestOf(testBeans.get(102), null, null, "bbb", "ccc", null, null, "ddd");
+        assertTestOf(testBeans.get(103), null, null, "bbb", "ccc", null, null, null);
+        assertTestOf(testBeans.get(104), null, null, "bbb", null, "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(105), null, null, "bbb", null, "ddd", "ccc", null);
+        assertTestOf(testBeans.get(106), null, null, "bbb", null, "ddd", null, "ddd");
+        assertTestOf(testBeans.get(107), null, null, "bbb", null, "ddd", null, null);
+        assertTestOf(testBeans.get(108), null, null, "bbb", null, null, "ccc", "ddd");
+        assertTestOf(testBeans.get(109), null, null, "bbb", null, null, "ccc", null);
+        assertTestOf(testBeans.get(110), null, null, "bbb", null, null, null, "ddd");
+        assertTestOf(testBeans.get(111), null, null, "bbb", null, null, null, null);
+        assertTestOf(testBeans.get(112), null, null, null, "ccc", "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(113), null, null, null, "ccc", "ddd", "ccc", null);
+        assertTestOf(testBeans.get(114), null, null, null, "ccc", "ddd", null, "ddd");
+        assertTestOf(testBeans.get(115), null, null, null, "ccc", "ddd", null, null);
+        assertTestOf(testBeans.get(116), null, null, null, "ccc", null, "ccc", "ddd");
+        assertTestOf(testBeans.get(117), null, null, null, "ccc", null, "ccc", null);
+        assertTestOf(testBeans.get(118), null, null, null, "ccc", null, null, "ddd");
+        assertTestOf(testBeans.get(119), null, null, null, "ccc", null, null, null);
+        assertTestOf(testBeans.get(120), null, null, null, null, "ddd", "ccc", "ddd");
+        assertTestOf(testBeans.get(121), null, null, null, null, "ddd", "ccc", null);
+        assertTestOf(testBeans.get(122), null, null, null, null, "ddd", null, "ddd");
+        assertTestOf(testBeans.get(123), null, null, null, null, "ddd", null, null);
+        assertTestOf(testBeans.get(124), null, null, null, null, null, "ccc", "ddd");
+        assertTestOf(testBeans.get(125), null, null, null, null, null, "ccc", null);
+        assertTestOf(testBeans.get(126), null, null, null, null, null, null, "ddd");
+        assertThat(testBeans.size(), is(127));
+
+    }
+
+    private void assertTestOf(TestOfBean testBean, String aaa, String bbb21, String bbb22, String ccc01, String ccc02,
+            String ccc11, String ccc12) {
+
+        boolean bbbexists = bbb21 != null || bbb22 != null;
+        boolean ccc0exists = ccc01 != null || ccc02 != null;
+        boolean ccc1exists = ccc11 != null || ccc12 != null;
+
+        assertThat(testBean.getAaa(), is(aaa));
+        if (bbbexists) {
+            assertThat(testBean.getBbb1().getBbb21(), is(bbb21));
+            assertThat(testBean.getBbb1().getBbb22(), is(bbb22));
+        } else {
+            assertThat(testBean.getBbb1(), is(nullValue()));
+        }
+        if (ccc0exists) {
+            assertThat(testBean.getCcc().get(0).getCcc1(), is(ccc01));
+            assertThat(testBean.getCcc().get(0).getCcc2(), is(ccc02));
+        } else {
+            assertThat(
+                testBean.getCcc() == null || testBean.getCcc().size() < 1 || testBean.getCcc().get(0) == null,
+                is(true));
+        }
+        if (ccc1exists) {
+            assertThat(testBean.getCcc().get(1).getCcc1(), is(ccc11));
+            assertThat(testBean.getCcc().get(1).getCcc2(), is(ccc12));
+        } else {
+            assertThat(
+                testBean.getCcc() == null || testBean.getCcc().size() < 2 || testBean.getCcc().get(1) == null,
+                is(true));
+        }
     }
 
 }

@@ -796,6 +796,11 @@ public class XlBeanReaderTest {
         SingleDefinition singleDef = (SingleDefinition) definitionMap.get("single");
         assertThat(singleDef.getOptions().get("type"), is("string"));
         assertThat(singleDef.getOptions().get("custom"), is("test value for custom option"));
+
+        Definition optionToOtherDirection = definitionMap.get("optionToOtherDirection");
+        System.out.println(optionToOtherDirection);
+
+        assertThat(optionToOtherDirection.getOptions().get("testOption"), is("value for option"));
     }
 
 }
