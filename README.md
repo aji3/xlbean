@@ -13,6 +13,10 @@ This library will be useful when you want to **use excel sheet from Java program
 
 [Wiki](https://github.com/aji3/xlbean/wiki)
 
+# Getting Started
+
+[Wiki](https://github.com/aji3/xlbean/wiki/Getting-Started)
+
 # Javadoc
 
 https://aji3.github.io/xlbean/
