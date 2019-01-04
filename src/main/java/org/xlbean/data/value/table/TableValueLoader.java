@@ -10,8 +10,8 @@ import org.xlbean.XlList;
 import org.xlbean.data.value.ValueLoader;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
-import org.xlbean.util.BeanHelper;
 import org.xlbean.util.Accessors;
+import org.xlbean.util.BeanHelper;
 import org.xlbean.util.XlBeanFactory;
 
 /**
@@ -39,7 +39,6 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
             for (Entry<String, List<String>> entry : definitionCache.getIndexKeysMap().entrySet()) {
                 ((XlList) table).addIndex(entry.getKey(), entry.getValue());
             }
-            Accessors.setValue(definition.getName(), table, bean);
         }
 
         int index = 0;
@@ -72,6 +71,7 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
             // if it does not fulfill the condition, add created bean to table instance.
             // if it fulfill the condition, throw away dataRow and break from the loop.
             if (checkTerminate(table, dataRow, index)) {
+                Accessors.setValue(definition.getName(), table, bean);
                 break;
             } else {
                 if (definitionCache.getOffset() == 0) {
@@ -90,10 +90,13 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
         if (!definitionCache.hasListToPropOption()) {
             return;
         }
-        SingleDefinition key = definitionCache.getListToPropKeyOptionDefinition();
-        SingleDefinition value = definitionCache.getListToPropValueOptionDefinition();
         String tableName = getDefinition().getName();
         List<XlBean> table = Accessors.getValue(tableName, rootBean);
+        if (table == null) {
+            return;
+        }
+        SingleDefinition key = definitionCache.getListToPropKeyOptionDefinition();
+        SingleDefinition value = definitionCache.getListToPropValueOptionDefinition();
         XlBean targetBean = rootBean;
         if (tableName.contains(".")) {
             targetBean = Accessors.getValue(tableName.substring(0, tableName.lastIndexOf('.')), rootBean);

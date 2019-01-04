@@ -1,6 +1,7 @@
 package org.xlbean.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -17,6 +18,17 @@ public class Accessors {
     private static final Pattern INDEX = Pattern.compile("\\[([0-9]+)\\]");
 
     private static Accessors INSTANCE = new Accessors();
+
+    /**
+     * If true, remove key whose value is null, empty list or empty map.
+     */
+    private boolean noNullValue = true;
+
+    public Accessors() {}
+
+    public Accessors(boolean noNullValue) {
+        this.noNullValue = noNullValue;
+    }
 
     /**
      * Parse {@code dottedFieldName}, create new XlBean object if necessary, set
@@ -50,9 +62,6 @@ public class Accessors {
     }
 
     public void set(String dottedFieldName, Object data, Map<String, Object> bean) {
-        if (data == null) {
-            return;
-        }
         FieldWrapper rootField = parseDottedFieldName(dottedFieldName);
         rootField.linkTarget(bean);
         rootField.buildObject(data);
@@ -172,13 +181,11 @@ public class Accessors {
             }
             this.target = target;
             Object childValue = target.get(name);
-            if (!lists.isEmpty()) {
-                for (int i = 0; i < lists.size(); i++) {
-                    if (childValue instanceof List) {
-                        ListWrapper list = lists.get(i);
-                        list.linkTarget((List<Object>) childValue);
-                        childValue = list.getTargetForIndex();
-                    }
+            for (int i = 0; i < lists.size(); i++) {
+                if (childValue instanceof List) {
+                    ListWrapper list = lists.get(i);
+                    list.linkTarget((List<Object>) childValue);
+                    childValue = list.getTargetForIndex();
                 }
             }
             if (!isLeaf()) {
@@ -200,7 +207,20 @@ public class Accessors {
                 ListWrapper list = lists.get(i);
                 newValue = list.buildObject(newValue);
             }
-            target.put(name, newValue);
+            if (noNullValue) {
+                if (newValue == null) {
+                    target.remove(name);
+                } else if (newValue instanceof Collection && ((Collection<?>) newValue).isEmpty()) {
+                    target.remove(name);
+                } else {
+                    target.put(name, newValue);
+                }
+                if (target.isEmpty()) {
+                    return null;
+                }
+            } else {
+                target.put(name, newValue);
+            }
             return target;
         }
     }
@@ -226,6 +246,9 @@ public class Accessors {
         }
 
         public Object buildObject(Object value) {
+            if (noNullValue && value == null) {
+                return target;
+            }
             if (target == null) {
                 target = createList();
             }
