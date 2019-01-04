@@ -14,7 +14,7 @@ import org.xlbean.XlBeanImpl;
 import org.xlbean.reader.XlBeanReader;
 import org.xlbean.reader.XlBeanReaderTest;
 
-public class FieldAccessHelperTest {
+public class AccessorsTest {
 
     @Test
     public void getValue() {
@@ -107,6 +107,46 @@ public class FieldAccessHelperTest {
         assertThat(Accessors.getValue("ccc[0].c2", bean), is("ccc[0].c2test"));
         assertThat(Accessors.getValue("ccc[1].c1", bean), is("ccc[1].c1test"));
         assertThat(Accessors.getValue("ccc[1].c2", bean), is("ccc[1].c2test"));
+
+    }
+
+    @Test
+    public void testNoNullValueFalse() {
+        Accessors.setInstance(new Accessors(false));
+
+        XlBean bean = new XlBeanImpl();
+        Accessors.setValue("aaa.bbb.ccc", "somevalue", bean);
+        Accessors.setValue("aaa2.bbb.ccc", "somevalue2", bean);
+        System.out.println(bean);
+        assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is("somevalue"));
+        assertThat(Accessors.getValue("aaa2.bbb.ccc", bean), is("somevalue2"));
+
+        Accessors.setValue("aaa.bbb.ccc", null, bean);
+        System.out.println(bean);
+        assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is(nullValue()));
+        assertThat(bean.containsKey("aaa"), is(true));
+        assertThat(bean.containsKey("aaa2"), is(true));
+
+        Accessors.setInstance(new Accessors());
+    }
+
+    @Test
+    public void testNoNullValue() {
+        XlBean bean = new XlBeanImpl();
+        Accessors.setValue("aaa.bbb.ccc", "somevalue", bean);
+        Accessors.setValue("aaa2.bbb.ccc", "somevalue2", bean);
+        Accessors.setValue("list[0].bbb.ccc", "somevalue0-1", bean);
+        System.out.println(bean);
+        assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is("somevalue"));
+        assertThat(Accessors.getValue("aaa2.bbb.ccc", bean), is("somevalue2"));
+        assertThat(Accessors.getValue("list[0].bbb.ccc", bean), is("somevalue0-1"));
+
+        Accessors.setValue("aaa.bbb.ccc", null, bean);
+        Accessors.setValue("list[0].bbb.ccc", null, bean);
+        System.out.println(bean);
+        assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is(nullValue()));
+        assertThat(bean.containsKey("aaa"), is(false));
+        assertThat(bean.containsKey("aaa2"), is(true));
 
     }
 }
