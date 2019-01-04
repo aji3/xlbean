@@ -20,27 +20,27 @@ public class TableDefinitionCacheAccessor {
     private Map<String, Integer> cache = new HashMap<>();
 
     protected int getOffset() {
-        Integer offset = cache.get("offset");
+        Integer offset = cache.get(TableValueLoader.OPTION_OFFSET);
         if (offset == null) {
             try {
-                offset = Integer.parseInt(definition.getOptions().get("offset"));
+                offset = Integer.parseInt(definition.getOptions().get(TableValueLoader.OPTION_OFFSET));
             } catch (NumberFormatException e) {
                 offset = 0;
             }
-            cache.put("offset", offset);
+            cache.put(TableValueLoader.OPTION_OFFSET, offset);
         }
-        return cache.get("offset");
+        return cache.get(TableValueLoader.OPTION_OFFSET);
     }
 
     public int getLimit() {
-        Integer limit = cache.get("limit");
+        Integer limit = cache.get(TableValueLoader.OPTION_LIMIT);
         if (limit == null) {
             try {
-                limit = Integer.parseInt(definition.getOptions().get("limit"));
+                limit = Integer.parseInt(definition.getOptions().get(TableValueLoader.OPTION_LIMIT));
             } catch (NumberFormatException e) {
                 limit = Integer.MAX_VALUE;
             }
-            cache.put("limit", limit);
+            cache.put(TableValueLoader.OPTION_LIMIT, limit);
         }
         return limit;
     }
@@ -89,28 +89,30 @@ public class TableDefinitionCacheAccessor {
     }
 
     private boolean isKeyValueOptionInitialized = false;
-    private SingleDefinition listToPropKeyOptionDefinition;
-    private SingleDefinition listToPropValueOptionDefinition;
+    private SingleDefinition toBeanKeyOptionDefinition;
+    private SingleDefinition toBeanValueOptionDefinition;
 
-    public boolean hasListToPropOption() {
+    public boolean hasToBeanOption() {
         if (!isKeyValueOptionInitialized) {
             for (SingleDefinition attr : definition.getAttributes().values()) {
-                if ("key".equals(attr.getOptions().get("listToProp"))) {
-                    listToPropKeyOptionDefinition = attr;
-                } else if ("value".equals(attr.getOptions().get("listToProp"))) {
-                    listToPropValueOptionDefinition = attr;
+                if (TableValueLoader.OPTION_TOBEAN_KEY.equals(
+                    attr.getOptions().get(TableValueLoader.OPTION_TOBEAN))) {
+                    toBeanKeyOptionDefinition = attr;
+                } else if (TableValueLoader.OPTION_TOBEAN_VALUE.equals(
+                    attr.getOptions().get(TableValueLoader.OPTION_TOBEAN))) {
+                    toBeanValueOptionDefinition = attr;
                 }
             }
             isKeyValueOptionInitialized = true;
         }
-        return listToPropKeyOptionDefinition != null && listToPropValueOptionDefinition != null;
+        return toBeanKeyOptionDefinition != null && toBeanValueOptionDefinition != null;
     }
 
-    public SingleDefinition getListToPropKeyOptionDefinition() {
-        return listToPropKeyOptionDefinition;
+    public SingleDefinition getToBeanKeyOptionDefinition() {
+        return toBeanKeyOptionDefinition;
     }
 
-    public SingleDefinition getListToPropValueOptionDefinition() {
-        return listToPropValueOptionDefinition;
+    public SingleDefinition getToBeanValueOptionDefinition() {
+        return toBeanValueOptionDefinition;
     }
 }

@@ -62,7 +62,7 @@ public class DefinitionRepositoryTest {
         def.setCell(cell);
         def.setSheetName("errorSheet");
 
-        DefinitionRepository repo = new DefinitionRepository();
+        Definitions repo = new Definitions();
         repo.addDefinition(def);
         repo.activate(xlwb);
 

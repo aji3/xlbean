@@ -28,7 +28,7 @@ import org.xlbean.XlBeanImpl;
 import org.xlbean.XlList;
 import org.xlbean.definition.Definition;
 import org.xlbean.definition.DefinitionLoader;
-import org.xlbean.definition.DefinitionRepository;
+import org.xlbean.definition.Definitions;
 import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.definition.SingleDefinition;
@@ -370,7 +370,7 @@ public class XlBeanReaderTest {
         try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
 
             DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader();
-            DefinitionRepository definitions = definitionLoader.load(wb);
+            Definitions definitions = definitionLoader.load(wb);
 
             XlBean bean = new XlBeanImpl();
             bean.set("definitions", definitions);

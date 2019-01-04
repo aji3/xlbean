@@ -1,12 +1,12 @@
 package org.xlbean.reader;
 
 import org.xlbean.XlBean;
-import org.xlbean.definition.DefinitionRepository;
+import org.xlbean.definition.Definitions;
 
 public class XlBeanReaderContext {
 
     private XlBean xlBean;
-    private DefinitionRepository definitions;
+    private Definitions definitions;
 
     public XlBean getXlBean() {
         return xlBean;
@@ -16,11 +16,11 @@ public class XlBeanReaderContext {
         this.xlBean = xlBean;
     }
 
-    public DefinitionRepository getDefinitions() {
+    public Definitions getDefinitions() {
         return definitions;
     }
 
-    public void setDefinitions(DefinitionRepository definitions) {
+    public void setDefinitions(Definitions definitions) {
         this.definitions = definitions;
     }
 }

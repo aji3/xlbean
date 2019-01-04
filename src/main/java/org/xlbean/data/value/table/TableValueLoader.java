@@ -21,6 +21,12 @@ import org.xlbean.util.XlBeanFactory;
  */
 public class TableValueLoader extends ValueLoader<TableDefinition> {
 
+    public static final String OPTION_OFFSET = "offset";
+    public static final String OPTION_LIMIT = "limit";
+    public static final String OPTION_TOBEAN = "toBean";
+    public static final String OPTION_TOBEAN_KEY = "key";
+    public static final String OPTION_TOBEAN_VALUE = "value";
+
     private static Logger log = LoggerFactory.getLogger(TableValueLoader.class);
 
     private TableDefinitionCacheAccessor definitionCache;
@@ -83,11 +89,11 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
             index++;
         }
 
-        processListToPropOption(bean);
+        processToBeanOption(bean);
     }
 
-    private void processListToPropOption(XlBean rootBean) {
-        if (!definitionCache.hasListToPropOption()) {
+    private void processToBeanOption(XlBean rootBean) {
+        if (!definitionCache.hasToBeanOption()) {
             return;
         }
         String tableName = getDefinition().getName();
@@ -95,8 +101,8 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
         if (table == null) {
             return;
         }
-        SingleDefinition key = definitionCache.getListToPropKeyOptionDefinition();
-        SingleDefinition value = definitionCache.getListToPropValueOptionDefinition();
+        SingleDefinition key = definitionCache.getToBeanKeyOptionDefinition();
+        SingleDefinition value = definitionCache.getToBeanValueOptionDefinition();
         XlBean targetBean = rootBean;
         if (tableName.contains(".")) {
             targetBean = Accessors.getValue(tableName.substring(0, tableName.lastIndexOf('.')), rootBean);

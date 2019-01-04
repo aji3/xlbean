@@ -23,7 +23,7 @@ import org.xlbean.XlBeanImpl;
 import org.xlbean.converter.impl.BeanConverterImpl;
 import org.xlbean.definition.BeanDefinitionLoader;
 import org.xlbean.definition.DefinitionLoader;
-import org.xlbean.definition.DefinitionRepository;
+import org.xlbean.definition.Definitions;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.reader.XlBeanReader;
 import org.xlbean.reader.XlBeanReaderTest;
@@ -124,7 +124,7 @@ public class XlBeanWriterTest {
     public void test_write_with_bean_definition2() throws IOException {
         InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_presidents.xlsx");
 
-        DefinitionRepository definitions = null;
+        Definitions definitions = null;
         try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
             DefinitionLoader loader = new ExcelR1C1DefinitionLoader();
             definitions = loader.load(wb);
