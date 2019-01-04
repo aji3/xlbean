@@ -10,7 +10,7 @@ import org.xlbean.data.value.ValueSaver;
 import org.xlbean.data.value.single.SingleValueSaver;
 import org.xlbean.data.value.table.TableValueSaver;
 import org.xlbean.definition.Definition;
-import org.xlbean.definition.DefinitionRepository;
+import org.xlbean.definition.Definitions;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
 import org.xlbean.exception.XlBeanException;
@@ -19,7 +19,7 @@ public class ExcelDataSaver {
 
     private static Logger log = LoggerFactory.getLogger(ExcelDataSaver.class);
 
-    public void save(XlBean bean, DefinitionRepository definitions, OutputStream out) {
+    public void save(XlBean bean, Definitions definitions, OutputStream out) {
         definitions.forEach(
             definition ->
             {

@@ -7,7 +7,7 @@ import org.xlbean.data.value.ValueLoader;
 import org.xlbean.data.value.single.SingleValueLoader;
 import org.xlbean.data.value.table.TableValueLoader;
 import org.xlbean.definition.Definition;
-import org.xlbean.definition.DefinitionRepository;
+import org.xlbean.definition.Definitions;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
 import org.xlbean.excel.XlWorkbook;
@@ -25,7 +25,7 @@ public class ExcelDataLoader {
 
     private static Logger log = LoggerFactory.getLogger(ExcelDataLoader.class);
 
-    public XlBean load(DefinitionRepository definitions, XlWorkbook workbook) {
+    public XlBean load(Definitions definitions, XlWorkbook workbook) {
         XlBean retBean = XlBeanFactory.getInstance().createBean();
         definitions.forEach(
             definition ->

@@ -16,7 +16,7 @@ import org.xlbean.util.Accessors;
 public class TableValueLoaderTest {
 
     @Test
-    public void listToPropOption() {
+    public void toBeanOption() {
         InputStream in = TableValueLoaderTest.class.getResourceAsStream("TestBook_definitionList.xlsx");
 
         XlBeanReader reader = new XlBeanReader();

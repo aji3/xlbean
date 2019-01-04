@@ -33,7 +33,7 @@ import org.xlbean.exception.XlBeanException;
 import org.xlbean.util.FileUtil;
 
 /**
- * Generates {@link DefinitionRepository} from a bean given as definitionSource.
+ * Generates {@link Definitions} from a bean given as definitionSource.
  *
  * <p>
  * Basically this class is needed only when you want to write out a bean into
@@ -64,7 +64,7 @@ public class BeanDefinitionLoader implements DefinitionLoader {
     }
 
     @Override
-    public DefinitionRepository load(Object definitionSource) {
+    public Definitions load(Object definitionSource) {
         if (definitionSource == null) {
             throw new IllegalArgumentException(String.format("Definition source should not be null"));
         }
@@ -74,7 +74,7 @@ public class BeanDefinitionLoader implements DefinitionLoader {
         } else {
             xlBeanOrXlList = converter.toMap(definitionSource);
         }
-        DefinitionRepository definitions = loadInternal(xlBeanOrXlList, new BeanDefinitionLoaderContext());
+        Definitions definitions = loadInternal(xlBeanOrXlList, new BeanDefinitionLoaderContext());
         definitions.sort(Comparator.comparing(Definition::getName));
 
         setCellInfo(definitions);
@@ -93,10 +93,10 @@ public class BeanDefinitionLoader implements DefinitionLoader {
      * @param definitions
      * @return
      */
-    private XlWorkbook createNewWorkbookWithDefinitions(DefinitionRepository definitions) {
+    private XlWorkbook createNewWorkbookWithDefinitions(Definitions definitions) {
 
         XlBean bean = new XlBeanImpl();
-        DefinitionRepository definitionDefinitions = createDefinitionForDefinitions(bean, definitions);
+        Definitions definitionDefinitions = createDefinitionForDefinitions(bean, definitions);
 
         initNewWorkbokToBeXlBeanTarget(bean, definitionDefinitions);
 
@@ -127,7 +127,7 @@ public class BeanDefinitionLoader implements DefinitionLoader {
 
     }
 
-    private void initNewWorkbokToBeXlBeanTarget(XlBean bean, DefinitionRepository definitions) {
+    private void initNewWorkbokToBeXlBeanTarget(XlBean bean, Definitions definitions) {
         SingleDefinition mark = new SingleDefinition();
         mark.setName(DefinitionConstants.TARGET_SHEET_MARK);
         mark.setCell(new XlCellAddress.Builder().row(0).column(0).build());
@@ -146,8 +146,8 @@ public class BeanDefinitionLoader implements DefinitionLoader {
      * @param definitions
      * @return
      */
-    private DefinitionRepository createDefinitionForDefinitions(XlBean bean, DefinitionRepository definitions) {
-        DefinitionRepository definitionDefinitions = new DefinitionRepository();
+    private Definitions createDefinitionForDefinitions(XlBean bean, Definitions definitions) {
+        Definitions definitionDefinitions = new Definitions();
         definitions
             .stream()
             .flatMap(definition -> createDefinitionForDefinition(definition, bean))
@@ -216,7 +216,7 @@ public class BeanDefinitionLoader implements DefinitionLoader {
      *
      * @param workbook
      */
-    private void validate(DefinitionRepository definitions, XlWorkbook workbook) {
+    private void validate(Definitions definitions, XlWorkbook workbook) {
         for (Definition definition : definitions.getDefinitions()) {
             // Check if the definition is valid
             if (!definition.validate()) {
@@ -241,7 +241,7 @@ public class BeanDefinitionLoader implements DefinitionLoader {
      * 
      * @param definitions
      */
-    private void setCellInfo(DefinitionRepository definitions) {
+    private void setCellInfo(Definitions definitions) {
         CellInfoGenerator generator = new CellInfoGenerator();
         definitions.forEach(
             it ->
@@ -289,8 +289,8 @@ public class BeanDefinitionLoader implements DefinitionLoader {
      * @param context
      * @return
      */
-    private DefinitionRepository loadInternal(Object obj, BeanDefinitionLoaderContext context) {
-        DefinitionRepository definitions = new DefinitionRepository();
+    private Definitions loadInternal(Object obj, BeanDefinitionLoaderContext context) {
+        Definitions definitions = new Definitions();
         if (obj instanceof XlBean) {
             ((Map<?, ?>) obj)
                 .forEach(
@@ -314,7 +314,7 @@ public class BeanDefinitionLoader implements DefinitionLoader {
     }
 
     private void loadSingleDefinition(
-            BeanDefinitionLoaderContext context, DefinitionRepository definitions) {
+            BeanDefinitionLoaderContext context, Definitions definitions) {
         if (context.getDepth() == 0) {
             context.push("value");
         }
@@ -325,7 +325,7 @@ public class BeanDefinitionLoader implements DefinitionLoader {
     }
 
     private void loadTableDefinition(
-            List<?> list, BeanDefinitionLoaderContext context, DefinitionRepository definitions) {
+            List<?> list, BeanDefinitionLoaderContext context, Definitions definitions) {
         if (context.getDepth() == 0) {
             context.push("values");
         }
@@ -334,7 +334,7 @@ public class BeanDefinitionLoader implements DefinitionLoader {
         definitions.addDefinition(table);
         Map<String, Definition> attributesMap = new HashMap<>();
         for (Object bean : list) {
-            DefinitionRepository attributes = loadInternal(bean, new BeanDefinitionLoaderContext());
+            Definitions attributes = loadInternal(bean, new BeanDefinitionLoaderContext());
             attributesMap.putAll(attributes.toMap());
         }
         attributesMap.values().forEach(it -> {

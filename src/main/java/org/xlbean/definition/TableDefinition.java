@@ -1,6 +1,6 @@
 package org.xlbean.definition;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class TableDefinition extends Definition {
 
     private static Logger log = LoggerFactory.getLogger(TableDefinition.class);
 
-    private Map<String, SingleDefinition> attributes = new HashMap<>();
+    private Map<String, SingleDefinition> attributes = new LinkedHashMap<>();
 
     /**
      * Returns true if the direction of the table is down.
