@@ -756,6 +756,28 @@ public class XlBeanReaderTest {
     }
 
     @Test
+    public void testOptionOnColumnSide() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_option.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBeanReaderContext context = reader.readContext(in);
+
+        System.out.println(context.getXlBean());
+
+        Definitions definitions = context.getDefinitions();
+        definitions.forEach(System.out::println);
+
+        assertThat(definitions.toMap().get("optionOnColumn").getOptions().get("testOption"), is("testValue"));
+        assertThat(
+            definitions.toMap().get("optionOnColumnTable").getOptions().get("anotherOption"),
+            is("anotherValue"));
+        assertThat(
+            definitions.toMap().get("optionOnColumnTable").getOptions().get("oneMoreOption"),
+            is("someValue"));
+
+    }
+
+    @Test
     public void testInTableOption() {
         InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_option.xlsx");
 
