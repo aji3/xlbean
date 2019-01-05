@@ -33,7 +33,6 @@ public class TableDefinitionBuilder extends DefinitionBuilder {
 
         // Set column to table
         definition.addAttribute(columnDefinition);
-        definition.addOptions(toMap(column.getOptions())); // Column options are also regarded as table options
 
         return definition;
     }
