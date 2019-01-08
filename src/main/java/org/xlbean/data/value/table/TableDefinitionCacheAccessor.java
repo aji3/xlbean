@@ -87,33 +87,4 @@ public class TableDefinitionCacheAccessor {
         }
         return indexKeysMap;
     }
-    //
-    // private boolean isKeyValueOptionInitialized = false;
-    // private SingleDefinition toBeanKeyOptionDefinition;
-    // private SingleDefinition toBeanValueOptionDefinition;
-    //
-    // public boolean hasToBeanOption() {
-    // if (!isKeyValueOptionInitialized) {
-    // for (SingleDefinition attr : definition.getAttributes().values()) {
-    // if (TableValueLoader.OPTION_TOBEAN_KEY.equals(
-    // attr.getOptions().get(TableValueLoader.OPTION_TOBEAN))) {
-    // toBeanKeyOptionDefinition = attr;
-    // } else if (TableValueLoader.OPTION_TOBEAN_VALUE.equals(
-    // attr.getOptions().get(TableValueLoader.OPTION_TOBEAN))) {
-    // toBeanValueOptionDefinition = attr;
-    // }
-    // }
-    // isKeyValueOptionInitialized = true;
-    // }
-    // return toBeanKeyOptionDefinition != null && toBeanValueOptionDefinition !=
-    // null;
-    // }
-    //
-    // public SingleDefinition getToBeanKeyOptionDefinition() {
-    // return toBeanKeyOptionDefinition;
-    // }
-    //
-    // public SingleDefinition getToBeanValueOptionDefinition() {
-    // return toBeanValueOptionDefinition;
-    // }
 }
