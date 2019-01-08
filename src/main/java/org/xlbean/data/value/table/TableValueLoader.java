@@ -154,7 +154,7 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
          * @param rootBean
          * @param row
          */
-        public void process(XlBean row) {
+        public void process(Map<String, Object> row) {
             if (key == null || value == null) {
                 return;
             }
