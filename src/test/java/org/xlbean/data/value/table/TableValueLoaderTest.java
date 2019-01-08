@@ -40,6 +40,7 @@ public class TableValueLoaderTest {
         assertThat(Accessors.getValue("xldef4[2].aaa", bean), is("aaa2"));
         assertThat(Accessors.getValue("xldef4[2].bbb", bean), is("bbb2"));
 
+        System.out.println(bean.get("obj"));
         assertThat(bean.get("obj"), is(instanceOf(XlBean.class)));
         assertThat(bean.bean("obj").get("xldef1"), is(instanceOf(String.class)));
         assertThat(bean.bean("obj").get("xldef3"), is(instanceOf(XlBean.class)));
