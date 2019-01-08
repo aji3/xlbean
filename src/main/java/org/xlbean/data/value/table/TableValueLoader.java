@@ -162,7 +162,7 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
             if (keyObj == null) {
                 return;
             }
-            String valueObj = Accessors.getValue(value, row);
+            Object valueObj = Accessors.getValue(value, row);
             if (targetBean == null) {
                 targetBean = XlBeanFactory.getInstance().createBean();
                 Accessors.setValue(keyObj, valueObj, targetBean);
