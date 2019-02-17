@@ -5,7 +5,9 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -111,12 +113,35 @@ public class AccessorsTest {
     }
 
     @Test
-    public void testNoNullValueFalse() {
-        Accessors.setInstance(new Accessors(false));
+    public void testIgnoreNullTrue() {
+        Accessors.setInstance(new Accessors(true, true, true));
 
         XlBean bean = new XlBeanImpl();
         Accessors.setValue("aaa.bbb.ccc", "somevalue", bean);
         Accessors.setValue("aaa2.bbb.ccc", "somevalue2", bean);
+        Accessors.setValue("aaa3", new XlBeanImpl(), bean);
+        System.out.println(bean);
+        assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is("somevalue"));
+        assertThat(Accessors.getValue("aaa2.bbb.ccc", bean), is("somevalue2"));
+
+        Accessors.setValue("aaa.bbb.ccc", null, bean);
+        System.out.println(bean);
+        assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is(nullValue()));
+        assertThat(bean.containsKey("aaa"), is(false));
+        assertThat(bean.containsKey("aaa2"), is(true));
+        assertThat(bean.containsKey("aaa3"), is(false));
+
+        Accessors.setInstance(new Accessors());
+    }
+
+    @Test
+    public void testIgnoreNullFalse() {
+        Accessors.setInstance(new Accessors(false, true, true));
+
+        XlBean bean = new XlBeanImpl();
+        Accessors.setValue("aaa.bbb.ccc", "somevalue", bean);
+        Accessors.setValue("aaa2.bbb.ccc", "somevalue2", bean);
+        Accessors.setValue("aaa3", new XlBeanImpl(), bean);
         System.out.println(bean);
         assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is("somevalue"));
         assertThat(Accessors.getValue("aaa2.bbb.ccc", bean), is("somevalue2"));
@@ -126,15 +151,19 @@ public class AccessorsTest {
         assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is(nullValue()));
         assertThat(bean.containsKey("aaa"), is(true));
         assertThat(bean.containsKey("aaa2"), is(true));
+        assertThat(bean.containsKey("aaa3"), is(false));
 
         Accessors.setInstance(new Accessors());
     }
 
     @Test
-    public void testNoNullValue() {
+    public void testIgnoreBlankMapFalse() {
+        Accessors.setInstance(new Accessors(true, false, true));
+
         XlBean bean = new XlBeanImpl();
         Accessors.setValue("aaa.bbb.ccc", "somevalue", bean);
         Accessors.setValue("aaa2.bbb.ccc", "somevalue2", bean);
+        Accessors.setValue("aaa3", new XlBeanImpl(), bean);
         Accessors.setValue("list[0].bbb.ccc", "somevalue0-1", bean);
         System.out.println(bean);
         assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is("somevalue"));
@@ -145,8 +174,66 @@ public class AccessorsTest {
         Accessors.setValue("list[0].bbb.ccc", null, bean);
         System.out.println(bean);
         assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is(nullValue()));
+        assertThat(bean.containsKey("aaa"), is(true));
+        assertThat(bean.bean("aaa").bean("bbb").isEmpty(), is(true));
+        assertThat(bean.containsKey("aaa2"), is(true));
+        assertThat(bean.containsKey("aaa3"), is(true));
+
+        Accessors.setInstance(new Accessors());
+    }
+
+    @Test
+    public void testIgnoreBlankListFalse() {
+        Accessors.setInstance(new Accessors(true, true, false));
+
+        XlBean bean = new XlBeanImpl();
+        Accessors.setValue("aaa.bbb.ccc", "somevalue", bean);
+        Accessors.setValue("aaa2.bbb.ccc", "somevalue2", bean);
+        Accessors.setValue("aaa3", new XlBeanImpl(), bean);
+        Accessors.setValue("list[0].bbb.ccc", "somevalue0-1", bean);
+        Accessors.setValue("list[1].bbb.ccc", null, bean);
+        List<String> blankList = new ArrayList<>();
+        Accessors.setValue("list2", blankList, bean);
+        System.out.println(bean);
+        assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is("somevalue"));
+        assertThat(Accessors.getValue("aaa2.bbb.ccc", bean), is("somevalue2"));
+        assertThat(Accessors.getValue("list[0].bbb.ccc", bean), is("somevalue0-1"));
+        assertThat(Accessors.getValue("list[1]", bean), is(nullValue()));
+        assertThat(Accessors.getValue("list2", bean), is(blankList));
+
+        Accessors.setValue("aaa.bbb.ccc", null, bean);
+        Accessors.setValue("list[0].bbb.ccc", null, bean);
+        System.out.println(bean);
+        assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is(nullValue()));
         assertThat(bean.containsKey("aaa"), is(false));
         assertThat(bean.containsKey("aaa2"), is(true));
+        assertThat(bean.containsKey("aaa3"), is(false));
+        assertThat(bean.containsKey("list2"), is(true));
 
+        Accessors.setInstance(new Accessors());
+    }
+
+    @Test
+    public void testIgnoreNull() {
+        XlBean bean = new XlBeanImpl();
+        Accessors.setValue("aaa.bbb.ccc", "somevalue", bean);
+        Accessors.setValue("aaa2.bbb.ccc", "somevalue2", bean);
+        Accessors.setValue("list[0].bbb.ccc", "somevalue0-1", bean);
+        Accessors.setValue("list[1].bbb.ccc", null, bean);
+        List<String> blankList = new ArrayList<>();
+        Accessors.setValue("list2", blankList, bean);
+        System.out.println(bean);
+        assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is("somevalue"));
+        assertThat(Accessors.getValue("aaa2.bbb.ccc", bean), is("somevalue2"));
+        assertThat(Accessors.getValue("list[0].bbb.ccc", bean), is("somevalue0-1"));
+        assertThat(Accessors.getValue("list[1]", bean), is(nullValue()));
+        assertThat(Accessors.getValue("list2", bean), is(nullValue()));
+
+        Accessors.setValue("aaa.bbb.ccc", null, bean);
+        Accessors.setValue("list[0].bbb.ccc", null, bean);
+        System.out.println(bean);
+        assertThat(Accessors.getValue("aaa.bbb.ccc", bean), is(nullValue()));
+        assertThat(bean.containsKey("aaa"), is(false));
+        assertThat(bean.containsKey("aaa2"), is(true));
     }
 }

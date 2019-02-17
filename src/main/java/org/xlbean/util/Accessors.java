@@ -22,12 +22,16 @@ public class Accessors {
     /**
      * If true, remove key whose value is null, empty list or empty map.
      */
-    private boolean noNullValue = true;
+    private boolean ignoreNull = true;
+    private boolean ignoreBlankMap = true;
+    private boolean ignoreBlankList = true;
 
     public Accessors() {}
 
-    public Accessors(boolean noNullValue) {
-        this.noNullValue = noNullValue;
+    public Accessors(boolean ignoreNull, boolean ignoreBlankMap, boolean ignoreBlankList) {
+        this.ignoreNull = ignoreNull;
+        this.ignoreBlankMap = ignoreBlankMap;
+        this.ignoreBlankList = ignoreBlankList;
     }
 
     /**
@@ -207,21 +211,20 @@ public class Accessors {
                 ListWrapper list = lists.get(i);
                 newValue = list.buildObject(newValue);
             }
-            if (noNullValue) {
-                if (newValue == null) {
-                    target.remove(name);
-                } else if (newValue instanceof Collection && ((Collection<?>) newValue).isEmpty()) {
-                    target.remove(name);
-                } else {
-                    target.put(name, newValue);
-                }
-                if (target.isEmpty()) {
-                    return null;
-                }
+            if (ignoreNull && newValue == null) {
+                target.remove(name);
+            } else if (ignoreBlankList && newValue instanceof Collection && ((Collection<?>) newValue).isEmpty()) {
+                target.remove(name);
+            } else if (ignoreBlankMap && newValue instanceof Map && ((Map<?, ?>) newValue).isEmpty()) {
+                target.remove(name);
             } else {
                 target.put(name, newValue);
             }
-            return target;
+            if (ignoreBlankMap && target.isEmpty()) {
+                return null;
+            } else {
+                return target;
+            }
         }
     }
 
@@ -246,7 +249,7 @@ public class Accessors {
         }
 
         public Object buildObject(Object value) {
-            if (noNullValue && value == null) {
+            if (ignoreNull && value == null) {
                 return target;
             }
             if (target == null) {
