@@ -24,9 +24,9 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
 
     public static final String OPTION_OFFSET = "offset";
     public static final String OPTION_LIMIT = "limit";
-    public static final String OPTION_TOBEAN = "toBean";
-    public static final String OPTION_TOBEAN_KEY = "key";
-    public static final String OPTION_TOBEAN_VALUE = "value";
+    public static final String OPTION_TOMAP = "toMap";
+    public static final String OPTION_TOMAP_KEY = "key";
+    public static final String OPTION_TOMAP_VALUE = "value";
 
     private static Logger log = LoggerFactory.getLogger(TableValueLoader.class);
 
@@ -47,7 +47,7 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
                 ((XlList) table).addIndex(entry.getKey(), entry.getValue());
             }
         }
-        ToBeanOptionProcessor toBeanOptionProcessor = new ToBeanOptionProcessor(definition, bean);
+        ToMapOptionProcessor toMapOptionProcessor = new ToMapOptionProcessor(definition, bean);
 
         int index = 0;
         // Loop over lines of table in excel sheet
@@ -89,7 +89,7 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
                 BeanHelper.setFillNull(table, index + definitionCache.getOffset(), dataRow);
             }
             index++;
-            toBeanOptionProcessor.process(dataRow);
+            toMapOptionProcessor.process(dataRow);
         }
 
     }
@@ -103,16 +103,16 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
     }
 
     /**
-     * When a list has "toBean" option, then the list will be converted to key and
+     * When a list has "toMap" option, then the list will be converted to key and
      * value of the bean where the list belongs to. For instance, if a list is
-     * something like "someList", then columns specified as "toBean=key" and
-     * "toBean=value" will become key-values of ROOT XlBean. If a list is
+     * something like "someList", then columns specified as "toMap=key" and
+     * "toMap=value" will become key-values of ROOT XlBean. If a list is
      * "obj.anotherList", then the key-values will be added to "obj".
      * 
      * @author tanikawa
      *
      */
-    public static class ToBeanOptionProcessor {
+    public static class ToMapOptionProcessor {
 
         private Map<String, Object> rootBean;
         private String key;
@@ -120,17 +120,17 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
         private String targetBeanName;
         private Map<String, Object> targetBean;
 
-        public ToBeanOptionProcessor(TableDefinition definition, Map<String, Object> rootBean) {
+        public ToMapOptionProcessor(TableDefinition definition, Map<String, Object> rootBean) {
             initialize(definition, rootBean);
         }
 
         private void initialize(TableDefinition definition, Map<String, Object> rootBean) {
             for (SingleDefinition attr : definition.getAttributes().values()) {
-                if (TableValueLoader.OPTION_TOBEAN_KEY.equals(
-                    attr.getOptions().get(TableValueLoader.OPTION_TOBEAN))) {
+                if (TableValueLoader.OPTION_TOMAP_KEY.equals(
+                    attr.getOptions().get(TableValueLoader.OPTION_TOMAP))) {
                     key = attr.getName();
-                } else if (TableValueLoader.OPTION_TOBEAN_VALUE.equals(
-                    attr.getOptions().get(TableValueLoader.OPTION_TOBEAN))) {
+                } else if (TableValueLoader.OPTION_TOMAP_VALUE.equals(
+                    attr.getOptions().get(TableValueLoader.OPTION_TOMAP))) {
                     value = attr.getName();
                 }
             }
@@ -145,9 +145,9 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
         }
 
         /**
-         * If a list has "toBean" option, then the list will be converted to key and
+         * If a list has "toMap" option, then the list will be converted to key and
          * value of the bean where the list belongs to. If a list is something like
-         * "someList", then columns specified as "toBean=key" and "toBean=value" will
+         * "someList", then columns specified as "toMap=key" and "toMap=value" will
          * become key-values of root XlBean. If a list is "obj.anotherList", then the
          * key-values will be added to "obj".
          * 
