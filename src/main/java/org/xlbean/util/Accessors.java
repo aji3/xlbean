@@ -47,6 +47,24 @@ public class Accessors {
     }
 
     /**
+     * Parse {@code dottedFieldName}, create new XlBean object if necessary, set
+     * {@code data} to {@code bean} by new instance of {@link Accessors} configured
+     * by given {@code ignoreNull}, {@code ignoreBlankMap} and
+     * {@code ignoreBlankList}
+     * 
+     * @param dottedFieldName
+     * @param data
+     * @param bean
+     * @param ignoreNull
+     * @param ignoreBlankMap
+     * @param ignoreBlankList
+     */
+    public static void setValue(String dottedFieldName, Object data, Map<String, Object> bean,
+            boolean ignoreNull, boolean ignoreBlankMap, boolean ignoreBlankList) {
+        new Accessors(ignoreNull, ignoreBlankMap, ignoreBlankList).set(dottedFieldName, data, bean);
+    }
+
+    /**
      * Parse dotted fields, scan {@code bean} based on the parsed result and return
      * value in the descendant object.
      * 

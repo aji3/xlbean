@@ -24,9 +24,6 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
 
     public static final String OPTION_OFFSET = "offset";
     public static final String OPTION_LIMIT = "limit";
-    public static final String OPTION_TOMAP = "toMap";
-    public static final String OPTION_TOMAP_KEY = "key";
-    public static final String OPTION_TOMAP_VALUE = "value";
 
     private static Logger log = LoggerFactory.getLogger(TableValueLoader.class);
 
@@ -47,6 +44,7 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
                 ((XlList) table).addIndex(entry.getKey(), entry.getValue());
             }
         }
+        Accessors.setValue(definition.getName(), table, bean, true, true, false);
         ToMapOptionProcessor toMapOptionProcessor = new ToMapOptionProcessor(definition, bean);
 
         int index = 0;
@@ -79,7 +77,6 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
             // if it does not fulfill the condition, add created bean to table instance.
             // if it fulfill the condition, throw away dataRow and break from the loop.
             if (checkTerminate(table, dataRow, index)) {
-                Accessors.setValue(definition.getName(), table, bean);
                 break;
             }
 
@@ -113,8 +110,10 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
      *
      */
     public static class ToMapOptionProcessor {
+        public static final String OPTION_TOMAP = "toMap";
+        public static final String OPTION_TOMAP_KEY = "key";
+        public static final String OPTION_TOMAP_VALUE = "value";
 
-        private Map<String, Object> rootBean;
         private String key;
         private String value;
         private String targetBeanName;
@@ -126,11 +125,11 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
 
         private void initialize(TableDefinition definition, Map<String, Object> rootBean) {
             for (SingleDefinition attr : definition.getAttributes().values()) {
-                if (TableValueLoader.OPTION_TOMAP_KEY.equals(
-                    attr.getOptions().get(TableValueLoader.OPTION_TOMAP))) {
+                if (OPTION_TOMAP_KEY.equals(
+                    attr.getOptions().get(OPTION_TOMAP))) {
                     key = attr.getName();
-                } else if (TableValueLoader.OPTION_TOMAP_VALUE.equals(
-                    attr.getOptions().get(TableValueLoader.OPTION_TOMAP))) {
+                } else if (OPTION_TOMAP_VALUE.equals(
+                    attr.getOptions().get(OPTION_TOMAP))) {
                     value = attr.getName();
                 }
             }
@@ -141,7 +140,6 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
             } else {
                 targetBean = rootBean;
             }
-            this.rootBean = rootBean;
         }
 
         /**
@@ -163,15 +161,11 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
                 return;
             }
             Object valueObj = Accessors.getValue(value, row);
-            if (targetBean == null) {
-                targetBean = XlBeanFactory.getInstance().createBean();
-                Accessors.setValue(keyObj, valueObj, targetBean);
-                // It must be this order because if Accessors#noNullValue = true, then it blank
-                // map cannot be set.
-                Accessors.setValue(targetBeanName, targetBean, rootBean);
-            } else {
-                Accessors.setValue(keyObj, valueObj, targetBean);
-            }
+            Accessors.setValue(keyObj, valueObj, targetBean);
+        }
+
+        public void setTargetBean(Map<String, Object> targetBean) {
+            this.targetBean = targetBean;
         }
     }
 }
