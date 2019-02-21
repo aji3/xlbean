@@ -20,7 +20,7 @@ import org.xlbean.excel.XlWorkbook;
  *
  * @author Kazuya Tanikawa
  */
-public class DefinitionRepository {
+public class Definitions {
 
     private static Logger log = LoggerFactory.getLogger(BeanDefinitionLoader.class);
 
@@ -103,7 +103,7 @@ public class DefinitionRepository {
      *
      * @param anotherRepository
      */
-    public void merge(DefinitionRepository anotherRepository) {
+    public void merge(Definitions anotherRepository) {
         anotherRepository.forEach(this::addDefinition);
     }
 

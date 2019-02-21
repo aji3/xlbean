@@ -28,7 +28,7 @@ import org.xlbean.XlBeanImpl;
 import org.xlbean.XlList;
 import org.xlbean.definition.Definition;
 import org.xlbean.definition.DefinitionLoader;
-import org.xlbean.definition.DefinitionRepository;
+import org.xlbean.definition.Definitions;
 import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.definition.SingleDefinition;
@@ -370,7 +370,7 @@ public class XlBeanReaderTest {
         try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
 
             DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader();
-            DefinitionRepository definitions = definitionLoader.load(wb);
+            Definitions definitions = definitionLoader.load(wb);
 
             XlBean bean = new XlBeanImpl();
             bean.set("definitions", definitions);
@@ -753,6 +753,49 @@ public class XlBeanReaderTest {
         assertThat(bean.beans("optionsOffset").get(5).string("aaa"), is("4"));
         assertThat(bean.beans("optionsOffset").get(6).string("aaa"), is("5"));
 
+    }
+
+    @Test
+    public void testOptionOnColumnSide() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_option.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBeanReaderContext context = reader.readContext(in);
+
+        System.out.println(context.getXlBean());
+
+        Definitions definitions = context.getDefinitions();
+        definitions.forEach(System.out::println);
+
+        assertThat(definitions.toMap().get("optionOnColumn").getOptions().get("testOption"), is("testValue"));
+        assertThat(
+            definitions.toMap().get("optionOnColumnTable").getOptions().get("anotherOption"),
+            is("anotherValue"));
+        assertThat(
+            definitions.toMap().get("optionOnColumnTable").getOptions().get("oneMoreOption"),
+            is("someValue"));
+    }
+
+    @Test
+    public void testOptionForTableAndColumn() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_option.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBeanReaderContext context = reader.readContext(in);
+
+        Definitions definitions = context.getDefinitions();
+        definitions.forEach(System.out::println);
+
+        TableDefinition table1 = (TableDefinition) definitions.toMap().get("optionForTableAndColumn001");
+        TableDefinition table2 = (TableDefinition) definitions.toMap().get("optionForTableAndColumn002");
+        TableDefinition table3 = (TableDefinition) definitions.toMap().get("optionForTableAndColumn003");
+        assertThat(table1.getOptions().get("opt1"), is("val1"));
+        assertThat(table1.getAttributes().get("col1").getOptions().isEmpty(), is(true));
+        assertThat(table2.getOptions().isEmpty(), is(true));
+        assertThat(table2.getAttributes().get("col1").getOptions().get("opt1"), is("val1"));
+        assertThat(table2.getAttributes().get("col2").getOptions().get("opt2"), is("val2"));
+        assertThat(table3.getOptions().get("opt3"), is("val3"));
+        assertThat(table3.getAttributes().get("col1").getOptions().isEmpty(), is(true));
     }
 
     @Test

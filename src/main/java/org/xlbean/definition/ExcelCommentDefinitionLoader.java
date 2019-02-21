@@ -32,8 +32,8 @@ public class ExcelCommentDefinitionLoader extends ExcelR1C1DefinitionLoader {
     }
 
     @Override
-    protected DefinitionRepository readAllSheetDefinition(XlSheet sheet) {
-        DefinitionRepository definitions = new DefinitionRepository();
+    protected Definitions readAllSheetDefinition(XlSheet sheet) {
+        Definitions definitions = new Definitions();
         int maxRow = sheet.getMaxRow();
         int maxCol = sheet.getMaxColumn();
         if (Math.min(maxRow, maxCol) == 0) {
@@ -50,7 +50,7 @@ public class ExcelCommentDefinitionLoader extends ExcelR1C1DefinitionLoader {
         return definitions;
     }
 
-    private void readCellDefinition(DefinitionRepository definitions, XlSheet sheet, int row, int col) {
+    private void readCellDefinition(Definitions definitions, XlSheet sheet, int row, int col) {
         String value = sheet.getCellComment(row, col);
         if (value == null) {
             return;

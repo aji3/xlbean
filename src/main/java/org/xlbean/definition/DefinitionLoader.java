@@ -11,6 +11,6 @@ package org.xlbean.definition;
  */
 public interface DefinitionLoader {
 
-    public DefinitionRepository load(Object definitionSource);
+    public Definitions load(Object definitionSource);
 
 }

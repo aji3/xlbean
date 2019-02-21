@@ -35,9 +35,9 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
      * @param context
      */
     @Override
-    public DefinitionRepository load(Object definitionSource) {
+    public Definitions load(Object definitionSource) {
         XlWorkbook workbook = initialize(definitionSource);
-        DefinitionRepository definitions = new DefinitionRepository();
+        Definitions definitions = new Definitions();
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             XlSheet sheet = workbook.getSheetAt(i);
             if (!isProcessingTargetSheet(sheet)) {
@@ -90,8 +90,8 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
      * @param sheet
      * @return
      */
-    protected DefinitionRepository readAllSheetDefinition(XlSheet sheet) {
-        DefinitionRepository definitions = new DefinitionRepository();
+    protected Definitions readAllSheetDefinition(XlSheet sheet) {
+        Definitions definitions = new Definitions();
         int maxRow = sheet.getMaxRow();
         int maxCol = sheet.getMaxColumn();
         if (Math.min(maxRow, maxCol) == 0) {
@@ -113,7 +113,7 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
         return definitions;
     }
 
-    private void processInTableOptionAndRemoveFromDefinitions(DefinitionRepository definitions, XlSheet sheet) {
+    private void processInTableOptionAndRemoveFromDefinitions(Definitions definitions, XlSheet sheet) {
         List<Definition> intableOptions = definitions
             .stream()
             .filter(def -> InTableOptionDefinition.class.equals(def.getClass()))
@@ -178,7 +178,7 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
     }
 
     private void readCellDefinition(
-            DefinitionRepository definitions, XlSheet sheet, int num, boolean isColumn) {
+            Definitions definitions, XlSheet sheet, int num, boolean isColumn) {
         String value = null;
         if (isColumn) {
             value = sheet.getCellValue(0, num);

@@ -12,7 +12,7 @@ import org.xlbean.XlBean;
 import org.xlbean.data.ExcelDataLoader;
 import org.xlbean.definition.BeanDefinitionLoader;
 import org.xlbean.definition.DefinitionLoader;
-import org.xlbean.definition.DefinitionRepository;
+import org.xlbean.definition.Definitions;
 import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.excel.XlWorkbook;
@@ -86,7 +86,7 @@ public class XlBeanReader {
      * Read definition and data from given {@code in} which should be a
      * {@link InputStream} of excel file and return an instance of
      * {@link XlBeanReaderContext} filled with {@link XlBean} and
-     * {@link DefinitionRepository}.
+     * {@link Definitions}.
      * 
      * <p>
      * {@code in} is copied to on-memory stream before opening the file, so that the
@@ -108,7 +108,7 @@ public class XlBeanReader {
      * Read definition and data from given {@code excelFile} which should be a
      * {@link File} of excel file and return an instance of
      * {@link XlBeanReaderContext} filled with {@link XlBean} and
-     * {@link DefinitionRepository}.
+     * {@link Definitions}.
      *
      * <p>
      * Excel file is copied to on-memory stream before opening the file, so that the
@@ -127,14 +127,14 @@ public class XlBeanReader {
     /**
      * Read definition from {@code definitionSource} then read data from
      * {@code dataSource} and return an instance of {@link XlBeanReaderContext}
-     * filled with {@link XlBean} and {@link DefinitionRepository}.
+     * filled with {@link XlBean} and {@link Definitions}.
      * 
      * @param definitionSource
      * @param dataSource
      * @return
      */
     public XlBeanReaderContext readContext(Object definitionSource, Workbook dataSource) {
-        DefinitionRepository definitions = definitionLoader.load(definitionSource);
+        Definitions definitions = definitionLoader.load(definitionSource);
 
         XlWorkbook workbook = XlWorkbook.wrap(dataSource);
         XlBean xlBean = this.dataLoader.load(definitions, workbook);

@@ -1,6 +1,7 @@
 package org.xlbean.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -19,6 +20,21 @@ public class Accessors {
     private static Accessors INSTANCE = new Accessors();
 
     /**
+     * If true, remove key whose value is null, empty list or empty map.
+     */
+    private boolean ignoreNull = true;
+    private boolean ignoreBlankMap = true;
+    private boolean ignoreBlankList = true;
+
+    public Accessors() {}
+
+    public Accessors(boolean ignoreNull, boolean ignoreBlankMap, boolean ignoreBlankList) {
+        this.ignoreNull = ignoreNull;
+        this.ignoreBlankMap = ignoreBlankMap;
+        this.ignoreBlankList = ignoreBlankList;
+    }
+
+    /**
      * Parse {@code dottedFieldName}, create new XlBean object if necessary, set
      * {@code data} to {@code bean}.
      * 
@@ -28,6 +44,24 @@ public class Accessors {
      */
     public static void setValue(String dottedFieldName, Object data, Map<String, Object> bean) {
         INSTANCE.set(dottedFieldName, data, bean);
+    }
+
+    /**
+     * Parse {@code dottedFieldName}, create new XlBean object if necessary, set
+     * {@code data} to {@code bean} by new instance of {@link Accessors} configured
+     * by given {@code ignoreNull}, {@code ignoreBlankMap} and
+     * {@code ignoreBlankList}
+     * 
+     * @param dottedFieldName
+     * @param data
+     * @param bean
+     * @param ignoreNull
+     * @param ignoreBlankMap
+     * @param ignoreBlankList
+     */
+    public static void setValue(String dottedFieldName, Object data, Map<String, Object> bean,
+            boolean ignoreNull, boolean ignoreBlankMap, boolean ignoreBlankList) {
+        new Accessors(ignoreNull, ignoreBlankMap, ignoreBlankList).set(dottedFieldName, data, bean);
     }
 
     /**
@@ -50,9 +84,6 @@ public class Accessors {
     }
 
     public void set(String dottedFieldName, Object data, Map<String, Object> bean) {
-        if (data == null) {
-            return;
-        }
         FieldWrapper rootField = parseDottedFieldName(dottedFieldName);
         rootField.linkTarget(bean);
         rootField.buildObject(data);
@@ -172,13 +203,11 @@ public class Accessors {
             }
             this.target = target;
             Object childValue = target.get(name);
-            if (!lists.isEmpty()) {
-                for (int i = 0; i < lists.size(); i++) {
-                    if (childValue instanceof List) {
-                        ListWrapper list = lists.get(i);
-                        list.linkTarget((List<Object>) childValue);
-                        childValue = list.getTargetForIndex();
-                    }
+            for (int i = 0; i < lists.size(); i++) {
+                if (childValue instanceof List) {
+                    ListWrapper list = lists.get(i);
+                    list.linkTarget((List<Object>) childValue);
+                    childValue = list.getTargetForIndex();
                 }
             }
             if (!isLeaf()) {
@@ -200,8 +229,20 @@ public class Accessors {
                 ListWrapper list = lists.get(i);
                 newValue = list.buildObject(newValue);
             }
-            target.put(name, newValue);
-            return target;
+            if (ignoreNull && newValue == null) {
+                target.remove(name);
+            } else if (ignoreBlankList && newValue instanceof Collection && ((Collection<?>) newValue).isEmpty()) {
+                target.remove(name);
+            } else if (ignoreBlankMap && newValue instanceof Map && ((Map<?, ?>) newValue).isEmpty()) {
+                target.remove(name);
+            } else {
+                target.put(name, newValue);
+            }
+            if (ignoreBlankMap && target.isEmpty()) {
+                return null;
+            } else {
+                return target;
+            }
         }
     }
 
@@ -226,6 +267,9 @@ public class Accessors {
         }
 
         public Object buildObject(Object value) {
+            if (ignoreNull && value == null) {
+                return target;
+            }
             if (target == null) {
                 target = createList();
             }

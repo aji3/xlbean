@@ -15,7 +15,7 @@ import org.xlbean.XlBean;
 import org.xlbean.data.ExcelDataSaver;
 import org.xlbean.definition.BeanDefinitionLoader;
 import org.xlbean.definition.DefinitionLoader;
-import org.xlbean.definition.DefinitionRepository;
+import org.xlbean.definition.Definitions;
 import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
 import org.xlbean.exception.XlBeanException;
@@ -46,7 +46,7 @@ public class XlBeanWriter {
      * @param outputExcel
      */
     public void write(File excelTemplate, XlBean data, File outputExcel) {
-        DefinitionRepository definitions = readDefinition(excelTemplate);
+        Definitions definitions = readDefinition(excelTemplate);
 
         try (OutputStream out = new FileOutputStream(outputExcel);) {
             write(definitions, data, out);
@@ -69,7 +69,7 @@ public class XlBeanWriter {
      * @param outputExcel
      */
     public void write(InputStream excelTemplate, XlBean data, OutputStream outputExcel) {
-        DefinitionRepository definitions = readDefinition(excelTemplate);
+        Definitions definitions = readDefinition(excelTemplate);
 
         write(definitions, data, outputExcel);
     }
@@ -92,19 +92,19 @@ public class XlBeanWriter {
             Object definitionSource, XlBean bean, OutputStream outputExcel)
             throws IOException {
 
-        DefinitionRepository definitions = definitionLoader.load(definitionSource);
+        Definitions definitions = definitionLoader.load(definitionSource);
         write(definitions, bean, outputExcel);
     }
 
-    public void write(DefinitionRepository definitions, XlBean bean, OutputStream outputExcel) {
+    public void write(Definitions definitions, XlBean bean, OutputStream outputExcel) {
         dataSaver.save(bean, definitions, outputExcel);
     }
 
-    protected DefinitionRepository readDefinition(Object definitionSource) {
+    protected Definitions readDefinition(Object definitionSource) {
         return definitionLoader.load(definitionSource);
     }
 
-    protected DefinitionRepository readDefinition(File excelTemplateFile) {
+    protected Definitions readDefinition(File excelTemplateFile) {
         try (InputStream is = new FileInputStream(excelTemplateFile)) {
             return readDefinition(is);
         } catch (IOException e) {
@@ -112,7 +112,7 @@ public class XlBeanWriter {
         }
     }
 
-    protected DefinitionRepository readDefinition(InputStream excelTemplateInputStream) {
+    protected Definitions readDefinition(InputStream excelTemplateInputStream) {
         try (InputStream copiedStream = FileUtil.copyToInputStream(excelTemplateInputStream);) {
             Workbook wb = WorkbookFactory.create(copiedStream);
             return readDefinition(wb);
