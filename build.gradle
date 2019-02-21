@@ -3,6 +3,7 @@ buildscript {
         mavenCentral()
     }
 }
+
 plugins {
     id 'jacoco'
     id 'com.github.kt3k.coveralls' version '2.8.1'
@@ -17,7 +18,7 @@ apply plugin: 'com.jfrog.bintray'
 
 group = 'org.xlbean'
 archivesBaseName = 'xlbean'
-version = '0.2.1'
+version = '0.2.2'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -104,5 +105,14 @@ jacocoTestReport {
     reports {
         xml.enabled = true
         html.enabled = true
+    }
+}
+
+apply plugin: 'maven'
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file://${System.env.HOME}/.m2/repository")
+        }
     }
 }
