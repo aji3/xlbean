@@ -24,7 +24,7 @@ public class SingleValueLoader extends ValueLoader<SingleDefinition> {
     @Override
     public void load(XlBean bean) {
         SingleDefinition definition = getDefinition();
-        String value = getValue(definition, definition.getCell().getRow(), definition.getCell().getColumn());
+        Object value = getValue(definition, definition.getCell().getRow(), definition.getCell().getColumn());
         if (log.isTraceEnabled()) {
             log.trace(value.toString());
         }

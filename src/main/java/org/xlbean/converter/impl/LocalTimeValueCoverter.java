@@ -11,6 +11,11 @@ public class LocalTimeValueCoverter implements ValueConverter<LocalTime> {
     private static final DateTimeFormatter LOCALTIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     @Override
+    public String getName() {
+        return "localtime";
+    }
+
+    @Override
     public boolean canConvert(Class<?> clazz) {
         if (clazz == null) {
             return false;

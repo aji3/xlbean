@@ -29,7 +29,7 @@ public class TableValueSaver extends ValueSaver<TableDefinition> {
         int index = 0;
         for (XlBean row : table) {
             for (SingleDefinition attribute : columns) {
-                String value = Accessors.getValue(attribute.getName(), row);
+                Object value = Accessors.getValue(attribute.getName(), row);
                 if (definition.isDirectionDown()) {
                     setValue(
                         attribute,

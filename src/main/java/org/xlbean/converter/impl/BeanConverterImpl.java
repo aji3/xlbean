@@ -16,8 +16,7 @@ import java.util.Map.Entry;
 
 import org.xlbean.XlBean;
 import org.xlbean.converter.BeanConverter;
-import org.xlbean.converter.ValueConverter;
-import org.xlbean.converter.ValueConverterFactory;
+import org.xlbean.converter.ValueConverters;
 import org.xlbean.exception.XlBeanException;
 import org.xlbean.util.XlBeanFactory;
 
@@ -27,8 +26,6 @@ import org.xlbean.util.XlBeanFactory;
  * @author Kazuya Tanikawa
  */
 public class BeanConverterImpl implements BeanConverter {
-
-    private ValueConverter<?> converter = ValueConverterFactory.getInstance().createValueConverter();
 
     /**
      * Convert the object retrieved by the given sourceKey to an object of given
@@ -131,9 +128,7 @@ public class BeanConverterImpl implements BeanConverter {
                 } else {
                     // If a value is neither Map or List, then it should be
                     // String.
-                    Object convertedValue = converter.toObject(
-                        value instanceof String ? (String) value : value.toString(),
-                        type);
+                    Object convertedValue = ValueConverters.toObject(value, type);
                     setter.invoke(destinationObj, convertedValue);
                 }
             } catch (ClassNotFoundException | InvocationTargetException | IllegalAccessException e) {
@@ -144,7 +139,7 @@ public class BeanConverterImpl implements BeanConverter {
     }
 
     private boolean isLeaf(Class<?> clazz) {
-        return converter.canConvert(clazz);
+        return ValueConverters.canConvert(clazz);
     }
 
     private <T> T instantiate(Class<T> clazz) {
@@ -187,9 +182,13 @@ public class BeanConverterImpl implements BeanConverter {
             }
             return xlList;
         } else {
-            //
-            if (converter.canConvert(value.getClass())) {
-                return converter.toString(value);
+            // if a value is not either Map or Iterable, then check if the value is
+            // supported by ValueConverter.
+            // if it is supported,then it will be converted to String, else the value is
+            // converted to a Map instance with which the entries are the properties of the
+            // bean.
+            if (ValueConverters.canConvert(value.getClass())) {
+                return ValueConverters.toString(value);
             } else {
                 //
                 return toMapInternal(value);

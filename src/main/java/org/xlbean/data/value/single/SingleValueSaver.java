@@ -13,7 +13,7 @@ public class SingleValueSaver extends ValueSaver<SingleDefinition> {
 
     @Override
     public void save(XlBean bean) {
-        String value = Accessors.getValue(getDefinition().getName(), bean);
+        Object value = Accessors.getValue(getDefinition().getName(), bean);
         setValue(
             getDefinition(),
             getDefinition().getCell().getRow(),
