@@ -5,6 +5,11 @@ import org.xlbean.converter.ValueConverter;
 public class ByteValueConverter implements ValueConverter<Byte> {
 
     @Override
+    public String getName() {
+        return "byte";
+    }
+
+    @Override
     public boolean canConvert(Class<?> clazz) {
         if (clazz == null) {
             return false;

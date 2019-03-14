@@ -5,6 +5,11 @@ import org.xlbean.converter.ValueConverter;
 public class LongValueConverter implements ValueConverter<Long> {
 
     @Override
+    public String getName() {
+        return "long";
+    }
+
+    @Override
     public boolean canConvert(Class<?> clazz) {
         if (clazz == null) {
             return false;

@@ -55,7 +55,7 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
 
             // Iterate definitions to read out value of cells in the row
             for (SingleDefinition attribute : definitionCache.getColumns()) {
-                String value = null;
+                Object value = null;
                 if (definition.isDirectionDown()) {
                     value = getValue(
                         attribute,

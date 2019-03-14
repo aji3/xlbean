@@ -12,6 +12,11 @@ public class LocalDateValueConverter implements ValueConverter<LocalDate> {
     private static final DateTimeFormatter LOCALDATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Override
+    public String getName() {
+        return "localdate";
+    }
+
+    @Override
     public boolean canConvert(Class<?> clazz) {
         if (clazz == null) {
             return false;
