@@ -5,6 +5,11 @@ import org.xlbean.converter.ValueConverter;
 public class IntValueConverter implements ValueConverter<Integer> {
 
     @Override
+    public String getName() {
+        return "int";
+    }
+
+    @Override
     public boolean canConvert(Class<?> clazz) {
         if (clazz == null) {
             return false;

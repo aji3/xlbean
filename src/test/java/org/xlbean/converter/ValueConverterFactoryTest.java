@@ -4,35 +4,52 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
-import org.xlbean.XlBean;
-import org.xlbean.XlBeanImpl;
-import org.xlbean.converter.impl.BeanConverterImpl;
-import org.xlbean.converter.impl.DelegateValueConverter;
 
 public class ValueConverterFactoryTest {
-
-    private static class TestValueConverter extends DelegateValueConverter {}
 
     @Test
     public void setInstance() throws Exception {
         ValueConverterFactory.setInstance(
             new ValueConverterFactory() {
                 @Override
-                public ValueConverter createValueConverter() {
-                    return new TestValueConverter();
+                public List<ValueConverter<?>> getValueConverters() {
+                    List<ValueConverter<?>> list = new ArrayList<>();
+                    list.addAll(super.getValueConverters());
+                    list.add(new TestValueConverter());
+                    return list;
                 }
             });
 
-        XlBean bean = new XlBeanImpl();
+        ValueConverter<?> conv = ValueConverters.getValueConverterByName("test");
 
-        Field f = XlBeanImpl.class.getDeclaredField("converter");
-        f.setAccessible(true);
-        Field f2 = BeanConverterImpl.class.getDeclaredField("converter");
-        f2.setAccessible(true);
+        assertThat(conv, is(instanceOf(TestValueConverter.class)));
+    }
 
-        assertThat(f2.get(f.get(bean)), is(instanceOf(TestValueConverter.class)));
+    private static class TestValueConverter implements ValueConverter<String> {
+
+        @Override
+        public String getName() {
+            return "test";
+        }
+
+        @Override
+        public boolean canConvert(Class<?> clazz) {
+            return false;
+        }
+
+        @Override
+        public String toString(Object obj) {
+            return null;
+        }
+
+        @Override
+        public String toObject(String value, Class<?> valueClass) {
+            return null;
+        }
+
     }
 }

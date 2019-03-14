@@ -32,45 +32,6 @@ import org.xlbean.converter.impl.ShortValueConverter;
 @SuppressWarnings("serial")
 public class XlBeanImpl extends HashMap<String, Object> implements XlBean {
 
-    /**
-     * Overridden method of {@link HashMap#put(Object, Object)} with type check.
-     *
-     * <p>
-     * This method allows only the following types:
-     *
-     * <ul>
-     * <li>{@link XlBean}
-     * <li>{@link List}
-     * <li>{@link String} If the value type is other than above, then
-     * {@link IllegalArgumentException} will be thrown.
-     * </ul>
-     *
-     * @throws IllegalArgumentException
-     *             If value type doesn't match allowed type.
-     */
-    @Override
-    public Object put(String key, Object value) {
-        if (!canPut(value)) {
-            throw new IllegalArgumentException(
-                String.format(
-                    "Value set to XlBean must be XlBean, List<XlBean> or String. To set value of any other class to this bean, use #set(String, Object). #set(String, Object) will scan all the properties in the object and set to this object. (Actual: %s)",
-                    value.getClass()));
-        }
-        return super.put(key, value);
-    }
-
-    /**
-     * Method used in put method to check if the {@code value} can be put to this
-     * map.
-     * 
-     * @param value
-     * @return
-     */
-    protected boolean canPut(Object value) {
-        return !(value != null
-                && !(value instanceof XlBean || value instanceof List || value instanceof String));
-    }
-
     /*
      * (non-Javadoc)
      * 

@@ -831,13 +831,13 @@ public class XlBeanReaderTest {
         Map<String, Definition> definitionMap = context.getDefinitions().toMap();
         TableDefinition optionsInTableDef = (TableDefinition) definitionMap.get("optionsInTable");
 
-        assertThat(optionsInTableDef.getAttributes().get("field1").getOptions().get("type"), is("string"));
+        assertThat(optionsInTableDef.getAttributes().get("field1").getOptions().get("readAs"), is("text"));
         assertThat(optionsInTableDef.getAttributes().get("field1").getOptions().get("customType"), is("hoge"));
-        assertThat(optionsInTableDef.getAttributes().get("field2").getOptions().get("type"), is(nullValue()));
+        assertThat(optionsInTableDef.getAttributes().get("field2").getOptions().get("readAs"), is(nullValue()));
         assertThat(optionsInTableDef.getAttributes().get("field2").getOptions().get("customType"), is("fuga"));
 
         SingleDefinition singleDef = (SingleDefinition) definitionMap.get("single");
-        assertThat(singleDef.getOptions().get("type"), is("string"));
+        assertThat(singleDef.getOptions().get("readAs"), is("text"));
         assertThat(singleDef.getOptions().get("custom"), is("test value for custom option"));
 
         Definition optionToOtherDirection = definitionMap.get("optionToOtherDirection");

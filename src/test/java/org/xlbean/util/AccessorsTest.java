@@ -49,7 +49,7 @@ public class AccessorsTest {
     @Test
     public void getValue_additional() {
 
-        XlBeanFactory.setInstance(new SimpleXlBeanFactory());
+        // XlBeanFactory.setInstance(new SimpleXlBeanFactory());
         Map<String, Object> target = new HashMap<>();
         Accessors.setValue("aaa", "aaa", target);
         Accessors.setValue("bbb.b1", "b1", target);

@@ -2,7 +2,6 @@ package org.xlbean.data.value;
 
 import org.xlbean.XlBean;
 import org.xlbean.definition.Definition;
-import org.xlbean.excel.XlSheet.ValueType;
 
 public abstract class ValueLoader<T extends Definition> {
 
@@ -15,9 +14,12 @@ public abstract class ValueLoader<T extends Definition> {
 
     private T definition;
 
+    private ReadAsOptionProcessor readAsOptionProcessor = new ReadAsOptionProcessor();
+    private ConverterOptionProcessor converterOptionProcessor = new ConverterOptionProcessor();
+
     @SuppressWarnings("unchecked")
     public ValueLoader(Definition definition) {
-        this.definition = (T) definition;
+        setDefinition((T) definition);
     }
 
     public T getDefinition() {
@@ -28,12 +30,26 @@ public abstract class ValueLoader<T extends Definition> {
         this.definition = definition;
     }
 
-    protected String getValue(Definition definition, int row, int column) {
-        String type = definition.getOptions().get("type");
-        if (type == null) {
-            return definition.getSheet().getCellValue(row, column);
+    protected Object getValue(Definition definition, int row, int column) {
+        String value = readValue(definition, row, column);
+        return processConverterOption(value, definition);
+    }
+
+    protected String readValue(Definition definition, int row, int column) {
+        String value = null;
+        if (readAsOptionProcessor.hasOption(definition)) {
+            value = definition.getSheet().getCellValue(row, column, readAsOptionProcessor.getOption(definition));
         } else {
-            return definition.getSheet().getCellValue(row, column, ValueType.valueOf(type));
+            value = definition.getSheet().getCellValue(row, column);
+        }
+        return value;
+    }
+
+    protected Object processConverterOption(String value, Definition definition) {
+        if (converterOptionProcessor.hasConverterOption(definition)) {
+            return converterOptionProcessor.toObject(value, definition);
+        } else {
+            return value;
         }
     }
 
