@@ -3,8 +3,6 @@ package org.xlbean.util;
 import java.util.List;
 import java.util.Map;
 
-import org.xlbean.converter.ValueConverters;
-
 public class BeanHelper {
 
     /**
@@ -57,13 +55,6 @@ public class BeanHelper {
                 }
             } else if (item instanceof Map) {
                 if (!(isValuesEmpty((Map<String, ?>) item))) {
-                    return false;
-                }
-            } else {
-                if (ValueConverters.canConvert(item.getClass())) {
-                    // if a value can be converted by ValueConverters, it means that the value is a
-                    // Leaf object.
-                    // whenever the leaf object is not null, it is not empty
                     return false;
                 }
             }

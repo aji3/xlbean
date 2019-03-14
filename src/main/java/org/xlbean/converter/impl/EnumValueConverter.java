@@ -6,11 +6,6 @@ import org.xlbean.converter.ValueConverter;
 public class EnumValueConverter implements ValueConverter<Enum> {
 
     @Override
-    public String getName() {
-        return "enum";
-    }
-
-    @Override
     public boolean canConvert(Class<?> clazz) {
         if (clazz == null) {
             return false;

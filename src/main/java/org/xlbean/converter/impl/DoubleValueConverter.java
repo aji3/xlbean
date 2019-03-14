@@ -5,11 +5,6 @@ import org.xlbean.converter.ValueConverter;
 public class DoubleValueConverter implements ValueConverter<Double> {
 
     @Override
-    public String getName() {
-        return "double";
-    }
-
-    @Override
     public boolean canConvert(Class<?> clazz) {
         if (clazz == null) {
             return false;

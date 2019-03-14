@@ -5,11 +5,6 @@ import org.xlbean.converter.ValueConverter;
 public class ShortValueConverter implements ValueConverter<Short> {
 
     @Override
-    public String getName() {
-        return "short";
-    }
-
-    @Override
     public boolean canConvert(Class<?> clazz) {
         if (clazz == null) {
             return false;

@@ -18,7 +18,7 @@ apply plugin: 'com.jfrog.bintray'
 
 group = 'org.xlbean'
 archivesBaseName = 'xlbean'
-version = '0.3.0'
+version = '0.2.2'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'

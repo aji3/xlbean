@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -129,142 +128,13 @@ public class XlBeanTest {
     }
 
     @Test
-    public void listOfConverted() throws ParseException {
-        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_ValueConverter_Converted.xlsx");
+    public void put() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(
+            "Value set to XlBean must be XlBean, List<XlBean> or String. To set value of any other class to this bean, use #set(String, Object). #set(String, Object) will scan all the properties in the object and set to this object. (Actual: class java.lang.Integer)");
 
-        XlBeanReader reader = new XlBeanReader();
-        XlBean bean = reader.read(in);
-
-        System.out.println(bean);
-
-        assertThat(bean.beans("testConverter").get(0).get("_BigDecimal"), is(new BigDecimal("1.0")));
-        assertThat(bean.beans("testConverter").get(1).get("_BigDecimal"), is(new BigDecimal("12.34567")));
-        assertThat(bean.beans("testConverter").get(2).get("_BigDecimal"), is(new BigDecimal("-54321.12345")));
-
-        assertThat(bean.beans("testConverter").get(0).get("_BigInteger"), is(new BigInteger("12345")));
-        assertThat(bean.beans("testConverter").get(1).get("_BigInteger"), is(new BigInteger("12345")));
-
-        assertThat(bean.beans("testConverter").get(0).get("_Boolean"), is(true));
-        assertThat(bean.beans("testConverter").get(1).get("_Boolean"), is(false));
-        assertThat(bean.beans("testConverter").get(2).get("_Boolean"), is(true));
-        assertThat(bean.beans("testConverter").get(3).get("_Boolean"), is(false));
-
-        assertThat(bean.beans("testConverter").get(0).get("_Character"), is(Character.valueOf('A')));
-
-        assertThat(bean.beans("testConverter").get(0).get("_Date"), is(DT.parse("2017-08-21T00:00:00.000")));
-        assertThat(bean.beans("testConverter").get(1).get("_Date"), is(DT.parse("2017-08-21T11:35:00.000")));
-
-        assertThat(bean.beans("testConverter").get(0).get("_Double"), is(Double.valueOf("1")));
-        assertThat(bean.beans("testConverter").get(1).get("_Double"), is(Double.valueOf("12.34567")));
-        assertThat(bean.beans("testConverter").get(2).get("_Double"), is(Double.valueOf("-54321.12345")));
-
-        assertThat(bean.beans("testConverter").get(0).get("_Integer"), is(Integer.valueOf("12345")));
-        assertThat(bean.beans("testConverter").get(1).get("_Integer"), is(Integer.valueOf("12345")));
-
-        assertThat(bean.beans("testConverter").get(0).get("_LocalDate"), is(LocalDate.of(2017, 8, 21)));
-        assertThat(bean.beans("testConverter").get(1).get("_LocalDate"), is(LocalDate.of(2017, 8, 21)));
-
-        assertThat(
-            bean.beans("testConverter").get(0).get("_LocalDateTime"),
-            is(LocalDateTime.of(2017, 8, 21, 0, 0, 0, 0)));
-        assertThat(
-            bean.beans("testConverter").get(1).get("_LocalDateTime"),
-            is(LocalDateTime.of(2017, 8, 21, 11, 35, 0, 0)));
-
-        assertThat(bean.beans("testConverter").get(0).get("_LocalTime"), is(LocalTime.of(6, 12, 34, 123000000)));
-
-        assertThat(bean.beans("testConverter").get(0).get("_Long"), is(Long.valueOf("12345")));
-        assertThat(bean.beans("testConverter").get(1).get("_Long"), is(Long.valueOf("12345")));
-
-        assertThat(bean.beans("testConverter").get(0).get("_Short"), is(Short.valueOf("123")));
-
-        assertThat(bean.beans("testConverter").get(0).get("_String"), is("Hello String!"));
-
-        assertThat(bean.beans("testConverter").get(0).get("_boolean"), is(true));
-        assertThat(bean.beans("testConverter").get(1).get("_boolean"), is(false));
-        assertThat(bean.beans("testConverter").get(2).get("_boolean"), is(true));
-        assertThat(bean.beans("testConverter").get(3).get("_boolean"), is(false));
-
-        assertThat(bean.beans("testConverter").get(0).get("_char"), is('A'));
-        assertThat(bean.beans("testConverter").get(1).get("_char"), is('9'));
-
-        assertThat(bean.beans("testConverter").get(0).get("_double"), is(Double.valueOf("1")));
-        assertThat(bean.beans("testConverter").get(1).get("_double"), is(Double.valueOf("12.34567")));
-        assertThat(bean.beans("testConverter").get(2).get("_double"), is(Double.valueOf("-54321.12345")));
-
-        assertThat(bean.beans("testConverter").get(0).get("_int"), is(Integer.valueOf("12345")));
-        assertThat(bean.beans("testConverter").get(1).get("_int"), is(Integer.valueOf("12345")));
-
-        assertThat(bean.beans("testConverter").get(0).get("_long"), is(Long.valueOf("12345")));
-        assertThat(bean.beans("testConverter").get(1).get("_long"), is(Long.valueOf("12345")));
-
-        assertThat(bean.beans("testConverter").get(0).get("_short"), is(Short.valueOf("123")));
-
-        List<TestConverterBean> list = bean.listOf("testConverter", TestConverterBean.class);
-
-        System.out.println(list);
-
-        System.out.println(list);
-
-        assertThat(list.get(0).get_BigDecimal(), is(new BigDecimal("1.0")));
-        assertThat(list.get(1).get_BigDecimal(), is(new BigDecimal("12.34567")));
-        assertThat(list.get(2).get_BigDecimal(), is(new BigDecimal("-54321.12345")));
-
-        assertThat(list.get(0).get_BigInteger(), is(new BigInteger("12345")));
-        assertThat(list.get(1).get_BigInteger(), is(new BigInteger("12345")));
-
-        assertThat(list.get(0).get_Boolean(), is(true));
-        assertThat(list.get(1).get_Boolean(), is(false));
-        assertThat(list.get(2).get_Boolean(), is(true));
-        assertThat(list.get(3).get_Boolean(), is(false));
-
-        assertThat(list.get(0).get_Character(), is('A'));
-        assertThat(list.get(1).get_Character(), is('9'));
-
-        assertThat(list.get(0).get_Date(), is(DT.parse("2017-08-21T00:00:00.000")));
-        assertThat(list.get(1).get_Date(), is(DT.parse("2017-08-21T11:35:00.000")));
-
-        assertThat(list.get(0).get_Double(), is(Double.valueOf("1")));
-        assertThat(list.get(1).get_Double(), is(Double.valueOf("12.34567")));
-        assertThat(list.get(2).get_Double(), is(Double.valueOf("-54321.12345")));
-
-        assertThat(list.get(0).get_Integer(), is(Integer.valueOf("12345")));
-        assertThat(list.get(1).get_Integer(), is(Integer.valueOf("12345")));
-
-        assertThat(list.get(0).get_LocalDate(), is(LocalDate.of(2017, 8, 21)));
-        assertThat(list.get(1).get_LocalDate(), is(LocalDate.of(2017, 8, 21)));
-
-        assertThat(list.get(0).get_LocalDateTime(), is(LocalDateTime.of(2017, 8, 21, 0, 0, 0, 0)));
-        assertThat(list.get(1).get_LocalDateTime(), is(LocalDateTime.of(2017, 8, 21, 11, 35, 0, 0)));
-
-        assertThat(list.get(0).get_LocalTime(), is(LocalTime.of(6, 12, 34, 123000000)));
-
-        assertThat(list.get(0).get_Long(), is(Long.valueOf("12345")));
-        assertThat(list.get(1).get_Long(), is(Long.valueOf("12345")));
-
-        assertThat(list.get(0).get_Short(), is(Short.valueOf("123")));
-
-        assertThat(list.get(0).get_String(), is("Hello String!"));
-
-        assertThat(list.get(0).is_boolean(), is(true));
-        assertThat(list.get(1).is_boolean(), is(false));
-        assertThat(list.get(2).is_boolean(), is(true));
-        assertThat(list.get(3).is_boolean(), is(false));
-
-        assertThat(list.get(0).get_char(), is('A'));
-        assertThat(list.get(1).get_char(), is('9'));
-
-        assertThat(list.get(0).get_double(), is(Double.valueOf("1")));
-        assertThat(list.get(1).get_double(), is(Double.valueOf("12.34567")));
-        assertThat(list.get(2).get_double(), is(Double.valueOf("-54321.12345")));
-
-        assertThat(list.get(0).get_int(), is(Integer.valueOf("12345")));
-        assertThat(list.get(1).get_int(), is(Integer.valueOf("12345")));
-
-        assertThat(list.get(0).get_long(), is(Long.valueOf("12345")));
-        assertThat(list.get(1).get_long(), is(Long.valueOf("12345")));
-
-        assertThat(list.get(0).get_short(), is(Short.valueOf("123")));
+        XlBean bean = new XlBeanImpl();
+        bean.put("illegalValue", Integer.valueOf(1));
     }
 
     @Test
@@ -522,7 +392,7 @@ public class XlBeanTest {
         assertThat(bean.bool("bool3"), is(true));
         assertThat(bean.bool("bool4"), is(false));
         assertThat(bean.bool("bool_error1"), is(false));
-        assertThat(bean.bool("bool_error2"), is(nullValue()));
+        assertThat(bean.bool("bool_error2"), is(false));
         assertThat(bean.bool("bool5"), is(false));
 
     }
@@ -541,7 +411,7 @@ public class XlBeanTest {
         assertThat(bools.get(2), is(true));
         assertThat(bools.get(3), is(false));
         assertThat(bools.get(4), is(false));
-        assertThat(bools.get(5), is(nullValue()));
+        assertThat(bools.get(5), is(false));
         assertThat(bools.get(6), is(false));
 
     }

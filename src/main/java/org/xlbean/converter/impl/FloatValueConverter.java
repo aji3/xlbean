@@ -5,11 +5,6 @@ import org.xlbean.converter.ValueConverter;
 public class FloatValueConverter implements ValueConverter<Float> {
 
     @Override
-    public String getName() {
-        return "float";
-    }
-
-    @Override
     public boolean canConvert(Class<?> clazz) {
         if (clazz == null) {
             return false;

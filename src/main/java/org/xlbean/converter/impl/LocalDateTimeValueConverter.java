@@ -12,11 +12,6 @@ public class LocalDateTimeValueConverter implements ValueConverter<LocalDateTime
     private static final DateTimeFormatter DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
     @Override
-    public String getName() {
-        return "localdatetime";
-    }
-
-    @Override
     public boolean canConvert(Class<?> clazz) {
         if (clazz == null) {
             return false;

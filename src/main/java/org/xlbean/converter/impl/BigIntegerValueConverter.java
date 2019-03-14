@@ -7,11 +7,6 @@ import org.xlbean.converter.ValueConverter;
 public class BigIntegerValueConverter implements ValueConverter<BigInteger> {
 
     @Override
-    public String getName() {
-        return "biginteger";
-    }
-
-    @Override
     public boolean canConvert(Class<?> clazz) {
         if (clazz == null) {
             return false;

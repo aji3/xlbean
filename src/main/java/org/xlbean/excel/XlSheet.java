@@ -33,8 +33,8 @@ public class XlSheet {
 
     private static Logger log = LoggerFactory.getLogger(ExcelDataLoader.class);
 
-    public enum ReadAsOption {
-        def, text, date,
+    public enum ValueType {
+        def, string, date,
     };
 
     private Sheet sheet;
@@ -59,8 +59,8 @@ public class XlSheet {
         return getCellValue(address, null);
     }
 
-    public String getCellValue(XlCellAddress address, ReadAsOption readAs) {
-        return getCellValue(address.getRow(), address.getColumn(), readAs);
+    public String getCellValue(XlCellAddress address, ValueType type) {
+        return getCellValue(address.getRow(), address.getColumn(), type);
     }
 
     public String getCellValue(int row, int col) {
@@ -74,12 +74,12 @@ public class XlSheet {
      * @param col
      * @return
      */
-    public String getCellValue(int row, int col, ReadAsOption readAs) {
+    public String getCellValue(int row, int col, ValueType type) {
         Cell cell = getCell(row, col);
         if (cell == null) {
             return null;
         } else {
-            return getCellValue(cell, readAs);
+            return getCellValue(cell, type);
         }
     }
 
@@ -90,7 +90,7 @@ public class XlSheet {
      * @param cell
      * @return
      */
-    public String getCellValue(Cell cell, ReadAsOption type) {
+    public String getCellValue(Cell cell, ValueType type) {
         CellType cellType = null;
         if (CellType.FORMULA == cell.getCellTypeEnum()) {
             // Do not use evaluateInCell, as this method updates a cell
@@ -103,11 +103,11 @@ public class XlSheet {
         } else {
             cellType = cell.getCellTypeEnum();
         }
-        if (type == null || ReadAsOption.def == type) {
+        if (type == null || ValueType.def == type) {
             return getCellValueAsData(cell, cellType, false);
-        } else if (ReadAsOption.text == type) {
+        } else if (ValueType.string == type) {
             return getCellValueAsPresented(cell);
-        } else if (ReadAsOption.date == type) {
+        } else if (ValueType.date == type) {
             return getCellValueAsData(cell, cellType, true);
         } else {
             return null;
@@ -131,17 +131,17 @@ public class XlSheet {
         setCellValue(row, col, value, null);
     }
 
-    public void setCellValue(int row, int col, String value, ReadAsOption type) {
+    public void setCellValue(int row, int col, String value, ValueType type) {
         Cell cell = getCell(row, col, true);
         setCellValue(cell, value, type);
     }
 
-    public void setCellValue(Cell cell, String value, ReadAsOption type) {
-        if (type == null || ReadAsOption.def.equals(type)) {
+    public void setCellValue(Cell cell, String value, ValueType type) {
+        if (type == null || ValueType.def.equals(type)) {
             setCellValueAsData(cell, value, false);
-        } else if (ReadAsOption.date.equals(type)) {
+        } else if (ValueType.date.equals(type)) {
             setCellValueAsData(cell, value, true);
-        } else if (ReadAsOption.text.equals(type)) {
+        } else if (ValueType.string.equals(type)) {
             setCellValueAsString(cell, value);
         } else {
             setCellValueAsData(cell, value, false);

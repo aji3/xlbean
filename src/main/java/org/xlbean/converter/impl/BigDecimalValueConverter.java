@@ -7,11 +7,6 @@ import org.xlbean.converter.ValueConverter;
 public class BigDecimalValueConverter implements ValueConverter<BigDecimal> {
 
     @Override
-    public String getName() {
-        return "bigdecimal";
-    }
-
-    @Override
     public boolean canConvert(Class<?> clazz) {
         if (clazz == null) {
             return false;
