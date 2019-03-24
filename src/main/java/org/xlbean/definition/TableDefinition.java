@@ -44,7 +44,7 @@ public class TableDefinition extends Definition {
      * @return
      */
     public boolean isDirectionDown() {
-        String direction = getOptions().get("direction");
+        String direction = getOptions().getOption("direction");
         if (direction == null) {
             return getStartCell().getRow() != null;
         } else {
@@ -113,7 +113,7 @@ public class TableDefinition extends Definition {
                         columnDefinition.merge(newColumn);
                     }
                 });
-        addOptions(definition.getOptions());
+        getOptions().merge(definition.getOptions());
     }
 
     @Override

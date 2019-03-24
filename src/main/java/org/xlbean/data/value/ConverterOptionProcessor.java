@@ -16,7 +16,7 @@ public class ConverterOptionProcessor {
     }
 
     public String getConverterOption(Definition definition) {
-        String option = definition.getOptions().get(OPTION_CONVERTER);
+        String option = definition.getOptions().getOption(OPTION_CONVERTER);
         if (option == null) {
             return null;
         }

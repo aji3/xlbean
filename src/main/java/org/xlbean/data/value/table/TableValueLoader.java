@@ -67,7 +67,12 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
                         attribute.getCell().getRow(),
                         definition.getStartCell().getColumn() + index);
                 }
-                Accessors.setValue(attribute.getName(), value, dataRow);
+                setValue(
+                    attribute.getName(),
+                    value,
+                    dataRow,
+                    definition.getOptions(),
+                    attribute.getOptions());
             }
             if (log.isTraceEnabled()) {
                 log.trace(dataRow.toString());
@@ -126,10 +131,10 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
         private void initialize(TableDefinition definition, Map<String, Object> rootBean) {
             for (SingleDefinition attr : definition.getAttributes().values()) {
                 if (OPTION_TOMAP_KEY.equals(
-                    attr.getOptions().get(OPTION_TOMAP))) {
+                    attr.getOptions().getOption(OPTION_TOMAP))) {
                     key = attr.getName();
                 } else if (OPTION_TOMAP_VALUE.equals(
-                    attr.getOptions().get(OPTION_TOMAP))) {
+                    attr.getOptions().getOption(OPTION_TOMAP))) {
                     value = attr.getName();
                 }
             }

@@ -13,16 +13,16 @@ public class ValueConverters {
     }
 
     public static ValueConverter<?> getValueConverter(Class<?> clazz) {
-        ValueConverter<?> ret = CONVERTER_CACHE.get(clazz);
-        if (ret == null) {
-            ret = getValueConverters()
+        if (!CONVERTER_CACHE.containsKey(clazz)) {
+            ValueConverter<?> converter = getValueConverters()
                 .stream()
-                .filter(converter -> converter.canConvert(clazz))
+                .filter(conv -> conv.canConvert(clazz))
                 .findFirst()
                 .orElse(null);
-            CONVERTER_CACHE.put(clazz, ret);
+            CONVERTER_CACHE.put(clazz, converter);
+
         }
-        return ret;
+        return CONVERTER_CACHE.get(clazz);
     }
 
     public static ValueConverter<?> getValueConverterByName(String name) {

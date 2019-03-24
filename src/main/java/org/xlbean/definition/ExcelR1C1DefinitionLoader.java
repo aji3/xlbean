@@ -165,7 +165,7 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
             SingleDefinition singleDefinition,
             XlSheet sheet) {
         String optionValue = loadOptionCell(optionKey.getCell(), singleDefinition.getCell(), sheet);
-        singleDefinition.addOption(optionKey.getOptionKey(), optionValue);
+        singleDefinition.getOptions().setOption(optionKey.getOptionKey(), optionValue);
     }
 
     private String loadOptionCell(XlCellAddress inTableOptionCell, XlCellAddress definitionCell, XlSheet sheet) {

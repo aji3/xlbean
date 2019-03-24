@@ -15,6 +15,7 @@ import org.xlbean.XlBean;
 import org.xlbean.XlBeanImpl;
 import org.xlbean.reader.XlBeanReader;
 import org.xlbean.reader.XlBeanReaderTest;
+import org.xlbean.util.Accessors.AccessorConfig.AccessorConfigBuilder;
 
 public class AccessorsTest {
 
@@ -114,7 +115,9 @@ public class AccessorsTest {
 
     @Test
     public void testIgnoreNullTrue() {
-        Accessors.setInstance(new Accessors(true, true, true));
+        Accessors.setInstance(
+            new Accessors(
+                new AccessorConfigBuilder().build()));
 
         XlBean bean = new XlBeanImpl();
         Accessors.setValue("aaa.bbb.ccc", "somevalue", bean);
@@ -136,7 +139,7 @@ public class AccessorsTest {
 
     @Test
     public void testIgnoreNullFalse() {
-        Accessors.setInstance(new Accessors(false, true, true));
+        Accessors.setInstance(new Accessors(new AccessorConfigBuilder().ignoreNull(false).build()));
 
         XlBean bean = new XlBeanImpl();
         Accessors.setValue("aaa.bbb.ccc", "somevalue", bean);
@@ -158,7 +161,7 @@ public class AccessorsTest {
 
     @Test
     public void testIgnoreBlankMapFalse() {
-        Accessors.setInstance(new Accessors(true, false, true));
+        Accessors.setInstance(new Accessors(new AccessorConfigBuilder().ignoreBlankMap(false).build()));
 
         XlBean bean = new XlBeanImpl();
         Accessors.setValue("aaa.bbb.ccc", "somevalue", bean);
@@ -179,12 +182,16 @@ public class AccessorsTest {
         assertThat(bean.containsKey("aaa2"), is(true));
         assertThat(bean.containsKey("aaa3"), is(true));
 
+        Accessors.setValue("test.test", null, bean);
+        assertThat(bean.bean("test").isEmpty(), is(true));
+        System.out.println(bean);
+
         Accessors.setInstance(new Accessors());
     }
 
     @Test
     public void testIgnoreBlankListFalse() {
-        Accessors.setInstance(new Accessors(true, true, false));
+        Accessors.setInstance(new Accessors(new AccessorConfigBuilder().ignoreBlankList(false).build()));
 
         XlBean bean = new XlBeanImpl();
         Accessors.setValue("aaa.bbb.ccc", "somevalue", bean);
@@ -209,6 +216,10 @@ public class AccessorsTest {
         assertThat(bean.containsKey("aaa2"), is(true));
         assertThat(bean.containsKey("aaa3"), is(false));
         assertThat(bean.containsKey("list2"), is(true));
+
+        Accessors.setValue("testList[0]", null, bean);
+        assertThat(bean.beans("testList").size(), is(0));
+        System.out.println(bean.get("testList"));
 
         Accessors.setInstance(new Accessors());
     }

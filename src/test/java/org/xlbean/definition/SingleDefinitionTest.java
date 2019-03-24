@@ -36,7 +36,7 @@ public class SingleDefinitionTest {
 
         assertThat(
             def.toString(),
-            is("SingleDefinition [name=test, cell=XlCellAddress [row=1, column=2], options={}]"));
+            is("SingleDefinition [name=test, cell=XlCellAddress [row=1, column=2], options=Options [optionsMap={}]]"));
 
     }
 }

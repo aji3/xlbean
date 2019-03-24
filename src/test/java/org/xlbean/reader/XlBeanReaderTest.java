@@ -767,12 +767,12 @@ public class XlBeanReaderTest {
         Definitions definitions = context.getDefinitions();
         definitions.forEach(System.out::println);
 
-        assertThat(definitions.toMap().get("optionOnColumn").getOptions().get("testOption"), is("testValue"));
+        assertThat(definitions.toMap().get("optionOnColumn").getOptions().getOption("testOption"), is("testValue"));
         assertThat(
-            definitions.toMap().get("optionOnColumnTable").getOptions().get("anotherOption"),
+            definitions.toMap().get("optionOnColumnTable").getOptions().getOption("anotherOption"),
             is("anotherValue"));
         assertThat(
-            definitions.toMap().get("optionOnColumnTable").getOptions().get("oneMoreOption"),
+            definitions.toMap().get("optionOnColumnTable").getOptions().getOption("oneMoreOption"),
             is("someValue"));
     }
 
@@ -789,12 +789,12 @@ public class XlBeanReaderTest {
         TableDefinition table1 = (TableDefinition) definitions.toMap().get("optionForTableAndColumn001");
         TableDefinition table2 = (TableDefinition) definitions.toMap().get("optionForTableAndColumn002");
         TableDefinition table3 = (TableDefinition) definitions.toMap().get("optionForTableAndColumn003");
-        assertThat(table1.getOptions().get("opt1"), is("val1"));
+        assertThat(table1.getOptions().getOption("opt1"), is("val1"));
         assertThat(table1.getAttributes().get("col1").getOptions().isEmpty(), is(true));
         assertThat(table2.getOptions().isEmpty(), is(true));
-        assertThat(table2.getAttributes().get("col1").getOptions().get("opt1"), is("val1"));
-        assertThat(table2.getAttributes().get("col2").getOptions().get("opt2"), is("val2"));
-        assertThat(table3.getOptions().get("opt3"), is("val3"));
+        assertThat(table2.getAttributes().get("col1").getOptions().getOption("opt1"), is("val1"));
+        assertThat(table2.getAttributes().get("col2").getOptions().getOption("opt2"), is("val2"));
+        assertThat(table3.getOptions().getOption("opt3"), is("val3"));
         assertThat(table3.getAttributes().get("col1").getOptions().isEmpty(), is(true));
     }
 
@@ -831,19 +831,53 @@ public class XlBeanReaderTest {
         Map<String, Definition> definitionMap = context.getDefinitions().toMap();
         TableDefinition optionsInTableDef = (TableDefinition) definitionMap.get("optionsInTable");
 
-        assertThat(optionsInTableDef.getAttributes().get("field1").getOptions().get("readAs"), is("text"));
-        assertThat(optionsInTableDef.getAttributes().get("field1").getOptions().get("customType"), is("hoge"));
-        assertThat(optionsInTableDef.getAttributes().get("field2").getOptions().get("readAs"), is(nullValue()));
-        assertThat(optionsInTableDef.getAttributes().get("field2").getOptions().get("customType"), is("fuga"));
+        assertThat(optionsInTableDef.getAttributes().get("field1").getOptions().getOption("readAs"), is("text"));
+        assertThat(optionsInTableDef.getAttributes().get("field1").getOptions().getOption("customType"), is("hoge"));
+        assertThat(optionsInTableDef.getAttributes().get("field2").getOptions().getOption("readAs"), is(nullValue()));
+        assertThat(optionsInTableDef.getAttributes().get("field2").getOptions().getOption("customType"), is("fuga"));
 
         SingleDefinition singleDef = (SingleDefinition) definitionMap.get("single");
-        assertThat(singleDef.getOptions().get("readAs"), is("text"));
-        assertThat(singleDef.getOptions().get("custom"), is("test value for custom option"));
+        assertThat(singleDef.getOptions().getOption("readAs"), is("text"));
+        assertThat(singleDef.getOptions().getOption("custom"), is("test value for custom option"));
 
         Definition optionToOtherDirection = definitionMap.get("optionToOtherDirection");
         System.out.println(optionToOtherDirection);
 
-        assertThat(optionToOtherDirection.getOptions().get("testOption"), is("value for option"));
+        assertThat(optionToOtherDirection.getOptions().getOption("testOption"), is("value for option"));
+    }
+
+    @Test
+    public void ignoreOption() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_ignoreOption.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        System.out.println(bean);
+
+        assertThat(bean.beans("options").get(0).containsKey("val0_0"), is(false));
+        assertThat(bean.beans("options").get(0).containsKey("val0_1"), is(false));
+
+        assertThat(bean.beans("options").get(0).containsKey("val1_0"), is(true));
+        assertThat(bean.beans("options").get(0).bean("val1_1").containsKey("val1"), is(true));
+        assertThat(bean.beans("options").get(0).bean("val1_1").beans("list").get(0).containsKey("aaa"), is(true));
+        assertThat(bean.beans("options").get(0).bean("val1_1").beans("list").get(0).containsKey("bbb"), is(true));
+
+        assertThat(bean.beans("options").get(0).containsKey("val2_0"), is(false));
+        assertThat(bean.beans("options").get(0).bean("val2_1").beans("list").size(), is(1));
+        assertThat(bean.beans("options").get(0).bean("val2_1").beans("list").get(0).isEmpty(), is(true));
+
+        assertThat(bean.beans("options").get(0).containsKey("val3_0"), is(false));
+        assertThat(bean.beans("options").get(0).bean("val3_1").containsKey("val3"), is(true));
+        assertThat(bean.beans("options").get(0).bean("val3_1").containsKey("list"), is(true));
+
+        assertThat(bean.beans("options").get(0).containsKey("val4_0"), is(true));
+        assertThat(bean.beans("options").get(0).bean("val4_1").containsKey("val4"), is(true));
+        assertThat(bean.beans("options").get(0).bean("val4_1").containsKey("list"), is(false));
+
+        assertThat(bean.bean("test"), is(nullValue()));
+        assertThat(bean.beans("listValue").size(), is(2));
+
     }
 
 }

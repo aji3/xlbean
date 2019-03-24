@@ -201,6 +201,9 @@ public class BeanConverterImpl implements BeanConverter {
         try {
             for (PropertyDescriptor pd : Introspector.getBeanInfo(obj.getClass()).getPropertyDescriptors()) {
                 String name = pd.getName();
+                if (pd.getReadMethod() == null) {
+                    continue;
+                }
                 if ("class".equals(name)) {
                     continue;
                 }

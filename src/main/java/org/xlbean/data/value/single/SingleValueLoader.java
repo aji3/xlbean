@@ -6,7 +6,6 @@ import org.xlbean.XlBean;
 import org.xlbean.data.value.ValueLoader;
 import org.xlbean.definition.Definition;
 import org.xlbean.definition.SingleDefinition;
-import org.xlbean.util.Accessors;
 
 /**
  * Value loader to load a value of a cell.
@@ -28,6 +27,6 @@ public class SingleValueLoader extends ValueLoader<SingleDefinition> {
         if (log.isTraceEnabled()) {
             log.trace(value.toString());
         }
-        Accessors.setValue(getDefinition().getName(), value, bean);
+        setValue(getDefinition().getName(), value, bean, getDefinition().getOptions());
     }
 }

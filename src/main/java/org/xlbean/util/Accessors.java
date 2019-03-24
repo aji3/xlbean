@@ -7,8 +7,17 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.xlbean.util.Accessors.AccessorConfig.AccessorConfigBuilder;
+
 /**
- * Utility class to handle dotted fields. (e.g. person.father.name)
+ * Utility class to get/set values from Map object by using nested field name.
+ * (e.g. person.father.name).
+ * 
+ * <p>
+ * Behavior for null, blank map and blank list can be changed by using
+ * {@link AccessorConfig}. Refer to {@link AccessorConfigBuilder} for detail
+ * description of each configuration.
+ * </p>
  * 
  * @author tanikawa
  *
@@ -22,16 +31,12 @@ public class Accessors {
     /**
      * If true, remove key whose value is null, empty list or empty map.
      */
-    private boolean ignoreNull = true;
-    private boolean ignoreBlankMap = true;
-    private boolean ignoreBlankList = true;
+    private AccessorConfig config = new AccessorConfig();
 
     public Accessors() {}
 
-    public Accessors(boolean ignoreNull, boolean ignoreBlankMap, boolean ignoreBlankList) {
-        this.ignoreNull = ignoreNull;
-        this.ignoreBlankMap = ignoreBlankMap;
-        this.ignoreBlankList = ignoreBlankList;
+    public Accessors(AccessorConfig config) {
+        this.config = config;
     }
 
     /**
@@ -61,7 +66,16 @@ public class Accessors {
      */
     public static void setValue(String dottedFieldName, Object data, Map<String, Object> bean,
             boolean ignoreNull, boolean ignoreBlankMap, boolean ignoreBlankList) {
-        new Accessors(ignoreNull, ignoreBlankMap, ignoreBlankList).set(dottedFieldName, data, bean);
+        new Accessors(
+            new AccessorConfigBuilder()
+                .ignoreNull(ignoreNull)
+                .ignoreBlankMap(ignoreBlankMap)
+                .ignoreBlankList(ignoreBlankList)
+                .build()).set(dottedFieldName, data, bean);
+    }
+
+    public static void setValue(String dottedFieldName, Object data, Map<String, Object> bean, AccessorConfig config) {
+        new Accessors(config).set(dottedFieldName, data, bean);
     }
 
     /**
@@ -81,6 +95,10 @@ public class Accessors {
 
     public static void setInstance(Accessors helper) {
         INSTANCE = helper;
+    }
+
+    public static AccessorConfig getConfig() {
+        return INSTANCE.config;
     }
 
     public void set(String dottedFieldName, Object data, Map<String, Object> bean) {
@@ -229,16 +247,17 @@ public class Accessors {
                 ListWrapper list = lists.get(i);
                 newValue = list.buildObject(newValue);
             }
-            if (ignoreNull && newValue == null) {
+            if (config.isIgnoreNull() && newValue == null) {
                 target.remove(name);
-            } else if (ignoreBlankList && newValue instanceof Collection && ((Collection<?>) newValue).isEmpty()) {
+            } else if (config.isIgnoreBlankList() && newValue instanceof Collection && ((Collection<?>) newValue)
+                .isEmpty()) {
                 target.remove(name);
-            } else if (ignoreBlankMap && newValue instanceof Map && ((Map<?, ?>) newValue).isEmpty()) {
+            } else if (config.isIgnoreBlankMap() && newValue instanceof Map && ((Map<?, ?>) newValue).isEmpty()) {
                 target.remove(name);
             } else {
                 target.put(name, newValue);
             }
-            if (ignoreBlankMap && target.isEmpty()) {
+            if (config.isIgnoreBlankMap() && target.isEmpty()) {
                 return null;
             } else {
                 return target;
@@ -267,13 +286,12 @@ public class Accessors {
         }
 
         public Object buildObject(Object value) {
-            if (ignoreNull && value == null) {
-                return target;
-            }
             if (target == null) {
                 target = createList();
             }
-            BeanHelper.setFillNull(target, index, value);
+            if (!(config.isIgnoreNull() && value == null)) {
+                BeanHelper.setFillNull(target, index, value);
+            }
             return target;
         }
 
@@ -292,6 +310,152 @@ public class Accessors {
 
     protected List<Object> createList() {
         return new ArrayList<>();
+    }
+
+    /**
+     * Configuration holder for Accessors.
+     * 
+     * 
+     * @author tanikawa
+     *
+     */
+    public static class AccessorConfig {
+        private boolean ignoreNull = true;
+        private boolean ignoreBlankMap = true;
+        private boolean ignoreBlankList = true;
+
+        public boolean isIgnoreNull() {
+            return ignoreNull;
+        }
+
+        public void setIgnoreNull(boolean ignoreNull) {
+            this.ignoreNull = ignoreNull;
+        }
+
+        public boolean isIgnoreBlankMap() {
+            return ignoreBlankMap;
+        }
+
+        public void setIgnoreBlankMap(boolean ignoreBlankMap) {
+            this.ignoreBlankMap = ignoreBlankMap;
+        }
+
+        public boolean isIgnoreBlankList() {
+            return ignoreBlankList;
+        }
+
+        public void setIgnoreBlankList(boolean ignoreBlankList) {
+            this.ignoreBlankList = ignoreBlankList;
+        }
+
+        /**
+         * Builder for AccessorConfig.
+         * <p>
+         * "ignoreNull": When true, key for null value will not be set to XlBean,
+         * otherwise, the key will be set to XlBean with null value. For instance, if a
+         * name of a field is "aaa" and value for this field is null, then the result
+         * will be as follows:
+         * <ul>
+         * <li>ignoreNull == true: {}</li>
+         * <li>ignoreNull == false: {"aaa": null}</li>
+         * </ul>
+         * </p>
+         * 
+         * <p>
+         * "ignoreBlankMap": When true, a XlBean (or Map) instance without any key will
+         * be treated as null. For instance, if a name of a field is "test.test" and
+         * value for this field is null, then the result will be as follows:
+         * <ul>
+         * <li>ignoreBlankMap == true && ignoreNull == true: {}</li>
+         * <li>ignoreBlankMap == false && ignoreNull == true: {"test":{}}</li>
+         * </ul>
+         * Using ignoreNull == true case because if ignoreNull == false, then the map
+         * will become {"test":{"test": null}} which is not empty anyway.
+         * </p>
+         * 
+         * <p>
+         * "ignoreBlankList": When true, a List instance whose size is 0 will be treated
+         * as null. For instance, if a name of field is "testList" and value for this
+         * field is null, then the result will be as follows:
+         * <ul>
+         * <li>ignoreBlankList == true && ignoreNull == true: {}</li>
+         * <li>ignoreBlankList == false && ignoreNull == true: {"testList":[]}</li>
+         * </ul>
+         * Using ignoreNull == true case because if ignoreNull == false, then the field
+         * will become {"testList":[null]} which is not empty anyway.
+         * </p>
+         * 
+         * @author tanikawa
+         *
+         */
+        public static class AccessorConfigBuilder {
+            private AccessorConfig config = new AccessorConfig();
+
+            /**
+             * When true, key for null value will not be set to XlBean, otherwise, the key
+             * will be set to XlBean with null value. For instance, if a name of a field is
+             * "aaa" and value for this field is null, then the result will be as follows:
+             * <ul>
+             * <li>ignoreNull == true: {}</li>
+             * <li>ignoreNull == false: {"aaa": null}</li>
+             * </ul>
+             * 
+             * @param ignoreNull
+             * @return
+             */
+            public AccessorConfigBuilder ignoreNull(boolean ignoreNull) {
+                config.setIgnoreNull(ignoreNull);
+                return this;
+            }
+
+            /**
+             * When true, a XlBean (or Map) instance without any key will be treated as
+             * null. For instance, if a name of a field is "test.test" and value for this
+             * field is null, then the result will be as follows:
+             * <ul>
+             * <li>ignoreBlankMap == true && ignoreNull == true: {}</li>
+             * <li>ignoreBlankMap == false && ignoreNull == true: {"test":{}}</li>
+             * </ul>
+             * Using ignoreNull == true case because if ignoreNull == false, then the map
+             * will become {"test":{"test": null}} which is not empty anyway.
+             * 
+             * @param ignoreBlankMap
+             * @return
+             */
+            public AccessorConfigBuilder ignoreBlankMap(boolean ignoreBlankMap) {
+                config.setIgnoreBlankMap(ignoreBlankMap);
+                return this;
+            }
+
+            /**
+             * When true, a List instance whose size is 0 will be treated as null. For
+             * instance, if a name of field is "testList" and value for this field is null,
+             * then the result will be as follows:
+             * <ul>
+             * <li>ignoreBlankList == true && ignoreNull == true: {}</li>
+             * <li>ignoreBlankList == false && ignoreNull == true: {"testList":[]}</li>
+             * </ul>
+             * Using ignoreNull == true case because if ignoreNull == false, then the field
+             * will become {"testList":[null]} which is not empty anyway.
+             * 
+             * @param ignoreBlankList
+             * @return
+             */
+            public AccessorConfigBuilder ignoreBlankList(boolean ignoreBlankList) {
+                config.setIgnoreBlankList(ignoreBlankList);
+                return this;
+            }
+
+            public AccessorConfig build() {
+                return config;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "AccessorConfig [ignoreNull=" + ignoreNull + ", ignoreBlankMap=" + ignoreBlankMap
+                    + ", ignoreBlankList=" + ignoreBlankList + "]";
+        }
     }
 
 }
