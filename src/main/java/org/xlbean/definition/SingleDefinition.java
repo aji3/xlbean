@@ -48,7 +48,7 @@ public class SingleDefinition extends Definition {
         if (cell != null) {
             cell.merge(definition.getCell());
         }
-        addOptions(newDefinition.getOptions());
+        getOptions().merge(newDefinition.getOptions());
     }
 
     @Override

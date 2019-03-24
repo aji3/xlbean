@@ -320,7 +320,7 @@ public class BeanDefinitionLoader implements DefinitionLoader {
         }
         SingleDefinition single = new SingleDefinition();
         single.setName(context.getCurrentName());
-        single.getOptions().put("type", "string");
+        single.getOptions().setOption("type", "string");
         definitions.addDefinition(single);
     }
 
@@ -368,7 +368,7 @@ public class BeanDefinitionLoader implements DefinitionLoader {
                         i,
                         item.getName());
                     single.setName(newName);
-                    single.getOptions().put("type", "string");
+                    single.getOptions().setOption("type", "string");
                     table.addAttribute(single);
                 }
             });

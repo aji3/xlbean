@@ -1,8 +1,5 @@
 package org.xlbean.definition;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.xlbean.excel.XlSheet;
 
 /**
@@ -15,7 +12,7 @@ import org.xlbean.excel.XlSheet;
 public abstract class Definition {
 
     private String name;
-    private Map<String, String> options = new HashMap<>();
+    private Options options = new Options();
     private String sheetName;
     private XlSheet sheet;
 
@@ -44,12 +41,8 @@ public abstract class Definition {
         return sheetName + "_" + name;
     }
 
-    public Map<String, String> getOptions() {
+    public Options getOptions() {
         return options;
-    }
-
-    public void setOptions(Map<String, String> options) {
-        this.options = options;
     }
 
     public String getSheetName() {
@@ -66,14 +59,6 @@ public abstract class Definition {
 
     public void setSheet(XlSheet sheet) {
         this.sheet = sheet;
-    }
-
-    public void addOptions(Map<String, String> options) {
-        getOptions().putAll(options);
-    }
-
-    public void addOption(String optionKey, String optionValue) {
-        getOptions().put(optionKey, optionValue);
     }
 
 }

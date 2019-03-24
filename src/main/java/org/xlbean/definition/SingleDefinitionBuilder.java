@@ -18,7 +18,7 @@ public class SingleDefinitionBuilder extends DefinitionBuilder {
         DefinitionUnit unit = (DefinitionUnit) parsedObject;
         SingleDefinition definition = new SingleDefinition();
         definition.setName(unit.getName());
-        definition.addOptions(toMap(unit.getOptions()));
+        definition.getOptions().setOptions(toMap(unit.getOptions()));
         definition.setCell(cell);
 
         return definition;

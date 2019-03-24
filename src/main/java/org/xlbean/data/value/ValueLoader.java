@@ -1,7 +1,11 @@
 package org.xlbean.data.value;
 
+import java.util.Map;
+
 import org.xlbean.XlBean;
 import org.xlbean.definition.Definition;
+import org.xlbean.definition.Options;
+import org.xlbean.util.Accessors;
 
 public abstract class ValueLoader<T extends Definition> {
 
@@ -16,6 +20,7 @@ public abstract class ValueLoader<T extends Definition> {
 
     private ReadAsOptionProcessor readAsOptionProcessor = new ReadAsOptionProcessor();
     private ConverterOptionProcessor converterOptionProcessor = new ConverterOptionProcessor();
+    private IgnoreOptionProcessor ignoreOptionProcessor = new IgnoreOptionProcessor();
 
     @SuppressWarnings("unchecked")
     public ValueLoader(Definition definition) {
@@ -33,6 +38,20 @@ public abstract class ValueLoader<T extends Definition> {
     protected Object getValue(Definition definition, int row, int column) {
         String value = readValue(definition, row, column);
         return processConverterOption(value, definition);
+    }
+
+    /**
+     * @param definitionName
+     * @param value
+     * @param bean
+     * @param priorityDefinition
+     */
+    protected void setValue(String definitionName, Object value, Map<String, Object> bean, Options... options) {
+        if (ignoreOptionProcessor.hasOption(options)) {
+            Accessors.setValue(definitionName, value, bean, ignoreOptionProcessor.getAccessorConfig(options));
+        } else {
+            Accessors.setValue(definitionName, value, bean);
+        }
     }
 
     protected String readValue(Definition definition, int row, int column) {
