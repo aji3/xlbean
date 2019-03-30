@@ -1,6 +1,5 @@
 package org.xlbean.data.value.table;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,25 +65,5 @@ public class TableDefinitionCacheAccessor {
             }
         }
         return columnsCache;
-    }
-
-    private Map<String, List<String>> indexKeysMap = null;
-
-    public Map<String, List<String>> getIndexKeysMap() {
-        if (indexKeysMap == null) {
-            indexKeysMap = new HashMap<>();
-            for (SingleDefinition attr : definition.getAttributes().values()) {
-                String indexName = attr.getOptions().getOption("index");
-                if (indexName != null) {
-                    List<String> list = indexKeysMap.get(indexName);
-                    if (list == null) {
-                        list = new ArrayList<>();
-                        indexKeysMap.put(indexName, list);
-                    }
-                    list.add(attr.getName());
-                }
-            }
-        }
-        return indexKeysMap;
     }
 }
