@@ -2,12 +2,10 @@ package org.xlbean.data.value.table;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlbean.XlBean;
-import org.xlbean.XlList;
 import org.xlbean.data.value.ValueLoader;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
@@ -40,9 +38,6 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
         List<XlBean> table = bean.beans(definition.getName());
         if (table == null) {
             table = XlBeanFactory.getInstance().createList();
-            for (Entry<String, List<String>> entry : definitionCache.getIndexKeysMap().entrySet()) {
-                ((XlList) table).addIndex(entry.getKey(), entry.getValue());
-            }
         }
         Accessors.setValue(definition.getName(), table, bean, true, true, false);
         ToMapOptionProcessor toMapOptionProcessor = new ToMapOptionProcessor(definition, bean);
