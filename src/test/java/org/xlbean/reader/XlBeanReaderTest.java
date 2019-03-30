@@ -14,7 +14,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +24,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.Test;
 import org.xlbean.XlBean;
 import org.xlbean.XlBeanImpl;
-import org.xlbean.XlList;
 import org.xlbean.definition.Definition;
 import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.Definitions;
@@ -334,33 +332,6 @@ public class XlBeanReaderTest {
         XlBean bean = reader.read(file);
 
         System.out.println(bean);
-    }
-
-    @Test
-    public void testIndex() {
-        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_bigdata_index.xlsx");
-
-        XlBeanReader reader = new XlBeanReader();
-        XlBean bean = reader.read(in);
-
-        XlList list = (XlList) bean.beans("bigtable");
-        @SuppressWarnings({ "rawtypes", "serial", "unchecked" })
-        Map<String, String> conditionMap = new HashMap() {
-            {
-                put("aaa", "2499.0");
-            }
-        };
-        long time = System.currentTimeMillis();
-        for (int i = 0; i < 100; i++) {
-            list.findByIndex(conditionMap);
-        }
-        System.out.println(String.format("with index :-> %d", (System.currentTimeMillis() - time)));
-        time = System.currentTimeMillis();
-        for (int i = 0; i < 100; i++) {
-            list.find(conditionMap);
-        }
-        System.out.println(String.format("without index :-> %d", (System.currentTimeMillis() - time)));
-        System.out.println();
     }
 
     @Test

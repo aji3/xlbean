@@ -13,7 +13,6 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.xlbean.XlBean;
-import org.xlbean.XlList;
 import org.xlbean.converter.impl.BeanConverterImpl;
 import org.xlbean.reader.XlBeanReader;
 
@@ -27,7 +26,7 @@ public class BeanConverterImplTest {
         List<String> list = new ArrayList<>();
         list.add("test");
 
-        XlList ret = (XlList) converter.toMap(list);
+        List<XlBean> ret = (List) converter.toMap(list);
         XlBean bean = ret.get(0);
 
         assertThat(bean.get("value"), is("test"));

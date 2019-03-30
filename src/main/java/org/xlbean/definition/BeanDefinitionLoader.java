@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlbean.XlBean;
 import org.xlbean.XlBeanImpl;
-import org.xlbean.XlList;
 import org.xlbean.converter.BeanConverter;
 import org.xlbean.converter.BeanConverterFactory;
 import org.xlbean.data.ExcelDataSaver;
@@ -69,7 +68,7 @@ public class BeanDefinitionLoader implements DefinitionLoader {
             throw new IllegalArgumentException(String.format("Definition source should not be null"));
         }
         Object xlBeanOrXlList = null;
-        if (definitionSource instanceof XlBean || definitionSource instanceof XlList) {
+        if (definitionSource instanceof XlBean || definitionSource instanceof List) {
             xlBeanOrXlList = definitionSource;
         } else {
             xlBeanOrXlList = converter.toMap(definitionSource);

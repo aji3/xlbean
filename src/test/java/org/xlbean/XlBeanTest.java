@@ -308,7 +308,7 @@ public class XlBeanTest {
 
         assertThat(BeanHelper.isValuesEmpty(bean), is(true));
 
-        XlList list = new XlList();
+        List list = new ArrayList();
         XlBean b = new XlBeanImpl();
         b.put("testNullForList", null);
         list.add(b);

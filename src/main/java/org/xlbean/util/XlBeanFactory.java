@@ -1,10 +1,10 @@
 package org.xlbean.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.xlbean.XlBean;
 import org.xlbean.XlBeanImpl;
-import org.xlbean.XlList;
 
 public class XlBeanFactory {
 
@@ -23,7 +23,7 @@ public class XlBeanFactory {
     }
 
     public List<XlBean> createList() {
-        return new XlList();
+        return new ArrayList<>();
     }
 
 }
