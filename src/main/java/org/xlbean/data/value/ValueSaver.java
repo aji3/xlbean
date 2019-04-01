@@ -10,7 +10,7 @@ public abstract class ValueSaver<T extends Definition> {
     private T definition;
 
     private ReadAsOptionProcessor readAsOptionProcessor = new ReadAsOptionProcessor();
-    private ConverterOptionProcessor converterOptionProcessor = new ConverterOptionProcessor();
+    private FieldTypeOptionProcessor converterOptionProcessor = new FieldTypeOptionProcessor();
 
     public ValueSaver(T definition) {
         this.definition = (T) definition;

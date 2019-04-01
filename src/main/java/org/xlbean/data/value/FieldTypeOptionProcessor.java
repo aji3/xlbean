@@ -6,10 +6,10 @@ import org.xlbean.converter.ValueConverter;
 import org.xlbean.converter.ValueConverters;
 import org.xlbean.definition.Definition;
 
-public class ConverterOptionProcessor {
-    public static final String OPTION_CONVERTER = "converter";
+public class FieldTypeOptionProcessor {
+    public static final String OPTION_CONVERTER = "fieldType";
 
-    private static Logger log = LoggerFactory.getLogger(ConverterOptionProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(FieldTypeOptionProcessor.class);
 
     public boolean hasConverterOption(Definition definition) {
         return getConverterOption(definition) != null;
