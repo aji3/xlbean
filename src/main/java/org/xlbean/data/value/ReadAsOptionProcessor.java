@@ -8,7 +8,7 @@ import org.xlbean.excel.XlSheet.ReadAsOption;
 public class ReadAsOptionProcessor {
     public static final String OPTION_READAS = "readAs";
 
-    private static Logger log = LoggerFactory.getLogger(ConverterOptionProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(FieldTypeOptionProcessor.class);
 
     public boolean hasOption(Definition definition) {
         return getOption(definition) != null;

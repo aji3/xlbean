@@ -19,7 +19,7 @@ public abstract class ValueLoader<T extends Definition> {
     private T definition;
 
     private ReadAsOptionProcessor readAsOptionProcessor = new ReadAsOptionProcessor();
-    private ConverterOptionProcessor converterOptionProcessor = new ConverterOptionProcessor();
+    private FieldTypeOptionProcessor converterOptionProcessor = new FieldTypeOptionProcessor();
     private IgnoreOptionProcessor ignoreOptionProcessor = new IgnoreOptionProcessor();
 
     @SuppressWarnings("unchecked")
