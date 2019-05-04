@@ -108,18 +108,16 @@ public class XlBeanReaderTest {
         assertThat(table.get(2).get("time"), is("06:55:00.000"));
         assertThat(table.get(3).get("time"), is("06:55:00.000"));
         assertThat(table.get(4).get("time"), is("06:55:00.000"));
-        assertThat(
-            table.get(5).get("time"),
-            is(
-                "1899-12-30T06:55:00.000")); // This is actually not a time format, but it is correct
-                                             // because this is the format which is specified on the
-                                             // excel sheet.
-        assertThat(
-            table.get(6).get("time"),
-            is(
-                "1899-12-30T06:55:00.000")); // This is actually not a time format, but it is correct
-                                             // because this is the format which is specified on the
-                                             // excel sheet.
+        assertThat(table.get(5).get("time"), is("1899-12-30T06:55:00.000")); // This is actually not a time format, but
+                                                                             // it is correct
+                                                                             // because this is the format which is
+                                                                             // specified on the
+                                                                             // excel sheet.
+        assertThat(table.get(6).get("time"), is("1899-12-30T06:55:00.000")); // This is actually not a time format, but
+                                                                             // it is correct
+                                                                             // because this is the format which is
+                                                                             // specified on the
+                                                                             // excel sheet.
         assertThat(table.get(7).get("time"), is("06:55:00.000"));
         assertThat(table.get(8).get("time"), is("06:55:00.000"));
         assertThat(table.get(9).get("time"), is("06:55:00.000"));
@@ -203,11 +201,9 @@ public class XlBeanReaderTest {
         // can't even assert
         // assertThat(tableStr.get(14).get("date"), is("2017-03-18T00:00:00.000"));//
         // can't even assert
-        assertThat(
-            tableStr.get(15).get("date"),
-            is(
-                "1899/12/31")); // Not the same as excel presentation, however meaning wise it is the
-                                // same.
+        assertThat(tableStr.get(15).get("date"), is("1899/12/31")); // Not the same as excel presentation, however
+                                                                    // meaning wise it is the
+                                                                    // same.
         assertThat(tableStr.get(16).get("date"), is(nullValue()));
 
         assertThat(tableStr.get(0).get("time"), is("6:55:00 午前")); // Not the same
@@ -270,9 +266,7 @@ public class XlBeanReaderTest {
         assertThat(
             america.getPresidents().get(0).getInOfficeFrom(),
             is(new SimpleDateFormat("yyyy-MM-dd").parse("1961-01-20")));
-        assertThat(
-            america.getPresidents().get(0).getInOfficeTo(),
-            is(LocalDateTime.of(1963, 11, 22, 0, 0)));
+        assertThat(america.getPresidents().get(0).getInOfficeTo(), is(LocalDateTime.of(1963, 11, 22, 0, 0)));
         assertThat(america.getPresidents().get(0).getNumberOfDaysInOffice(), comparesEqualTo(1036));
 
         assertThat(america.getPresidents().get(10).getName(), is("Donald Trump"));
@@ -302,24 +296,16 @@ public class XlBeanReaderTest {
         assertThat(presidents.get(0).getName(), is("John F. Kennedy"));
         assertThat(presidents.get(0).getDateOfBirth(), is(LocalDate.of(1917, 5, 29)));
         assertThat(presidents.get(0).getStateOfBirth(), is(States.Massachusetts));
-        assertThat(
-            presidents.get(0).getInOfficeFrom(),
-            is(new SimpleDateFormat("yyyy-MM-dd").parse("1961-01-20")));
-        assertThat(
-            presidents.get(0).getInOfficeTo(),
-            is(LocalDateTime.of(1963, 11, 22, 0, 0)));
+        assertThat(presidents.get(0).getInOfficeFrom(), is(new SimpleDateFormat("yyyy-MM-dd").parse("1961-01-20")));
+        assertThat(presidents.get(0).getInOfficeTo(), is(LocalDateTime.of(1963, 11, 22, 0, 0)));
         assertThat(presidents.get(0).getNumberOfDaysInOffice(), comparesEqualTo(1036));
 
         // check that non-enum values are ignored as null without any exception
         assertThat(presidents.get(10).getName(), is("Donald Trump"));
         assertThat(presidents.get(10).getDateOfBirth(), is(LocalDate.of(1946, 6, 14)));
         assertThat(presidents.get(10).getStateOfBirth(), is(nullValue()));
-        assertThat(
-            presidents.get(10).getInOfficeFrom(),
-            is(new SimpleDateFormat("yyyy-MM-dd").parse("2017-01-20")));
-        assertThat(
-            presidents.get(10).getInOfficeTo(),
-            is(nullValue()));
+        assertThat(presidents.get(10).getInOfficeFrom(), is(new SimpleDateFormat("yyyy-MM-dd").parse("2017-01-20")));
+        assertThat(presidents.get(10).getInOfficeTo(), is(nullValue()));
         assertThat(presidents.get(10).getNumberOfDaysInOffice(), comparesEqualTo(0));
     }
 
@@ -370,9 +356,7 @@ public class XlBeanReaderTest {
         assertThat(
             america.getPresidents().get(0).getInOfficeFrom(),
             is(new SimpleDateFormat("yyyy-MM-dd").parse("1961-1-20")));
-        assertThat(
-            america.getPresidents().get(0).getInOfficeTo(),
-            is(LocalDateTime.of(1963, 11, 22, 0, 0)));
+        assertThat(america.getPresidents().get(0).getInOfficeTo(), is(LocalDateTime.of(1963, 11, 22, 0, 0)));
         assertThat(america.getPresidents().get(0).getNumberOfDaysInOffice(), comparesEqualTo(1036));
 
         assertThat(america.getPresidents().get(10).getName(), is("Donald Trump"));
@@ -822,8 +806,9 @@ public class XlBeanReaderTest {
         InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_ignoreOption.xlsx");
 
         XlBeanReader reader = new XlBeanReader();
-        XlBean bean = reader.read(in);
+        XlBeanReaderContext context = reader.readContext(in);
 
+        XlBean bean = context.getXlBean();
         System.out.println(bean);
 
         assertThat(bean.beans("options").get(0).containsKey("val0_0"), is(false));
@@ -848,6 +833,24 @@ public class XlBeanReaderTest {
 
         assertThat(bean.bean("test"), is(nullValue()));
         assertThat(bean.beans("listValue").size(), is(2));
+
+    }
+
+    @Test
+    public void testToMap() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_toMap.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+        System.out.println(bean);
+
+        assertThat(bean.string("list1-test0-0"), is("list1-test0-1"));
+        assertThat(bean.containsKey("list1-test1-0"), is(false));
+        assertThat(bean.string("list1-test3-0"), is("list1-test3-1"));
+
+        assertThat(bean.string("list2-test0-0"), is("list2-test0-1"));
+        assertThat(bean.containsKey("list2-test1-0"), is(true));
+        assertThat(bean.string("list2-test3-0"), is("list2-test3-1"));
 
     }
 

@@ -22,13 +22,17 @@ public class TableDefinitionBuilder extends DefinitionBuilder {
         DefinitionUnit table = definitionPair.getLeft();
         TableDefinition definition = new TableDefinition();
         definition.setName(table.getName());
-        definition.getOptions().setOptions(toMap(table.getOptions()));
+        Options tableOptions = definition.getOptions();
+        tableOptions.setOptions(toMap(table.getOptions()));
 
         // Column
         DefinitionUnit column = definitionPair.getRight();
         SingleDefinition columnDefinition = new SingleDefinition();
         columnDefinition.setName(column.getName());
-        columnDefinition.getOptions().setOptions(toMap(column.getOptions()));
+        Options columnOptions = columnDefinition.getOptions();
+        columnOptions.setOptions(toMap(column.getOptions()));
+        columnOptions.setParent(tableOptions);
+
         columnDefinition.setCell(cell);
 
         // Set column to table

@@ -6,7 +6,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlbean.XlBean;
+import org.xlbean.data.value.IgnoreOptionProcessor;
 import org.xlbean.data.value.ValueLoader;
+import org.xlbean.definition.Definition;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
 import org.xlbean.util.Accessors;
@@ -66,7 +68,6 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
                     attribute.getName(),
                     value,
                     dataRow,
-                    definition.getOptions(),
                     attribute.getOptions());
             }
             if (log.isTraceEnabled()) {
@@ -114,22 +115,24 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
         public static final String OPTION_TOMAP_KEY = "key";
         public static final String OPTION_TOMAP_VALUE = "value";
 
+        private Definition definition;
         private String key;
         private String value;
         private String targetBeanName;
         private Map<String, Object> targetBean;
+
+        private IgnoreOptionProcessor ignoreOptionProcessor = new IgnoreOptionProcessor();
 
         public ToMapOptionProcessor(TableDefinition definition, Map<String, Object> rootBean) {
             initialize(definition, rootBean);
         }
 
         private void initialize(TableDefinition definition, Map<String, Object> rootBean) {
+            this.definition = definition;
             for (SingleDefinition attr : definition.getAttributes().values()) {
-                if (OPTION_TOMAP_KEY.equals(
-                    attr.getOptions().getOption(OPTION_TOMAP))) {
+                if (OPTION_TOMAP_KEY.equals(attr.getOptions().getOption(OPTION_TOMAP))) {
                     key = attr.getName();
-                } else if (OPTION_TOMAP_VALUE.equals(
-                    attr.getOptions().getOption(OPTION_TOMAP))) {
+                } else if (OPTION_TOMAP_VALUE.equals(attr.getOptions().getOption(OPTION_TOMAP))) {
                     value = attr.getName();
                 }
             }
@@ -161,7 +164,16 @@ public class TableValueLoader extends ValueLoader<TableDefinition> {
                 return;
             }
             Object valueObj = Accessors.getValue(value, row);
-            Accessors.setValue(keyObj, valueObj, targetBean);
+            if (ignoreOptionProcessor.hasOption(definition.getOptions())) {
+                Accessors
+                    .setValue(
+                        keyObj,
+                        valueObj,
+                        targetBean,
+                        ignoreOptionProcessor.getAccessorConfig(definition.getOptions()));
+            } else {
+                Accessors.setValue(keyObj, valueObj, targetBean);
+            }
         }
 
         public void setTargetBean(Map<String, Object> targetBean) {
