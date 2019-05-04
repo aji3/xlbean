@@ -46,7 +46,7 @@ public abstract class ValueLoader<T extends Definition> {
      * @param bean
      * @param priorityDefinition
      */
-    protected void setValue(String definitionName, Object value, Map<String, Object> bean, Options... options) {
+    protected void setValue(String definitionName, Object value, Map<String, Object> bean, Options options) {
         if (ignoreOptionProcessor.hasOption(options)) {
             Accessors.setValue(definitionName, value, bean, ignoreOptionProcessor.getAccessorConfig(options));
         } else {

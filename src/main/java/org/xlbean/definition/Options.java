@@ -3,9 +3,17 @@ package org.xlbean.definition;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Holder of options.
+ * 
+ * @author Kazuya Tanikawa
+ *
+ */
 public class Options {
 
     private Map<String, String> optionsMap = new HashMap<>();
+
+    private Options parent;
 
     public String getOption(String key) {
         if (key == null) {
@@ -51,6 +59,18 @@ public class Options {
     @Override
     public String toString() {
         return "Options [optionsMap=" + optionsMap + "]";
+    }
+
+    public Options getParent() {
+        return parent;
+    }
+
+    public void setParent(Options parent) {
+        this.parent = parent;
+    }
+
+    public boolean hasParent() {
+        return parent != null;
     }
 
 }

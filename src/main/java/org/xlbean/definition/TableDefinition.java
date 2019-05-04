@@ -109,6 +109,7 @@ public class TableDefinition extends Definition {
                     SingleDefinition columnDefinition = attributes.get(key);
                     if (columnDefinition == null) {
                         attributes.put(key, newColumn);
+                        newColumn.getOptions().setParent(getOptions());
                     } else {
                         columnDefinition.merge(newColumn);
                     }
