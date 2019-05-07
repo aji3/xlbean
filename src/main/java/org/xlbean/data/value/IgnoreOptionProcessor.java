@@ -1,5 +1,9 @@
 package org.xlbean.data.value;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.xlbean.definition.Options;
 import org.xlbean.util.Accessors;
 import org.xlbean.util.Accessors.AccessorConfig;
@@ -116,25 +120,36 @@ public class IgnoreOptionProcessor {
         return builder.build();
     }
 
-    public boolean hasOption(Options... option) {
+    public boolean hasOption(Options option) {
         if (option == null) {
             return false;
         }
-        for (Options opt : option) {
+        for (Options opt = option; true; opt = opt.getParent()) {
             IgnoreOptionAccessorConfig config = createConfig(opt);
             if (config.hasIgnoreOption()) {
                 return true;
+            }
+            if (!opt.hasParent()) {
+                break;
             }
         }
         return false;
     }
 
-    public AccessorConfig getAccessorConfig(Options... options) {
+    public AccessorConfig getAccessorConfig(Options options) {
         if (options == null) {
             return Accessors.getConfig();
         }
         AccessorConfig accessorConfig = Accessors.getConfig();
-        for (Options opt : options) {
+        List<Options> optionsList = new ArrayList<>();
+        for (Options opt = options; true; opt = opt.getParent()) {
+            optionsList.add(opt);
+            if (!opt.hasParent()) {
+                break;
+            }
+        }
+        Collections.reverse(optionsList);
+        for (Options opt : optionsList) {
             accessorConfig = overrideAccessorConfig(accessorConfig, createConfig(opt));
         }
         return accessorConfig;
