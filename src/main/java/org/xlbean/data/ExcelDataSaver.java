@@ -13,6 +13,7 @@ import org.xlbean.definition.Definition;
 import org.xlbean.definition.Definitions;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
+import org.xlbean.definition.TargetDefinition;
 import org.xlbean.exception.XlBeanException;
 
 public class ExcelDataSaver {
@@ -20,17 +21,21 @@ public class ExcelDataSaver {
     private static Logger log = LoggerFactory.getLogger(ExcelDataSaver.class);
 
     public void save(XlBean bean, Definitions definitions, OutputStream out) {
-        definitions.forEach(
-            definition ->
-            {
-                long now = System.currentTimeMillis();
-                log.debug("Start saving data: {}", definition.getName());
-                getValueSaver(definition).save(bean);
-                log.info(
-                    "Saved data: {} [{} msec]",
-                    definition.getName(),
-                    (System.currentTimeMillis() - now));
-            });
+        definitions
+            .stream()
+            .filter(d -> !(d instanceof TargetDefinition))
+            .forEach(
+                definition ->
+                {
+                    long now = System.currentTimeMillis();
+                    log.debug("Start saving data: {}", definition.getName());
+                    getValueSaver(definition).save(bean);
+                    log
+                        .info(
+                            "Saved data: {} [{} msec]",
+                            definition.getName(),
+                            (System.currentTimeMillis() - now));
+                });
 
         try {
             definitions.write(out);
@@ -42,8 +47,10 @@ public class ExcelDataSaver {
     protected ValueSaver<?> getValueSaver(Definition definition) {
         if (definition instanceof SingleDefinition) {
             return new SingleValueSaver((SingleDefinition) definition);
-        } else {
+        } else if (definition instanceof TableDefinition){
             return new TableValueSaver((TableDefinition) definition);
+        } else {
+            throw new IllegalArgumentException("Unexpected Definition instance: " + definition.getClass());
         }
     }
 }

@@ -15,6 +15,26 @@ public class Options {
 
     private Options parent;
 
+    /**
+     * Get Option value of the {@code key} from this Options instance and return if
+     * not null. If the value is null, call getOptionDeep of the {@code parent}
+     * instance and return so that any option set to parent can be obtained.
+     * 
+     * @param key
+     * @return
+     */
+    public String getOptionDeep(String key) {
+        if (key == null) {
+            return null;
+        }
+        String value = optionsMap.get(key);
+        if (value == null && parent != null) {
+            return parent.getOptionDeep(key);
+        } else {
+            return value;
+        }
+    }
+
     public String getOption(String key) {
         if (key == null) {
             return null;
@@ -22,11 +42,25 @@ public class Options {
         return optionsMap.get(key);
     }
 
-    public void setOption(String key, String value) {
+    /**
+     * Put key-value into the Options map. If the given {@code key} already exists,
+     * then it will override.
+     * 
+     * @param key
+     * @param value
+     */
+    public void addOption(String key, String value) {
         optionsMap.put(key, value);
     }
 
-    public void setOptions(Map<String, String> newOptions) {
+    /**
+     * Put all key-values in the given {@code newOptions} into the Options map. If
+     * any of the the given {@code key} already exists, then it will override.
+     * 
+     * @param key
+     * @param value
+     */
+    public void addOptions(Map<String, String> newOptions) {
         if (newOptions == null) {
             return;
         }
@@ -52,7 +86,7 @@ public class Options {
 
     public Options clone() {
         Options clone = new Options();
-        clone.setOptions(optionsMap);
+        clone.addOptions(optionsMap);
         return clone;
     }
 

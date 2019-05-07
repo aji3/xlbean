@@ -56,13 +56,17 @@ public class DefinitionRepositoryTest {
 
         XlWorkbook xlwb = XlWorkbook.wrap(wb);
 
+        TargetDefinition targetDef = new TargetDefinition();
+        targetDef.setSheetName("errorSheet");
+        
         SingleDefinition def = new SingleDefinition();
         def.setName("errorDef");
         XlCellAddress cell = new XlCellAddress.Builder().row(3).column(3).build();
         def.setCell(cell);
         def.setSheetName("errorSheet");
 
-        Definitions repo = new Definitions();
+        Definitions repo = new Definitions(new Options());
+        repo.addDefinition(targetDef);
         repo.addDefinition(def);
         repo.activate(xlwb);
 

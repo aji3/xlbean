@@ -18,6 +18,7 @@ import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.Definitions;
 import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
+import org.xlbean.definition.Options;
 import org.xlbean.exception.XlBeanException;
 import org.xlbean.util.FileUtil;
 
@@ -28,7 +29,8 @@ import org.xlbean.util.FileUtil;
  */
 public class XlBeanWriter {
 
-    private DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader();
+    private Options globalOptions = new Options();
+    private DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader(globalOptions);
     private ExcelDataSaver dataSaver = new ExcelDataSaver();
 
     /**
@@ -125,10 +127,11 @@ public class XlBeanWriter {
 
         private DefinitionLoader definitionLoader;
         private ExcelDataSaver dataSaver;
+        private Options globalOptions;
 
         public XlBeanWriter build() {
             if (definitionLoader == null) {
-                definitionLoader = new ExcelR1C1DefinitionLoader();
+                definitionLoader = new ExcelR1C1DefinitionLoader(globalOptions);
             }
             if (dataSaver == null) {
                 dataSaver = new ExcelDataSaver();
@@ -163,6 +166,18 @@ public class XlBeanWriter {
          */
         public XlBeanWriterBuilder dataSaver(ExcelDataSaver dataSaver) {
             this.dataSaver = dataSaver;
+            return this;
+        }
+
+        /**
+         * Add option which affects globally.
+         * 
+         * @param key
+         * @param value
+         * @return
+         */
+        public XlBeanWriterBuilder addOption(String key, String value) {
+            this.globalOptions.addOption(key, value);
             return this;
         }
 

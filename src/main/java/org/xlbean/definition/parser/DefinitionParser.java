@@ -79,10 +79,11 @@ public class DefinitionParser {
      * </ul>
      * </p>
      */
-    static Parser<String> VARIABLE = Parsers.sequence(
-        VARIABLE_NAME,
-        INDEX.many(),
-        (name, indexes) -> name + String.join("", indexes));
+    static Parser<String> VARIABLE = Parsers
+        .sequence(
+            VARIABLE_NAME,
+            INDEX.many(),
+            (name, indexes) -> name + String.join("", indexes));
 
     /**
      * Parser for variables connected by "."
@@ -106,11 +107,12 @@ public class DefinitionParser {
      * <li>test[0].aaa[1]?testOption</li>
      * </ul>
      */
-    static Parser<InTableOptionUnit> IN_TABLE_OPTION_DEFINITION = Parsers.sequence(
-        LAYERED_VARIABLE,
-        Scanners.isChar('?'),
-        VARIABLE_NAME,
-        (key, symbol, value) -> new InTableOptionUnit(key, value));
+    static Parser<InTableOptionUnit> IN_TABLE_OPTION_DEFINITION = Parsers
+        .sequence(
+            LAYERED_VARIABLE,
+            Scanners.isChar(DefinitionConstants.OPTION_STARTER),
+            VARIABLE_NAME,
+            (key, symbol, value) -> new InTableOptionUnit(key, value));
 
     /**
      * Parser for option.
@@ -121,11 +123,12 @@ public class DefinitionParser {
      * <li>_test=123</li>
      * </ul>
      */
-    static Parser<DefinitionOption> OPTION = Parsers.sequence(
-        VARIABLE_NAME,
-        Scanners.isChar('='),
-        VALUE,
-        (key, eq, value) -> new DefinitionOption(key, value));
+    static Parser<DefinitionOption> OPTION = Parsers
+        .sequence(
+            VARIABLE_NAME,
+            Scanners.isChar(DefinitionConstants.OPTION_EQUAL),
+            VALUE,
+            (key, eq, value) -> new DefinitionOption(key, value));
 
     /**
      * Parser for options connected by "&".
@@ -136,7 +139,21 @@ public class DefinitionParser {
      * <li>key1=value123&key2=true</li>
      * </ul>
      */
-    static Parser<List<DefinitionOption>> OPTIONS = OPTION.sepBy(Scanners.isChar('&'));
+    static Parser<List<DefinitionOption>> OPTIONS = OPTION.sepBy(Scanners.isChar(DefinitionConstants.OPTION_CONNECTOR));
+
+    /**
+     * Parser for the symbol to let xlbean to read sheet. It is a fixed string
+     * "####", with options in the format of
+     * "?optionKey1=optionValue1&optionKey2=optionValue2".
+     */
+    static Parser<TargetDefinitionUnit> TARGET_DEFINITION = Parsers
+        .sequence(
+            Patterns.string(DefinitionConstants.TARGET_SHEET_MARK).toScanner("START_MARK").source(),
+            Scanners
+                .isChar('?')
+                .next(OPTIONS)
+                .asOptional(),
+            (names, options) -> new TargetDefinitionUnit(options.orElse(new ArrayList<>())));
 
     /**
      * Parser for SingleDefinition class.
@@ -150,19 +167,20 @@ public class DefinitionParser {
      * <li>test[0]?key1=value1&key2=value2</li>
      * </ul>
      */
-    static Parser<DefinitionUnit> SINGLE_DEFINITION = Parsers.sequence(
-        LAYERED_VARIABLE,
-        Scanners
-            .isChar('?')
-            .next(OPTIONS)
-            .asOptional(),
-        (names, options) -> new DefinitionUnit(String.join(".", names), options.orElse(new ArrayList<>())));
+    static Parser<DefinitionUnit> SINGLE_DEFINITION = Parsers
+        .sequence(
+            LAYERED_VARIABLE,
+            Scanners
+                .isChar(DefinitionConstants.OPTION_STARTER)
+                .next(OPTIONS)
+                .asOptional(),
+            (names, options) -> new DefinitionUnit(String.join(".", names), options.orElse(new ArrayList<>())));
 
     /**
      * Parser for start marker "~" of table.
      */
     static Parser<DefinitionUnit> TABLE_START_MARKER = Patterns
-        .isChar('~')
+        .isChar(DefinitionConstants.START_MARK)
         .toScanner("start_marker")
         .source()
         .map(mark -> new DefinitionUnit(mark, new ArrayList<>()));
@@ -180,18 +198,20 @@ public class DefinitionParser {
      * </ul>
      * 
      */
-    static Parser<DefinitionPair> TABLE_DEFINITION = Parsers.sequence(
-        SINGLE_DEFINITION,
-        Scanners.isChar('#'),
-        TABLE_START_MARKER.or(SINGLE_DEFINITION),
-        (left, sep, right) -> new DefinitionPair(left, right));
+    static Parser<DefinitionPair> TABLE_DEFINITION = Parsers
+        .sequence(
+            SINGLE_DEFINITION,
+            Scanners.isChar(DefinitionConstants.TABLE_DEFINITION_DELIMITER),
+            TABLE_START_MARKER.or(SINGLE_DEFINITION),
+            (left, sep, right) -> new DefinitionPair(left, right));
 
     /**
      * Entry point.
      */
-    static Parser<?> DEFINITION = Parsers.longer(
-        IN_TABLE_OPTION_DEFINITION,
-        Parsers.or(TABLE_DEFINITION, SINGLE_DEFINITION));
+    static Parser<?> DEFINITION = Parsers
+        .longer(
+            IN_TABLE_OPTION_DEFINITION,
+            Parsers.or(TARGET_DEFINITION, TABLE_DEFINITION, SINGLE_DEFINITION));
 
     public static Object parse(String str) {
         return DEFINITION.parse(str);

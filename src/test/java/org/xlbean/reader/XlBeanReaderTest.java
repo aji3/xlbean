@@ -29,6 +29,7 @@ import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.Definitions;
 import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
+import org.xlbean.definition.Options;
 import org.xlbean.definition.SingleDefinition;
 import org.xlbean.definition.TableDefinition;
 import org.xlbean.reader.XlBeanReader.XlBeanReaderBuilder;
@@ -326,7 +327,7 @@ public class XlBeanReaderTest {
 
         try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
 
-            DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader();
+            DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader(new Options());
             Definitions definitions = definitionLoader.load(wb);
 
             XlBean bean = new XlBeanImpl();
@@ -340,7 +341,9 @@ public class XlBeanReaderTest {
     @Test
     public void testCommentDefinitionReader() throws ParseException {
 
-        XlBeanReader reader = new XlBeanReaderBuilder().definitionLoader(new ExcelCommentDefinitionLoader()).build();
+        XlBeanReader reader = new XlBeanReaderBuilder()
+            .definitionLoader(new ExcelCommentDefinitionLoader(new Options()))
+            .build();
         InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_presidents_comment.xlsx");
         XlBean bean = reader.read(in);
 
@@ -799,6 +802,68 @@ public class XlBeanReaderTest {
         System.out.println(optionToOtherDirection);
 
         assertThat(optionToOtherDirection.getOptions().getOption("testOption"), is("value for option"));
+    }
+
+    @Test
+    public void testLayeredOption() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_option.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBeanReaderContext context = reader.readContext(in);
+
+        Options aaa = context.getDefinitions().toMap().get("layeredaaa").getOptions();
+        assertThat(aaa.getOption("single"), is("val2"));
+        assertThat(aaa.getOption("global"), is(nullValue()));
+        assertThat(aaa.getOptionDeep("global"), is("val1"));
+        assertThat(aaa.getOptionDeep("test"), is(nullValue()));
+        Options bbb = context.getDefinitions().toMap().get("layeredbbb").getOptions();
+        assertThat(bbb.getOption("global"), is("val9"));
+        assertThat(bbb.getOptionDeep("global"), is("val9"));
+        TableDefinition tableDef = (TableDefinition) context.getDefinitions().toMap().get("layeredtable");
+        Options table = tableDef.getOptions();
+        assertThat(table.getOption("global"), is(nullValue()));
+        assertThat(table.getOption("table"), is("val3"));
+        assertThat(table.getOptionDeep("global"), is("val1"));
+        assertThat(table.getOptionDeep("table"), is("val3"));
+        Options column1 = tableDef.getAttributes().get("column1").getOptions();
+        assertThat(column1.getOption("global"), is(nullValue()));
+        assertThat(column1.getOption("table"), is(nullValue()));
+        assertThat(column1.getOptionDeep("global"), is("val1"));
+        assertThat(column1.getOptionDeep("table"), is("val3"));
+        Options column2 = tableDef.getAttributes().get("column2").getOptions();
+        assertThat(column2.getOption("global"), is(nullValue()));
+        assertThat(column2.getOption("table"), is(nullValue()));
+        assertThat(column2.getOption("column"), is("val4"));
+        assertThat(column2.getOptionDeep("global"), is("val1"));
+        assertThat(column2.getOptionDeep("table"), is("val3"));
+        assertThat(column2.getOptionDeep("column"), is("val4"));
+        Options column3 = tableDef.getAttributes().get("column3").getOptions();
+        assertThat(column3.getOption("global"), is(nullValue()));
+        assertThat(column3.getOption("table"), is("val9"));
+        assertThat(column3.getOption("column"), is(nullValue()));
+        assertThat(column3.getOptionDeep("global"), is("val1"));
+        assertThat(column3.getOptionDeep("table"), is("val9"));
+        assertThat(column3.getOptionDeep("column"), is(nullValue()));
+
+        TableDefinition tableDef2 = (TableDefinition) context.getDefinitions().toMap().get("layeredtable2");
+        Options table2 = tableDef2.getOptions();
+        assertThat(table2.getOption("global"), is("val99"));
+        assertThat(table2.getOptionDeep("global"), is("val99"));
+        Options col = tableDef2.getAttributes().get("col").getOptions();
+        assertThat(col.getOption("global"), is("val999"));
+        assertThat(col.getOptionDeep("global"), is("val999"));
+    }
+
+    @Test
+    public void testLayeredOptionActual() {
+        InputStream in = XlBeanReaderTest.class.getResourceAsStream("TestBook_option.xlsx");
+
+        XlBeanReader reader = new XlBeanReader();
+        XlBean bean = reader.read(in);
+
+        assertThat(bean.get("layeredAct"), is("1"));
+        assertThat(bean.beans("layeredActTable").get(0).get("col1"), is(1));
+        assertThat(bean.beans("layeredActTable").get(0).get("col2"), is(true));
     }
 
     @Test

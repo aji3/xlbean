@@ -16,7 +16,7 @@ public class FieldTypeOptionProcessor {
     }
 
     public String getConverterOption(Definition definition) {
-        String option = definition.getOptions().getOption(OPTION_CONVERTER);
+        String option = definition.getOptions().getOptionDeep(OPTION_CONVERTER);
         if (option == null) {
             return null;
         }

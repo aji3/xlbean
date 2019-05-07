@@ -15,7 +15,7 @@ public class ReadAsOptionProcessor {
     }
 
     public ReadAsOption getOption(Definition definition) {
-        String option = definition.getOptions().getOption(OPTION_READAS);
+        String option = definition.getOptions().getOptionDeep(OPTION_READAS);
         if (option == null) {
             return null;
         }
