@@ -26,6 +26,7 @@ import org.xlbean.XlBeanImpl;
 import org.xlbean.converter.BeanConverter;
 import org.xlbean.converter.BeanConverterFactory;
 import org.xlbean.data.ExcelDataSaver;
+import org.xlbean.definition.parser.DefinitionConstants;
 import org.xlbean.excel.XlCellAddress;
 import org.xlbean.excel.XlWorkbook;
 import org.xlbean.exception.XlBeanException;
@@ -47,6 +48,12 @@ public class BeanDefinitionLoader implements DefinitionLoader {
     private BeanConverter converter = BeanConverterFactory.getInstance().createBeanConverter();
 
     private String newSheetName = "data";
+
+    private Options globalOptions;
+
+    public BeanDefinitionLoader(Options globalOptions) {
+        this.globalOptions = globalOptions;
+    }
 
     /**
      * Number of iterations for list in list. (e.g. if value of this field is 2,
@@ -109,10 +116,11 @@ public class BeanDefinitionLoader implements DefinitionLoader {
             XlWorkbook workbook = XlWorkbook.wrap(rawWorkbook);
             definitionDefinitions.activate(workbook);
 
-            new ExcelDataSaver().save(
-                bean,
-                definitionDefinitions,
-                os);
+            new ExcelDataSaver()
+                .save(
+                    bean,
+                    definitionDefinitions,
+                    os);
         } catch (IOException e) {
             throw new XlBeanException(e);
         }
@@ -146,7 +154,7 @@ public class BeanDefinitionLoader implements DefinitionLoader {
      * @return
      */
     private Definitions createDefinitionForDefinitions(XlBean bean, Definitions definitions) {
-        Definitions definitionDefinitions = new Definitions();
+        Definitions definitionDefinitions = new Definitions(globalOptions);
         definitions
             .stream()
             .flatMap(definition -> createDefinitionForDefinition(definition, bean))
@@ -167,19 +175,24 @@ public class BeanDefinitionLoader implements DefinitionLoader {
                     row = 0;
                     column = attr.getCell().getColumn();
                 }
-                retList.add(
-                    createDefinition(
-                        row,
-                        column,
-                        table.getName() + "#" + attr.getName(),
-                        bean));
+                retList
+                    .add(
+                        createDefinition(
+                            row,
+                            column,
+                            table.getName() + "#" + attr.getName(),
+                            bean));
             }
-        } else {
+        } else if (definition instanceof SingleDefinition) {
             // it instanceof SingleDefinition
             SingleDefinition single = (SingleDefinition) definition;
 
             retList.add(createDefinition(single.getCell().getRow(), 0, single.getName(), bean));
             retList.add(createDefinition(0, single.getCell().getColumn(), single.getName(), bean));
+        } else if (definition instanceof TargetDefinition){
+            retList.add(definition);
+        } else {
+            throw new IllegalArgumentException("Unexpected Definition instance: " + definition.getClass());
         }
         return retList.stream();
     }
@@ -219,10 +232,11 @@ public class BeanDefinitionLoader implements DefinitionLoader {
         for (Definition definition : definitions.getDefinitions()) {
             // Check if the definition is valid
             if (!definition.validate()) {
-                log.warn(
-                    "Invalid definition [{}] ({})",
-                    definition.getName(),
-                    definition.getClass().getName());
+                log
+                    .warn(
+                        "Invalid definition [{}] ({})",
+                        definition.getName(),
+                        definition.getClass().getName());
                 continue;
             }
         }
@@ -242,30 +256,35 @@ public class BeanDefinitionLoader implements DefinitionLoader {
      */
     private void setCellInfo(Definitions definitions) {
         CellInfoGenerator generator = new CellInfoGenerator();
-        definitions.forEach(
-            it ->
-            {
-                if (it instanceof TableDefinition) {
-                    TableDefinition table = (TableDefinition) it;
-                    for (SingleDefinition attr : table
-                        .getAttributes()
-                        .values()
-                        .stream()
-                        .sorted(Comparator.comparing(SingleDefinition::getName))
-                        .collect(Collectors.toList())) {
-                        attr.setCell(generator.generateCellForTableColumn());
-                    }
-                    SingleDefinition start = new SingleDefinition();
-                    start.setName("~");
-                    start.setCell(new XlCellAddress.Builder().row(1).build());
-                    table.addAttribute(start);
-                } else {
-                    // it instanceof SingleDefinition
-                    SingleDefinition single = (SingleDefinition) it;
-                    single.setCell(generator.generateCellForSingle());
-                }
-                it.setSheetName("data");
-            });
+        definitions
+            .stream()
+            .filter(d -> !(d instanceof TargetDefinition))
+            .forEach(d -> setCellInfo(d, generator));
+    }
+
+    private void setCellInfo(Definition definition, CellInfoGenerator generator) {
+        if (definition instanceof TableDefinition) {
+            TableDefinition table = (TableDefinition) definition;
+            for (SingleDefinition attr : table
+                .getAttributes()
+                .values()
+                .stream()
+                .sorted(Comparator.comparing(SingleDefinition::getName))
+                .collect(Collectors.toList())) {
+                attr.setCell(generator.generateCellForTableColumn());
+            }
+            SingleDefinition start = new SingleDefinition();
+            start.setName("~");
+            start.setCell(new XlCellAddress.Builder().row(1).build());
+            table.addAttribute(start);
+        } else if (definition instanceof SingleDefinition) {
+            // it instanceof SingleDefinition
+            SingleDefinition single = (SingleDefinition) definition;
+            single.setCell(generator.generateCellForSingle());
+        } else {
+            throw new IllegalArgumentException("Unexpected Definition instance: " + definition.getClass());
+        }
+        definition.setSheetName("data");
     }
 
     private class CellInfoGenerator {
@@ -289,7 +308,10 @@ public class BeanDefinitionLoader implements DefinitionLoader {
      * @return
      */
     private Definitions loadInternal(Object obj, BeanDefinitionLoaderContext context) {
-        Definitions definitions = new Definitions();
+        Definitions definitions = new Definitions(globalOptions);
+        TargetDefinition targetDefinition = new TargetDefinition();
+        targetDefinition.setSheetName(newSheetName);
+        definitions.addDefinition(targetDefinition);
         if (obj instanceof XlBean) {
             ((Map<?, ?>) obj)
                 .forEach(
@@ -319,7 +341,8 @@ public class BeanDefinitionLoader implements DefinitionLoader {
         }
         SingleDefinition single = new SingleDefinition();
         single.setName(context.getCurrentName());
-        single.getOptions().setOption("type", "string");
+        single.setSheetName(newSheetName);
+        single.getOptions().addOption("type", "string");
         definitions.addDefinition(single);
     }
 
@@ -330,10 +353,12 @@ public class BeanDefinitionLoader implements DefinitionLoader {
         }
         TableDefinitionForBeanLoader table = new TableDefinitionForBeanLoader(list);
         table.setName(context.getCurrentName());
+        table.setSheetName(newSheetName);
         definitions.addDefinition(table);
         Map<String, Definition> attributesMap = new HashMap<>();
         for (Object bean : list) {
             Definitions attributes = loadInternal(bean, new BeanDefinitionLoaderContext());
+            attributes.getDefinitions().removeIf(d -> d instanceof TargetDefinition);
             attributesMap.putAll(attributes.toMap());
         }
         attributesMap.values().forEach(it -> {
@@ -356,21 +381,27 @@ public class BeanDefinitionLoader implements DefinitionLoader {
     private void convertInternalTableDefinitionToNestedSingleDefinition(
             TableDefinitionForBeanLoader internalTableDefinition,
             TableDefinitionForBeanLoader table) {
-        internalTableDefinition.getAttributes().values().forEach(
-            item ->
-            {
-                for (int i = 0; i < Math.min(numberOfIterations, internalTableDefinition.getSourceList().size()); i++) {
-                    SingleDefinition single = new SingleDefinition();
-                    String newName = String.format(
-                        "%s[%d].%s",
-                        internalTableDefinition.getName(),
-                        i,
-                        item.getName());
-                    single.setName(newName);
-                    single.getOptions().setOption("type", "string");
-                    table.addAttribute(single);
-                }
-            });
+        internalTableDefinition
+            .getAttributes()
+            .values()
+            .forEach(
+                item ->
+                {
+                    for (int i = 0; i < Math
+                        .min(numberOfIterations, internalTableDefinition.getSourceList().size()); i++) {
+                        SingleDefinition single = new SingleDefinition();
+                        String newName = String
+                            .format(
+                                "%s[%d].%s",
+                                internalTableDefinition.getName(),
+                                i,
+                                item.getName());
+                        single.setName(newName);
+                        single.getOptions().addOption("type", "string");
+                        single.getOptions().setParent(table.getOptions().getParent());
+                        table.addAttribute(single);
+                    }
+                });
     }
 
     /**

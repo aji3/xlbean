@@ -15,6 +15,7 @@ import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.Definitions;
 import org.xlbean.definition.ExcelCommentDefinitionLoader;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
+import org.xlbean.definition.Options;
 import org.xlbean.excel.XlWorkbook;
 import org.xlbean.util.FileUtil;
 
@@ -33,7 +34,8 @@ import org.xlbean.util.FileUtil;
  */
 public class XlBeanReader {
 
-    private DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader();
+    private Options globalOptions = new Options();
+    private DefinitionLoader definitionLoader = new ExcelR1C1DefinitionLoader(globalOptions);
     private ExcelDataLoader dataLoader = new ExcelDataLoader();
 
     /**
@@ -154,10 +156,11 @@ public class XlBeanReader {
     public static class XlBeanReaderBuilder {
         private DefinitionLoader definitionLoader;
         private ExcelDataLoader dataLoader;
+        private Options globalOptions = new Options();
 
         public XlBeanReader build() {
             if (definitionLoader == null) {
-                definitionLoader = new ExcelR1C1DefinitionLoader();
+                definitionLoader = new ExcelR1C1DefinitionLoader(globalOptions);
             }
             if (dataLoader == null) {
                 this.dataLoader = new ExcelDataLoader();
@@ -165,6 +168,7 @@ public class XlBeanReader {
             XlBeanReader reader = new XlBeanReader();
             reader.dataLoader = dataLoader;
             reader.definitionLoader = definitionLoader;
+            reader.globalOptions = globalOptions;
             return reader;
         }
 
@@ -193,6 +197,18 @@ public class XlBeanReader {
          */
         public XlBeanReaderBuilder dataLoader(ExcelDataLoader dataLoader) {
             this.dataLoader = dataLoader;
+            return this;
+        }
+
+        /**
+         * Add option which affects globally in the reader.
+         * 
+         * @param key
+         * @param value
+         * @return
+         */
+        public XlBeanReaderBuilder addOption(String key, String value) {
+            this.globalOptions.addOption(key, value);
             return this;
         }
     }

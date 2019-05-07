@@ -10,6 +10,7 @@ import org.jparsec.error.ParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xlbean.definition.InTableOptionDefinition.OptionKey;
+import org.xlbean.definition.parser.DefinitionConstants;
 import org.xlbean.definition.parser.DefinitionParser;
 import org.xlbean.excel.XlCellAddress;
 import org.xlbean.excel.XlSheet;
@@ -24,10 +25,18 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
 
     private static Logger log = LoggerFactory.getLogger(ExcelR1C1DefinitionLoader.class);
 
-    private static final List<DefinitionBuilder> DEFAULT_DEFINITION_BUILDERS = Arrays.asList(
-        new SingleDefinitionBuilder(),
-        new TableDefinitionBuilder(),
-        new InTableOptionDefinitionBuilder());
+    private static final List<DefinitionBuilder> DEFAULT_DEFINITION_BUILDERS = Arrays
+        .asList(
+            new SingleDefinitionBuilder(),
+            new TableDefinitionBuilder(),
+            new InTableOptionDefinitionBuilder(),
+            new TargetDefinitionBuilder());
+
+    private Options globalOptions;
+
+    public ExcelR1C1DefinitionLoader(Options globalOptions) {
+        this.globalOptions = globalOptions;
+    }
 
     /**
      * Scan all the sheets and read definition from row 1 and column 1.
@@ -37,7 +46,7 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
     @Override
     public Definitions load(Object definitionSource) {
         XlWorkbook workbook = initialize(definitionSource);
-        Definitions definitions = new Definitions();
+        Definitions definitions = new Definitions(globalOptions);
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             XlSheet sheet = workbook.getSheetAt(i);
             if (!isProcessingTargetSheet(sheet)) {
@@ -46,14 +55,16 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
             long now = System.currentTimeMillis();
             log.debug("Start loading table definition from sheet {}", sheet.getSheetName());
             definitions.merge(readAllSheetDefinition(sheet));
-            log.info(
-                "Loaded table definition from sheet {} [{} msec]",
-                sheet.getSheetName(),
-                (System.currentTimeMillis() - now));
+            log
+                .info(
+                    "Loaded table definition from sheet {} [{} msec]",
+                    sheet.getSheetName(),
+                    (System.currentTimeMillis() - now));
         }
 
         definitions.validateAll();
         definitions.activate(workbook);
+        definitions.getDefinitions().removeIf(d -> d instanceof TargetDefinition);
         return definitions;
     }
 
@@ -66,13 +77,17 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
     }
 
     /**
-     * Returns true if the value of cell(0, 0) is "####".
+     * Returns true if the value of cell(0, 0) starts from "####".
      *
      * @param sheet
      * @return
      */
     protected boolean isProcessingTargetSheet(XlSheet sheet) {
-        return DefinitionConstants.TARGET_SHEET_MARK.equals(sheet.getCellValue(0, 0));
+        String targetMark = sheet.getCellValue(0, 0);
+        if (targetMark == null) {
+            return false;
+        }
+        return targetMark.startsWith(DefinitionConstants.TARGET_SHEET_MARK);
     }
 
     protected List<DefinitionBuilder> getDefinitionBuilders() {
@@ -91,7 +106,7 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
      * @return
      */
     protected Definitions readAllSheetDefinition(XlSheet sheet) {
-        Definitions definitions = new Definitions();
+        Definitions definitions = new Definitions(globalOptions);
         int maxRow = sheet.getMaxRow();
         int maxCol = sheet.getMaxColumn();
         if (Math.min(maxRow, maxCol) == 0) {
@@ -99,11 +114,14 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
         }
 
         // read column definition
-        for (int col = 1; col <= maxCol; col++) {
+        // starting from 0 because it should read address (0, 0) to get target mark
+        // "####".
+        for (int col = 0; col <= maxCol; col++) {
             readCellDefinition(definitions, sheet, col, true);
         }
 
         // read row definition
+        // starting from 1 because target mark has been already read by column iterator.
         for (int row = 1; row <= maxRow; row++) {
             readCellDefinition(definitions, sheet, row, false);
         }
@@ -165,7 +183,7 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
             SingleDefinition singleDefinition,
             XlSheet sheet) {
         String optionValue = loadOptionCell(optionKey.getCell(), singleDefinition.getCell(), sheet);
-        singleDefinition.getOptions().setOption(optionKey.getOptionKey(), optionValue);
+        singleDefinition.getOptions().addOption(optionKey.getOptionKey(), optionValue);
     }
 
     private String loadOptionCell(XlCellAddress inTableOptionCell, XlCellAddress definitionCell, XlSheet sheet) {
@@ -201,13 +219,15 @@ public class ExcelR1C1DefinitionLoader implements DefinitionLoader {
         DefinitionBuilder definitionBuilder = getDefinitionBuilder(parsedDefinition);
         Definition newDefinition = null;
         if (isColumn) {
-            newDefinition = definitionBuilder.build(
-                parsedDefinition,
-                new XlCellAddress.Builder().column(num).build());
+            newDefinition = definitionBuilder
+                .build(
+                    parsedDefinition,
+                    new XlCellAddress.Builder().column(num).build());
         } else {
-            newDefinition = definitionBuilder.build(
-                parsedDefinition,
-                new XlCellAddress.Builder().row(num).build());
+            newDefinition = definitionBuilder
+                .build(
+                    parsedDefinition,
+                    new XlCellAddress.Builder().row(num).build());
         }
         newDefinition.setSheetName(sheetName);
         return newDefinition;

@@ -22,7 +22,7 @@ public class TableDefinitionCacheAccessor {
         Integer offset = cache.get(TableValueLoader.OPTION_OFFSET);
         if (offset == null) {
             try {
-                offset = Integer.parseInt(definition.getOptions().getOption(TableValueLoader.OPTION_OFFSET));
+                offset = Integer.parseInt(definition.getOptions().getOptionDeep(TableValueLoader.OPTION_OFFSET));
             } catch (NumberFormatException e) {
                 offset = 0;
             }
@@ -35,7 +35,7 @@ public class TableDefinitionCacheAccessor {
         Integer limit = cache.get(TableValueLoader.OPTION_LIMIT);
         if (limit == null) {
             try {
-                limit = Integer.parseInt(definition.getOptions().getOption(TableValueLoader.OPTION_LIMIT));
+                limit = Integer.parseInt(definition.getOptions().getOptionDeep(TableValueLoader.OPTION_LIMIT));
             } catch (NumberFormatException e) {
                 limit = Integer.MAX_VALUE;
             }

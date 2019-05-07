@@ -28,6 +28,12 @@ public class Definitions {
 
     private XlWorkbook workbook;
 
+    private Options globalOptions;
+
+    public Definitions(Options globalOptions) {
+        this.globalOptions = globalOptions;
+    }
+
     /**
      * Add {@link Definition} to this repository.
      *
@@ -48,6 +54,24 @@ public class Definitions {
             .orElse(null);
         if (duplicatedDefinition == null) {
             definitions.add(definition);
+            if (definition instanceof TargetDefinition) {
+                // if the definition is TargetDefinition("####"), then set globalOptions to its
+                // parent so that globalOptions will become ancestor of every definitions
+                definition.getOptions().setParent(globalOptions);
+            } else {
+                // if the definition is not TargetDefinition, then find the TargetDefinition of
+                // the sheet and link Options.
+                Definition targetDefinition = definitions
+                    .stream()
+                    .filter(d -> d instanceof TargetDefinition)
+                    .filter(d -> d.getSheetName() == null ? false : d.getSheetName().equals(definition.getSheetName()))
+                    .findFirst()
+                    .orElse(null);
+                if (targetDefinition == null) {
+                    throw new IllegalStateException("TargetDefinition instance for the sheet should exist.");
+                }
+                definition.getOptions().setParent(targetDefinition.getOptions());
+            }
         } else {
             duplicatedDefinition.merge(definition);
         }
@@ -62,10 +86,11 @@ public class Definitions {
         DefinitionValidationContext validationContext = new DefinitionValidationContext();
         for (Definition definition : definitions) {
             if (!definition.validate()) {
-                log.warn(
-                    "Invalid definition [{}] ({})",
-                    definition.getName(),
-                    definition.getClass().getName());
+                log
+                    .warn(
+                        "Invalid definition [{}] ({})",
+                        definition.getName(),
+                        definition.getClass().getName());
                 validationContext.addErrorDefinition(definition);
             }
         }
@@ -92,9 +117,10 @@ public class Definitions {
         return definitions
             .stream()
             .collect(
-                Collectors.groupingBy(
-                    Definition::getName,
-                    Collectors.reducing(null, (i, t) -> t)));
+                Collectors
+                    .groupingBy(
+                        Definition::getName,
+                        Collectors.reducing(null, (i, t) -> t)));
 
     }
 
@@ -131,11 +157,12 @@ public class Definitions {
     private void activateOne(Definition definition) {
         XlSheet sheet = workbook.getSheet(definition.getSheetName());
         if (sheet == null) {
-            log.warn(
-                "No sheet named \"{}\" was found for definition \"{}\". ({})",
-                definition.getSheetName(),
-                definition.getName(),
-                definition.getClass().getName());
+            log
+                .warn(
+                    "No sheet named \"{}\" was found for definition \"{}\". ({})",
+                    definition.getSheetName(),
+                    definition.getName(),
+                    definition.getClass().getName());
             return;
         }
         definition.setSheet(sheet);

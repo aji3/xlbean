@@ -35,6 +35,7 @@ import org.xlbean.definition.BeanDefinitionLoader;
 import org.xlbean.definition.DefinitionLoader;
 import org.xlbean.definition.Definitions;
 import org.xlbean.definition.ExcelR1C1DefinitionLoader;
+import org.xlbean.definition.Options;
 import org.xlbean.reader.XlBeanReader;
 import org.xlbean.reader.XlBeanReaderTest;
 import org.xlbean.util.FileUtil;
@@ -97,10 +98,11 @@ public class XlBeanWriterTest {
         XlBean bean = reader.read(in);
 
         XlBeanWriter writer = new XlBeanWriterBuilder().definitionLoader(new BeanDefinitionLoader()).build();
-        writer.write(
-            bean,
-            bean,
-            new FileOutputStream("build/XlBeanWriterTest/test_with_bean_definition.xlsx"));
+        writer
+            .write(
+                bean,
+                bean,
+                new FileOutputStream("build/XlBeanWriterTest/test_with_bean_definition.xlsx"));
     }
 
     /**
@@ -117,13 +119,15 @@ public class XlBeanWriterTest {
         String expected = expectedBean.toString();
 
         XlBeanWriter writer = new XlBeanWriterBuilder().definitionLoader(new BeanDefinitionLoader(10)).build();
-        writer.write(
-            expectedBean,
-            expectedBean,
-            new FileOutputStream("build/XlBeanWriterTest/test_write_with_bean_definition_listinlist.xlsx"));
+        writer
+            .write(
+                expectedBean,
+                expectedBean,
+                new FileOutputStream("build/XlBeanWriterTest/test_write_with_bean_definition_listinlist.xlsx"));
 
-        XlBean beanFromWriter = reader.read(
-            new File("build/XlBeanWriterTest/test_write_with_bean_definition_listinlist.xlsx"));
+        XlBean beanFromWriter = reader
+            .read(
+                new File("build/XlBeanWriterTest/test_write_with_bean_definition_listinlist.xlsx"));
 
         System.out.println(beanFromWriter);
 
@@ -136,7 +140,7 @@ public class XlBeanWriterTest {
 
         Definitions definitions = null;
         try (Workbook wb = WorkbookFactory.create(FileUtil.copyToInputStream(in))) {
-            DefinitionLoader loader = new ExcelR1C1DefinitionLoader();
+            DefinitionLoader loader = new ExcelR1C1DefinitionLoader(new Options());
             definitions = loader.load(wb);
         } catch (EncryptedDocumentException | InvalidFormatException e) {
             throw new RuntimeException(e);
@@ -146,10 +150,11 @@ public class XlBeanWriterTest {
         XlBeanWriter writer = new XlBeanWriterBuilder().definitionLoader(new BeanDefinitionLoader()).build();
         XlBean bean = new XlBeanImpl();
         bean.put("definitions", new BeanConverterImpl().toMap(definitions));
-        writer.write(
-            bean,
-            bean,
-            new FileOutputStream("build/XlBeanWriterTest/test_with_bean_definition2.xlsx"));
+        writer
+            .write(
+                bean,
+                bean,
+                new FileOutputStream("build/XlBeanWriterTest/test_with_bean_definition2.xlsx"));
     }
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss.SSS");

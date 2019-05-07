@@ -22,7 +22,7 @@ public abstract class DefinitionBuilder {
      */
     public abstract Definition build(Object parsedDefinition, XlCellAddress cell);
 
-    protected Map<String, String> toMap(List<DefinitionOption> definitionUnitList) {
+    protected Map<String, String> convertParsedOptionsToMap(List<DefinitionOption> definitionUnitList) {
         return definitionUnitList
             .stream()
             .collect(Collectors.toMap(DefinitionOption::getName, DefinitionOption::getValue));

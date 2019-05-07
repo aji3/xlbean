@@ -149,10 +149,11 @@ public class DefinitionParserTest {
             "singleDef?opt1=0&opt2=true&testValue=",
             new DefinitionUnit(
                 "singleDef",
-                Arrays.asList(
-                    new DefinitionOption("opt1", "0"),
-                    new DefinitionOption("opt2", "true"),
-                    new DefinitionOption("testValue", ""))));
+                Arrays
+                    .asList(
+                        new DefinitionOption("opt1", "0"),
+                        new DefinitionOption("opt2", "true"),
+                        new DefinitionOption("testValue", ""))));
     }
 
     @Test
@@ -207,10 +208,11 @@ public class DefinitionParserTest {
             "singleDef?opt1=0&opt2=true&testValue=",
             new DefinitionUnit(
                 "singleDef",
-                Arrays.asList(
-                    new DefinitionOption("opt1", "0"),
-                    new DefinitionOption("opt2", "true"),
-                    new DefinitionOption("testValue", ""))));
+                Arrays
+                    .asList(
+                        new DefinitionOption("opt1", "0"),
+                        new DefinitionOption("opt2", "true"),
+                        new DefinitionOption("testValue", ""))));
 
         assertParser(
             DefinitionParser.DEFINITION,
@@ -245,6 +247,31 @@ public class DefinitionParserTest {
 
     }
 
+    @Test
+    public void test_TARGET_DEFINITION() {
+        assertParser(
+            DefinitionParser.TARGET_DEFINITION,
+            "####",
+            new TargetDefinitionUnit(Arrays.asList()));
+
+        assertParser(
+            DefinitionParser.TARGET_DEFINITION,
+            "####?test=option",
+            new TargetDefinitionUnit(Arrays.asList(new DefinitionOption("test", "option"))));
+
+        assertParser(
+            DefinitionParser.TARGET_DEFINITION,
+            "####?test=option&test2=option2",
+            new TargetDefinitionUnit(
+                Arrays.asList(new DefinitionOption("test", "option"), new DefinitionOption("test2", "option2"))));
+    }
+
+    @Test
+    public void test_DefinitionParser_TARGET_DEFINITION() {
+        TargetDefinitionUnit targetDefinition = (TargetDefinitionUnit) DefinitionParser.parse("####");
+        System.out.println(targetDefinition);
+    }
+
     static void assertParser(Parser<?> parser, String source, Object value) {
         assertEquals(value, parser.parse(source));
     }
@@ -267,6 +294,11 @@ public class DefinitionParserTest {
         assertEq(value, option);
     }
 
+    static void assertParser(Parser<?> parser, String source, TargetDefinitionUnit value) {
+        TargetDefinitionUnit targetDefinition = (TargetDefinitionUnit) parser.parse(source);
+        assertEq(value, targetDefinition);
+    }
+
     static void assertEq(DefinitionOption expected, DefinitionOption actual) {
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getValue(), actual.getValue());
@@ -285,6 +317,13 @@ public class DefinitionParserTest {
     static void assertEq(InTableOptionUnit expected, InTableOptionUnit actual) {
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getOptionKey(), actual.getOptionKey());
+    }
+
+    static void assertEq(TargetDefinitionUnit expected, TargetDefinitionUnit actual) {
+        assertEquals(expected.getOptions().size(), actual.getOptions().size());
+        for (int i = 0; i < expected.getOptions().size(); i++) {
+            assertEq(expected.getOptions().get(i), actual.getOptions().get(i));
+        }
     }
 
     static void assertEq(List<DefinitionOption> expected, List<DefinitionOption> actual) {
